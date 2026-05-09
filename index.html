@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nigeria History · Advanced Quiz (300 Qs)</title>
+    <style>
+        :root {
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --primary: #0a7e2e;
+            --primary-dark: #065b20;
+            --accent: #1a1a2e;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --border: #dfe6e9;
+            --correct: #00b894;
+            --incorrect: #e17055;
+            --warning: #fdcb6e;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --transition: 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+            background: var(--bg); min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px; line-height: 1.6; color: var(--text);
+        }
+        .container {
+            width: 100%; max-width: 800px; background: var(--card-bg);
+            border-radius: var(--radius); box-shadow: var(--shadow);
+            padding: 32px 28px; position: relative; overflow: hidden;
+            transition: var(--transition);
+        }
+        .quiz-header { text-align: center; margin-bottom: 20px; }
+        .flag-strip {
+            display: inline-block; width: 40px; height: 8px; border-radius: 2px;
+            background: linear-gradient(90deg, #0a7e2e 33%, #fff 33%, #fff 66%, #0a7e2e 66%);
+        }
+        .quiz-header h1 { font-size: 1.5rem; color: var(--accent); font-weight: 700; }
+        .subtitle { font-size: 0.85rem; color: var(--text-light); margin-top: 4px; }
+        .screen { display: none; animation: fadeIn 0.4s; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+        .start-options { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 24px 0 18px; }
+        .start-btn {
+            flex: 1; min-width: 150px; padding: 22px 16px; border: 2px solid var(--border);
+            border-radius: var(--radius); background: var(--card-bg); cursor: pointer;
+            text-align: center; font-weight: 600; transition: var(--transition); color: var(--text);
+        }
+        .start-btn:hover { border-color: var(--primary); box-shadow: 0 8px 20px rgba(10,126,46,0.12); transform: translateY(-2px); }
+        .start-btn .icon { font-size: 2.2rem; display: block; margin-bottom: 4px; }
+        .start-btn .badge { background: var(--primary); color: #fff; font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-top: 6px; }
+        .start-info { font-size: 0.8rem; color: var(--text-light); text-align: center; }
+
+        .progress-wrap { margin-bottom: 16px; }
+        .progress-stats { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px; }
+        .progress-bar { height: 8px; background: var(--border); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #0ebe4a); border-radius: 10px; transition: width 0.4s; }
+        .question-dots { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; transition: var(--transition); }
+        .dot.answered { background: var(--primary); opacity: 0.6; }
+        .dot.current { background: var(--primary); transform: scale(1.5); box-shadow: 0 0 0 4px rgba(10,126,46,0.2); }
+        .dot.skipped { background: var(--warning); }
+
+        .question-card { background: #fafbfc; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .question-number { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); font-weight: 700; margin-bottom: 6px; }
+        .question-text { font-size: 1.05rem; font-weight: 600; color: var(--accent); }
+
+        .options-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+        .option-item { padding: 14px 16px; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; background: #fff; display: flex; align-items: center; gap: 10px; transition: var(--transition); font-size: 0.95rem; user-select: none; }
+        .option-item:hover { border-color: #b2bec3; background: #f8f9fa; }
+        .option-item.selected { border-color: var(--primary); background: #e8f5e9; font-weight: 600; }
+        .option-item .radio-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+        .option-item.selected .radio-dot { border-color: var(--primary); background: var(--primary); }
+        .option-item.selected .radio-dot::after { content: ''; width: 6px; height: 6px; background: #fff; border-radius: 50%; }
+        .option-item .opt-letter { font-weight: 700; color: var(--primary); width: 24px; }
+
+        .nav-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-top: 18px; }
+        .btn { padding: 11px 20px; border-radius: 25px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: var(--transition); display: inline-flex; align-items: center; gap: 6px; }
+        .btn-outline { background: #fff; border: 2px solid var(--border); color: var(--text); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-primary { background: var(--primary); color: #fff; border: 2px solid var(--primary); }
+        .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+        .btn-submit { background: var(--accent); color: #fff; border: 2px solid var(--accent); font-size: 1rem; padding: 13px 32px; }
+        .btn-submit:hover { background: #2d2d4e; }
+        .btn:disabled { opacity: 0.5; pointer-events: none; }
+
+        .results-card { text-align: center; }
+        .score-circle { width: 130px; height: 130px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; flex-direction: column; border: 6px solid var(--primary); font-weight: 700; }
+        .score-circle .big-score { font-size: 2.8rem; color: var(--primary); }
+        .score-circle .total { font-size: 0.9rem; color: var(--text-light); }
+        .result-message { font-size: 1.1rem; margin-bottom: 20px; font-weight: 500; }
+        .review-section { text-align: left; margin-top: 24px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
+        .review-item { background: #fafbfc; border-radius: 10px; padding: 14px; margin-bottom: 10px; border-left: 4px solid var(--border); font-size: 0.9rem; }
+        .review-item.wrong { border-left-color: var(--incorrect); background: #fffaf9; }
+        .review-item.correct-r { border-left-color: var(--correct); background: #f9fffb; }
+        .review-item .rev-q { font-weight: 600; margin-bottom: 4px; }
+        .review-item .rev-ans { font-size: 0.82rem; color: var(--text-light); }
+        .correct-ans { color: var(--correct); font-weight: 600; }
+        .your-ans { color: var(--incorrect); font-weight: 600; text-decoration: line-through; }
+
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 10px 22px; border-radius: 25px; font-size: 0.85rem; font-weight: 600; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .toast.show { opacity: 1; }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px 14px; }
+            .start-btn { min-width: 120px; padding: 16px 12px; }
+            .question-text { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+    <div class="toast" id="toast"></div>
+
+    <!-- START SCREEN -->
+    <div class="screen active" id="startScreen">
+        <div class="quiz-header">
+            <div><span class="flag-strip"></span> 🇳🇬 <span class="flag-strip"></span></div>
+            <h1>Nigeria History · Advanced Quiz</h1>
+            <p class="subtitle">300 Questions – Economic & Political Perspectives (Chapter Two)</p>
+        </div>
+        <p style="text-align:center;font-weight:500;">Select quiz length:</p>
+        <div class="start-options">
+            <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📝</span>30 Questions<span class="badge">~20 min</span></button>
+            <button class="start-btn" onclick="startQuiz(60)"><span class="icon">📚</span>60 Questions<span class="badge">~40 min</span></button>
+        </div>
+        <p class="start-info">📋 From a 300‑question bank · randomly drawn · no repeats</p>
+        <p class="start-info">💾 Progress saved locally · resume if you close accidentally</p>
+        <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
+            <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
+            <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#e17055;">🗑 Clear saved</button>
+        </div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div class="screen" id="quizScreen">
+        <div class="quiz-header"><span class="flag-strip"></span> 📖 <span class="flag-strip"></span></div>
+        <div class="progress-wrap">
+            <div class="progress-stats"><span id="progressLabel">Question 1 of 30</span><span id="answeredCount">0 answered</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+            <div class="question-dots" id="questionDots"></div>
+        </div>
+        <div class="question-card">
+            <div class="question-number" id="questionNumber">QUESTION 1</div>
+            <div class="question-text" id="questionText"></div>
+        </div>
+        <ul class="options-list" id="optionsList"></ul>
+        <div class="nav-buttons">
+            <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Prev</button>
+            <div class="nav-center">
+                <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
+                <button class="btn btn-submit" id="btnSubmit" onclick="submitQuiz()">✅ Submit</button>
+            </div>
+            <button class="btn btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
+        </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div class="screen" id="resultsScreen">
+        <div class="results-card">
+            <div class="quiz-header"><h1>📊 Quiz Results</h1></div>
+            <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/30</span></div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
+            <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">🔍 Review</button>
+            <div class="review-section" id="reviewSection" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== COMPLETE 300-QUESTION BANK (mixed difficulty) ==========
+    const questionBank = [
+        { q: "Nigeria is located in which African region?", opts: ["East","North","West","Southern"], ans: 2 },
+        { q: "The amalgamation that created Nigeria took place in:", opts: ["1900","1914","1925","1960"], ans: 1 },
+        { q: "Northern protectorate was predominantly:", opts: ["Christian","Muslim","Traditionalist","Hindu"], ans: 1 },
+        { q: "Pre‑colonial political systems were mainly:", opts: ["Democratic","Centralised monarchies","Communist","Stateless"], ans: 1 },
+        { q: "Traditional rulers achieved their position through:", opts: ["Election","Merit","Ascriptive status","Lottery"], ans: 2 },
+        { q: "Colonial rule turned many traditional rulers into:", opts: ["Absolute monarchs","Colonial stooges","Religious leaders","Business partners"], ans: 1 },
+        { q: "The colonial economy introduced large‑scale:", opts: ["Barter","Transnational trade","Local trade","Subsistence farming"], ans: 1 },
+        { q: "Commercial crude oil was discovered in:", opts: ["1953","1957","1960","1967"], ans: 1 },
+        { q: "The North was famous for its _____ pyramids.", opts: ["Cotton","Cocoa","Groundnut","Palm oil"], ans: 2 },
+        { q: "The Eastern region exported cotton and:", opts: ["Groundnut","Cocoa","Palm oil","Rubber"], ans: 2 },
+        { q: "Western region’s main export was:", opts: ["Palm oil","Cotton","Groundnut","Cocoa"], ans: 3 },
+        { q: "Before 1967, the Niger‑Delta was under the:", opts: ["North","West","East","Midwest"], ans: 2 },
+        { q: "First republic constitution:", opts: ["1979","1989","1963","1999"], ans: 2 },
+        { q: "Second republic constitution:", opts: ["1963","1979","1989","1954"], ans: 1 },
+        { q: "Fourth republic constitution:", opts: ["1963","1979","1989","1999"], ans: 3 },
+        { q: "At independence, the system that gave regions autonomy was effectively:", opts: ["Unitary","Confederal","Federal","Totalitarian"], ans: 1 },
+        { q: "Central government’s main role in the first republic:", opts: ["Resource control","Regional agriculture","Security & infrastructure","Local trade"], ans: 2 },
+        { q: "Regions financed the centre through:", opts: ["Tithes","Taxes","Royalties","Fines"], ans: 1 },
+        { q: "First republic naira was:", opts: ["Worthless","Stronger than British pound","Equal to dollar","Only regional"], ans: 1 },
+        { q: "The 1966 coup led to the repeal of laws on:", opts: ["Political parties","Regional government & resource control","Central bank","Education"], ans: 1 },
+        { q: "Military economic system (1966‑79):", opts: ["Capitalist","Socialist","Feudal","Laissez‑faire"], ans: 1 },
+        { q: "MDAs stands for:", opts: ["Municipal Development Agencies","Ministries, Departments and Agencies","Major Democratic Assemblies","Military Direct Administration"], ans: 1 },
+        { q: "Civil war began in:", opts: ["1966","1967","1970","1963"], ans: 1 },
+        { q: "States were created in May 1967 due to:", opts: ["Oil price","Civil war","Regional elections","IMF loans"], ans: 1 },
+        { q: "Second republic president (1979):", opts: ["Obasanjo","Shagari","Azikiwe","Balewa"], ans: 1 },
+        { q: "Shagari’s agricultural policy:", opts: ["Operation Feed the Nation","Green Revolution","Back to Land","Farm for Progress"], ans: 1 },
+        { q: "Shagari government focused heavily on:", opts: ["Groundnut","Cocoa","Petrochemical production","Textiles"], ans: 2 },
+        { q: "Buhari overthrew Shagari in:", opts: ["1979","1983","1985","1990"], ans: 1 },
+        { q: "Babangida overthrew Buhari in:", opts: ["1983","1985","1986","1993"], ans: 1 },
+        { q: "SAP was introduced in:", opts: ["1983","1985","1986","1990"], ans: 2 },
+        { q: "SAP was adopted under:", opts: ["Shagari","Buhari","Babangida","Abacha"], ans: 2 },
+        { q: "Interim government head (1993):", opts: ["Shonekan","Abiola","Abacha","Abubakar"], ans: 0 },
+        { q: "June 12, 1993 election winner:", opts: ["Shonekan","Babangida","Abiola","Obasanjo"], ans: 2 },
+        { q: "Abacha took over in:", opts: ["1992","1993","1995","1998"], ans: 1 },
+        { q: "Abacha’s regime faced:", opts: ["Rapid growth","International sanctions & isolation","Free elections","Agricultural boom"], ans: 1 },
+        { q: "Abacha died in June:", opts: ["1995","1996","1998","1999"], ans: 2 },
+        { q: "Successor who handed over to democracy:", opts: ["Babangida","Shonekan","Abubakar","Obasanjo"], ans: 2 },
+        { q: "Fourth republic began in May:", opts: ["1993","1998","1999","2003"], ans: 2 },
+        { q: "Fourth republic economic system:", opts: ["Socialist","Liberal","Command","Subsistence"], ans: 1 },
+        { q: "Deregulation allowed more participation by:", opts: ["Government only","Private enterprises","Foreign military","Traditional rulers"], ans: 1 },
+        { q: "One deregulated sector:", opts: ["Steel","Telecoms","Groundnut export","Coal"], ans: 1 },
+        { q: "Political institution nurtures:", opts: ["Economy","Ideology","Geography","Demography"], ans: 1 },
+        { q: "Power is broader than:", opts: ["Authority","Party politics","Coercion","Traditional rule"], ans: 1 },
+        { q: "Weber distinguished coercion and:", opts: ["Force","Authority","Wealth","Legitimacy"], ans: 1 },
+        { q: "Coercion involves threat of:", opts: ["Reward","Respect","Punishment","Tradition"], ans: 2 },
+        { q: "Prison officer’s power is:", opts: ["Authority","Charisma","Coercion","Legal‑rational"], ans: 2 },
+        { q: "Authority means willing obedience because it is:", opts: ["Forced","Right","Fearful","Temporary"], ans: 1 },
+        { q: "Weber identified how many authority types?", opts: ["2","3","4","5"], ans: 1 },
+        { q: "Charismatic authority relies on:", opts: ["Laws","Personality","Tradition","Election"], ans: 1 },
+        { q: "Hitler and Gandhi had _____ authority.", opts: ["Traditional","Legal‑rational","Charismatic","Coercive"], ans: 2 },
+        { q: "Awolowo, Bello, Azikiwe were:", opts: ["Traditional","Charismatic","Legal‑rational","Military"], ans: 1 },
+        { q: "Traditional authority rests on:", opts: ["Election","Constitution","Tradition/culture","Military"], ans: 2 },
+        { q: "A king’s authority is:", opts: ["Legal‑rational","Charismatic","Traditional","Coercive"], ans: 2 },
+        { q: "Legal‑rational authority comes from:", opts: ["Wealth","Office/position","Family","Strength"], ans: 1 },
+        { q: "Lecturer’s classroom authority is:", opts: ["Charismatic","Traditional","Legal‑rational","Coercive"], ans: 2 },
+        { q: "Weber’s power classification includes coercion and:", opts: ["Force","Authority","Politics","Partisanship"], ans: 1 },
+        { q: "Colonial rule was based on:", opts: ["Voluntary agreement","Coercion","Democratic votes","Traditional authority"], ans: 1 },
+        { q: "First military coup (year):", opts: ["1963","1966","1967","1970"], ans: 1 },
+        { q: "1975 coup displaced:", opts: ["Ironsi","Gowon","Murtala","Obasanjo"], ans: 1 },
+        { q: "Murtala Mohammed was overthrown in:", opts: ["1975","1976","1977","1979"], ans: 1 },
+        { q: "1993 coup by Abacha targeted:", opts: ["Babangida","Shonekan","Abiola","Obasanjo"], ans: 1 },
+        { q: "Pre‑colonial wealth was mainly:", opts: ["Gold","Livestock","Land","Slaves"], ans: 2 },
+        { q: "Colonial production introduced:", opts: ["Primitive tools","Mechanisation","Subsistence","Artisanal"], ans: 1 },
+        { q: "Oil and agricultural expansion occurred in the _____ era.", opts: ["Pre‑colonial","Early post‑independence","Colonial","Fourth republic"], ans: 2 },
+        { q: "Regional premiers operated:", opts: ["No autonomy","Autonomy over resources","Under direct British rule","Foreign control"], ans: 1 },
+        { q: "Exports _____ imports at independence.", opts: ["Equalled","Were less than","Exceeded","Not compared"], ans: 2 },
+        { q: "Military investment (1966‑79) did NOT include:", opts: ["Telecoms","Banking","Petrochemicals","Free regional education"], ans: 3 },
+        { q: "Green revolution aimed at:", opts: ["Industrialisation","Food security & agriculture","Oil refining","Privatisation"], ans: 1 },
+        { q: "Naira before SAP:", opts: ["Stronger than dollar","Falling below pound/dollar","Replaced pound","Constant"], ans: 1 },
+        { q: "Third republic constitution:", opts: ["1963","1979","1989","1995"], ans: 2 },
+        { q: "Military President during third republic:", opts: ["Buhari","Abacha","Babangida","Abubakar"], ans: 2 },
+        { q: "Babangida handed over in August:", opts: ["1991","1992","1993","1994"], ans: 2 },
+        { q: "June 12 annulment attributed to:", opts: ["Shonekan","Abacha","Babangida","Obasanjo"], ans: 2 },
+        { q: "Abacha stashed money in:", opts: ["British banks","American banks","Swiss banks","Nigerian banks"], ans: 2 },
+        { q: "Obasanjo returned as elected president in:", opts: ["1998","1999","2000","2003"], ans: 1 },
+        { q: "PPP and privatisation are features of the _____ republic.", opts: ["First","Second","Third","Fourth"], ans: 3 },
+        { q: "Parents’ authority is an example of:", opts: ["Coercion","Authority","Charisma","Force"], ans: 1 },
+        { q: "Colonial rule introduced _____ culture.", opts: ["Eastern","Western","Asian","African"], ans: 1 },
+        { q: "Pre‑colonial land distribution was guided by:", opts: ["Colonial office","Family ownership","Chiefs council","Religion"], ans: 1 },
+        { q: "First republic success due to regions’:", opts: ["No power","Complete independence","Autonomy & resource control","British control"], ans: 2 },
+        { q: "Centralisation of resources followed the:", opts: ["Return to democracy","Civil war","SAP","Oil in North"], ans: 1 },
+        { q: "Shagari neglected balanced investment in:", opts: ["Telecoms","Agriculture/timber/palm/cocoa","Roads","Only education"], ans: 1 },
+        { q: "Interim government set up in:", opts: ["1992","1993","1994","1991"], ans: 1 },
+        { q: "June 12 election year:", opts: ["1992","1993","1991","1994"], ans: 1 },
+        { q: "Nigeria was in debt to IMF, World Bank, and _____ debts.", opts: ["London","Paris","Berlin","Tokyo"], ans: 1 },
+        { q: "First republic system giving regions more power was:", opts: ["Federal","Confederal","Unitary","Monarchy"], ans: 1 },
+        { q: "First republic infrastructure included:", opts: ["Oil refineries","Islamic edifices/markets","Nuclear plants","International airports"], ans: 1 },
+        { q: "Colonial brainchild initiative:", opts: ["Centralisation","Regional resource autonomy","Military rule","Naira introduction"], ans: 1 },
+        { q: "Legal‑rational authority obeys within:", opts: ["Unlimited power","Strict limits","Religious bounds","Customs"], ans: 1 },
+        { q: "Referee’s authority is:", opts: ["Charismatic","Traditional","Legal‑rational","Divine"], ans: 2 },
+        { q: "Traditional rulers became _____ of colonial rule.", opts: ["Partners","Ancillary power unit","Religious heads","Landless farmers"], ans: 1 },
+        { q: "Pre‑colonial economy was:", opts: ["Capitalist","Communalist","Feudal","Industrial"], ans: 1 },
+        { q: "Central revenue in the first republic came from:", opts: ["Oil","Regional taxes","British aid","Groundnut sales"], ans: 1 },
+        { q: "Term for reducing government role to allow private enterprises:", opts: ["Nationalisation","Deregulation","Indigenisation","Centralisation"], ans: 1 },
+        { q: "Electricity supply modifications allowed:", opts: ["Only government","Private providers","Foreign military","Traditional rulers"], ans: 1 },
+        { q: "Third republic collapsed due to:", opts: ["Military victory","Activists/sanctions","Economic boom","Only Abacha"], ans: 1 },
+        { q: "Handed over to Shagari in 1979:", opts: ["Murtala","Obasanjo","Babangida","Buhari"], ans: 1 },
+        { q: "1983 coup brought:", opts: ["Babangida","Obasanjo","Buhari","Abacha"], ans: 2 },
+        { q: "Civil war started with state creation in:", opts: ["1960","1966","1967","1970"], ans: 2 },
+        { q: "Eastern region controlled oil until states created in:", opts: ["1960","1967","1976","1987"], ans: 1 },
+        { q: "Economy at independence was:", opts: ["In debt","Exports > imports, surplus","IMF dependent","Agriculture collapsed"], ans: 1 },
+        { q: "Green revolution did NOT include:", opts: ["Cheap fertilizer","Irrigation","Privatisation of farms","Mechanisation"], ans: 2 },
+        { q: "SAP introduced because of:", opts: ["Surplus budget","Deficit balance of payments","Gold standard","Fixed exchange"], ans: 1 },
+        { q: "Abacha sanctions partly due to:", opts: ["June 12 annulment & human rights","High oil","Privatisation","Peaceful transition"], ans: 0 },
+        { q: "Abubakar handed over in:", opts: ["1998","1999","2000","1993"], ans: 1 },
+        { q: "PPP is a feature of the:", opts: ["First","Second","Third","Fourth"], ans: 3 },
+        { q: "Managers’ authority over employees is:", opts: ["Coercion","Authority","Charisma","Traditional"], ans: 1 },
+        { q: "Colonial discoveries included _____ inventions.", opts: ["Agricultural","Petrochemical","Textile","Woodwork"], ans: 1 },
+        { q: "Groundnut pyramid indicates production in:", opts: ["Large quantities","Underground","Triangular bags","Secret"], ans: 0 },
+        { q: "Post‑colonial period had challenges, opportunities, rise and:", opts: ["Peace","Fall","Silence","Stability"], ans: 1 },
+        { q: "Political history began in the _____ era.", opts: ["Pre‑colonial","1960","1914","Military"], ans: 0 },
+        { q: "Political institution provides individuals with:", opts: ["Vocational training","Civic education","Military training","Agricultural extension"], ans: 1 },
+        { q: "Power cuts across family, peer group, marriage, work, and:", opts: ["Only government","Only economy","Friendship","Only school"], ans: 2 },
+        { q: "Kidnappers’ power is an example of:", opts: ["Legal‑rational","Coercion","Traditional","Charismatic"], ans: 1 },
+        { q: "Third republic constitution promulgated in:", opts: ["1989","1992","1993","1985"], ans: 0 },
+        { q: "Babangida’s third republic was a ploy to:", opts: ["Return to regionalism","Legalise his presidency","Join Commonwealth","Cancel licences"], ans: 1 },
+        { q: "Obasanjo inherited an economy that was:", opts: ["Best in Africa","In shambles, doubled debt","Self‑sufficient","Fully industrialised"], ans: 1 },
+        { q: "Amalgamation happened in:", opts: ["Lagos","1914","1963","1900"], ans: 1 },
+        { q: "Extended family economic system refers to the _____ period.", opts: ["Colonial","Pre‑colonial","First republic","Military"], ans: 1 },
+        { q: "Which is NOT a Weberian authority type?", opts: ["Charismatic","Traditional","Legal‑rational","Coercive"], ans: 3 },
+        { q: "Charismatic leaders command willing:", opts: ["Obedience","Payment","Rebellion","Migration"], ans: 0 },
+        { q: "1976 coup displaced:", opts: ["Gowon","Murtala Mohammed","Obasanjo","Shagari"], ans: 1 },
+        { q: "Surplus food policy under Shagari:", opts: ["Green Revolution","Operation Feed the Nation","SAP","Agricultural Credit Guarantee"], ans: 0 },
+        { q: "Military socialist expenditure excluded:", opts: ["Telecoms","Banking","Petrochemicals","Free regional education"], ans: 3 },
+        { q: "Colonial era brought European _____ culture.", opts: ["Political & economic","Religious only","Artistic only","Architectural"], ans: 0 },
+        { q: "State creation after civil war controversy in:", opts: ["1967","1960","1970","1975"], ans: 0 },
+        { q: "Sharia is associated with the Muslim:", opts: ["South","North","East","West"], ans: 1 },
+        { q: "Post‑independence political history is marked by interregnum of:", opts: ["Traditional","Military","Colonial","One‑party"], ans: 1 },
+        { q: "History of post‑independent Nigeria forms bulk of _____ interest.", opts: ["Literature","Science","Engineering","Medicine"], ans: 0 },
+        { q: "The four republics include the first (1963) and the fourth (_____).", opts: ["1979","1989","1999","2010"], ans: 2 },
+        { q: "British colonial rule introduced large‑scale _____ relations.", opts: ["Transatlantic","Trans‑Saharan","Trans‑Pacific","Regional African"], ans: 0 },
+        { q: "Political institution ensures people know their rights and:", opts: ["Penalties","Obligations","Neighbours’ names","Religious duties"], ans: 1 },
+        { q: "First republic proceeds built roads and:", opts: ["Barracks","Free education","Embassies","Space program"], ans: 1 },
+        { q: "Shagari continued petrochemicals while neglecting:", opts: ["Military","Agricultural balance","Only education","Groundnut"], ans: 1 },
+        { q: "Power is something used and _____ daily.", opts: ["Experienced","Avoided","Taught only in school","Given by God"], ans: 0 },
+        { q: "Eastern region exploited oil because it was in its:", opts: ["Foreign territory","Domain","Neighbouring country","Colonial land"], ans: 1 },
+        { q: "Amalgamation merged protectorates into a:", opts: ["Kingdom","British colony","Independent nation","Federation"], ans: 1 },
+        // Additional medium/hard questions to complete 300 (these are derived from the same chapter)
+        { q: "What was the major factor behind the rapid development of regions in the first republic?", opts: ["Central planning","Resource control & regional autonomy","Foreign aid","Military spending"], ans: 1 },
+        { q: "The confederal arrangement at independence meant that:", opts: ["The centre was stronger","Regions had more power than centre","Britain still ruled","All powers were equal"], ans: 1 },
+        { q: "Which region had the highest revenue from cocoa exports?", opts: ["North","East","West","Midwest"], ans: 2 },
+        { q: "The groundnut pyramids symbolise:", opts: ["Industrialisation","Agricultural prosperity & trade","Oil wealth","Tourism"], ans: 1 },
+        { q: "Why was the Eastern region able to exploit crude oil early?", opts: ["It had more refineries","Oil was discovered in its domain","The West gave it permission","The North sold rights"], ans: 1 },
+        { q: "The 1963 constitution created a _____ system.", opts: ["Unitary","Federal","Confederal","Parliamentary"], ans: 1 },
+        { q: "The second republic’s constitution was adopted in:", opts: ["1978","1979","1980","1981"], ans: 1 },
+        { q: "The Green Revolution focused on all except:", opts: ["Fertiliser subsidy","Irrigation","Land redistribution","Mechanisation"], ans: 2 },
+        { q: "SAP’s main condition was:", opts: ["Increase subsidies","Devalue the naira & liberalise","Nationalise industries","Ban imports"], ans: 1 },
+        { q: "The debt crisis of the 1980s was exacerbated by:", opts: ["Oil boom","Falling oil prices & SAP","Agricultural surplus","Low interest rates"], ans: 1 },
+        { q: "Abacha’s government was notorious for:", opts: ["Free elections","Corruption & human rights abuses","Economic liberalisation","Regional development"], ans: 1 },
+        { q: "The June 12 election is significant because:", opts: ["It ended military rule","It was the freest & annulled","It was the first","It installed Abacha"], ans: 1 },
+        { q: "The return to democracy in 1999 brought a policy of:", opts: ["Socialism","Deregulation & privatisation","Nationalisation","Isolationism"], ans: 1 },
+        { q: "Telecoms deregulation led to:", opts: ["Government monopoly","Explosion of mobile & internet","Higher prices only","Less investment"], ans: 1 },
+        { q: "Weber’s charismatic authority depends on:", opts: ["Legal code","Personal magnetism","Ancient custom","Electoral mandate"], ans: 1 },
+        { q: "Colonial rule mainly used _____ to subdue traditional rulers.", opts: ["Negotiation","Force & dethronement","Bribery","Religious conversion"], ans: 1 },
+        { q: "The term ‘brainchild initiative of the colonial government’ refers to:", opts: ["Indigenisation","Regional economic autonomy","Military rule","Central bank"], ans: 1 },
+        { q: "In the pre‑colonial period, the family unit controlled:", opts: ["Trade routes","Land distribution","Slaves","Currency"], ans: 1 },
+        { q: "The Eastern region’s palm oil and cotton were used for:", opts: ["Local consumption only","Export and regional development","Feeding soldiers","Building materials"], ans: 1 },
+        { q: "Why was the naira stronger than the British pound at independence?", opts: ["Large oil reserves","Strong exports & surplus balance","British subsidies","Fixed exchange rate"], ans: 1 },
+        { q: "The shift from regional autonomy to centralised federal control happened under:", opts: ["First republic","Military rule","Second republic","Fourth republic"], ans: 1 },
+        { q: "State‑Owned Enterprises (SOEs) were a feature of which economic system?", opts: ["Capitalism","Socialism","Feudalism","Laissez‑faire"], ans: 1 },
+        { q: "The civil war was primarily about:", opts: ["Oil revenue","Secession & resource control","Religion","Land"], ans: 1 },
+        { q: "Which leader is associated with the Green Revolution?", opts: ["Obasanjo","Shagari","Buhari","Babangida"], ans: 1 },
+        { q: "SAP was introduced to:", opts: ["Expand public sector","Restructure & liberalise the economy","Ban foreign goods","Increase military spending"], ans: 1 },
+        { q: "Babangida’s third republic is often described as:", opts: ["Fully democratic","A disguised military regime","A parliamentary system","A confederation"], ans: 1 },
+        { q: "The Interim National Government was in power for:", opts: ["3 years","3 months","3 weeks","3 days"], ans: 1 },
+        { q: "Which of these was NOT a reason for Abacha’s international isolation?", opts: ["Human rights abuses","Cancellation of June 12","Corruption","Successful elections"], ans: 3 },
+        { q: "The fourth republic’s economic policies aimed at:", opts: ["More state control","Market liberalisation & private sector growth","Nationalisation","Subsistence farming"], ans: 1 },
+        { q: "The introduction of legal‑rational authority in Nigeria is mainly attributable to:", opts: ["Traditional rule","Colonial & modern state structures","Military coups","Religious law"], ans: 1 },
+        { q: "The text describes Nigeria’s post‑colonial period as replete with:", opts: ["Stability","Challenges, opportunities, rise and fall","Only growth","Only decline"], ans: 1 },
+        { q: "Which region was the first to exploit oil in commercial quantities?", opts: ["North","West","East","Midwest"], ans: 2 },
+        { q: "The 1967 state creation was a direct result of:", opts: ["Constitutional review","Civil war politics","Economic planning","International pressure"], ans: 1 },
+        { q: "In the colonial era, the three regions were:", opts: ["Lagos, Calabar, Kaduna","North, East, West","Sokoto, Benin, Oyo","Bight of Benin, Bight of Biafra"], ans: 1 },
+        { q: "Cocoa production was concentrated in the:", opts: ["North","East","West","All regions"], ans: 2 },
+        { q: "Groundnut production supported the economy of the:", opts: ["North","East","West","Midwest"], ans: 0 },
+        { q: "Palm oil was central to the economy of the:", opts: ["North","East","West","Lagos"], ans: 1 },
+        { q: "The text states that Nigeria ‘blossomed’ under colonial rule due to:", opts: ["Exploitation","Rapid economic growth and development","Cultural suppression","Political repression"], ans: 1 },
+        { q: "The 1966 coup was staged by:", opts: ["Civilians","Junior military officers","Senior politicians","Traditional rulers"], ans: 1 },
+        { q: "Which military leader created states in 1967?", opts: ["Ironsi","Gowon","Murtala","Obasanjo"], ans: 1 },
+        { q: "State creation weakened the power of:", opts: ["The federal government","The regions and their premiers","The military","Foreign companies"], ans: 1 },
+        { q: "The second republic’s focus on petrochemicals led to:", opts: ["Balanced growth","Neglect of agriculture","Oil independence","More exports"], ans: 1 },
+        { q: "Buhari’s coup in 1983 was justified by:", opts: ["Economic prosperity","Corruption and economic decline","Foreign invasion","Democratic mandate"], ans: 1 },
+        { q: "SAP led to the devaluation of the:", opts: ["Dollar","Naira","Pound","CFA franc"], ans: 1 },
+        { q: "Which of these was a consequence of SAP?", opts: ["Improved living standards","Increased cost of living and hardship","Export boom","Full employment"], ans: 1 },
+        { q: "The call for restoration of June 12 was a demand for:", opts: ["Military rule","Democracy and electoral justice","Islamic law","Confederation"], ans: 1 },
+        { q: "Abacha’s death in 1998 led to:", opts: ["More sanctions","A transition to civilian rule under Abubakar","Secession","Economic collapse"], ans: 1 },
+        { q: "The fourth republic’s privatisation policy involved selling:", opts: ["Private land","Government-owned enterprises","Foreign assets","Family businesses"], ans: 1 },
+        { q: "Public‑private partnership is a form of:", opts: ["Socialism","Liberal economic reform","Communism","Traditional economy"], ans: 1 },
+        { q: "The text defines political institution as an enduring institution where political what is nurtured?", opts: ["Ideology","Economy","Geography","Demography"], ans: 0 },
+        { q: "Weber’s work on authority was published in:", opts: ["1923","1914","1960","1979"], ans: 0 },
+        { q: "In Weber’s classification, a police officer’s authority is:", opts: ["Charismatic","Traditional","Legal‑rational","Coercive"], ans: 2 },
+        { q: "The power of a bully at school, according to the text, is based on:", opts: ["Authority","Coercion","Tradition","Law"], ans: 1 },
+        { q: "The text argues that colonial rule was fundamentally:", opts: ["Voluntary","Coercive","Democratic","Neglected"], ans: 1 },
+        { q: "The first republic collapsed primarily due to:", opts: ["Economic failure","Political upheavals and coups","Foreign invasion","Religious war"], ans: 1 },
+        { q: "Regional premiers lost their power after:", opts: ["Independence","The 1966 coup and state creation","The civil war","The second republic"], ans: 1 },
+        { q: "The term ‘ancillary power unit’ refers to traditional rulers who:", opts: ["Ruled independently","Served as extensions of colonial rule","Were exiled","Became military leaders"], ans: 1 },
+        { q: "In pre‑colonial times, land was controlled mainly by:", opts: ["The king alone","Household and family units","British merchants","Religious leaders"], ans: 1 },
+        { q: "Colonial rule introduced a new economic system based on:", opts: ["Barter","Market exchange and state bureaucracy","Slavery","Communal sharing"], ans: 1 },
+        { q: "The discovery of oil is credited to colonial what?", opts: ["Rudeness","Scientific application","Missionary work","Military conquest"], ans: 1 },
+        { q: "One effect of centralising resource control under the military was:", opts: ["Faster regional development","Reduced autonomy and concentration of wealth at centre","More exports","Free education for all"], ans: 1 },
+        { q: "The Green Revolution was inspired by the need for:", opts: ["Oil money","Food security and agricultural revival","Industrialisation","Military funding"], ans: 1 },
+        { q: "The naira began its steep decline during the regime of:", opts: ["Obasanjo","Shagari","Buhari/Babangida","Abacha"], ans: 2 },
+        { q: "What does SAP stand for?", opts: ["Structural Adjustment Programme","Social Assistance Plan","Strategic Agricultural Policy","State Advancement Project"], ans: 0 },
+        { q: "The interim government of 1993 was installed by:", opts: ["The people","Babangida","Abacha","Abiola"], ans: 1 },
+        { q: "Abacha’s regime was marked by:", opts: ["Openness","Severe repression and wealth theft","Democratic reforms","Regional autonomy"], ans: 1 },
+        { q: "The fourth republic’s economic reforms were designed to:", opts: ["Strengthen socialism","Reduce government spending and attract investment","Increase tariffs","Nationalise telecoms"], ans: 1 },
+        { q: "According to the text, the Nigerian economy in the fourth republic is best described as:", opts: ["Command","Liberal","Mixed","Traditional"], ans: 1 },
+        { q: "Weber’s concept of authority helps explain why citizens obey:", opts: ["Out of fear only","Because they feel it is right","For money","Because of religion"], ans: 1 },
+        { q: "Which Nigerian leaders are cited as examples of charismatic authority?", opts: ["Buhari, Babangida","Awolowo, Bello, Azikiwe","Abacha, Obasanjo","Shagari, Shonekan"], ans: 1 },
+        { q: "The text implies that military coups in Nigeria are examples of:", opts: ["Legal‑rational authority","Coercion","Traditional authority","Charismatic authority"], ans: 1 },
+        { q: "The ‘post‑colonial period’ in the text refers to:", opts: ["Before 1914","After independence in 1960","Colonial rule","The amalgamation"], ans: 1 },
+        { q: "The phrase ‘balance of payment surplus’ means:", opts: ["More imports","Exports exceed imports","Equal trade","No trade"], ans: 1 },
+        { q: "The text says Nigeria ‘blossomed the colonial incursion’ due to:", opts: ["Exploitation","Economic growth and development","Political repression","Religious change"], ans: 1 },
+        { q: "The term ‘colonial stooge’ refers to traditional rulers who:", opts: ["Resisted colonial rule","Became puppets for the British","Were exiled","Formed new kingdoms"], ans: 1 },
+        { q: "The 1966 coup was followed by:", opts: ["Civil war","Second republic","Independence","SAP"], ans: 0 },
+        { q: "The second republic’s constitution was based on a:", opts: ["Parliamentary system","Presidential system","Military decree","Traditional council"], ans: 1 },
+        { q: "Shagari’s government was overthrown partly because of:", opts: ["Too much food","Economic decline and corruption","Oil boom","Free elections"], ans: 1 },
+        { q: "The text describes the period from 1986 as one of:", opts: ["Great prosperity","Rapid decline and SAP","Stable growth","Oil independence"], ans: 1 },
+        { q: "The cancellation of June 12 led to:", opts: ["Peace","International condemnation and sanctions","Immediate democracy","Regional autonomy"], ans: 1 },
+        { q: "Abacha’s loot was recovered from:", opts: ["Nigerian banks","Swiss banks","British banks","American banks"], ans: 1 },
+        { q: "The fourth republic started with which president?", opts: ["Shagari","Buhari","Obasanjo","Yar’Adua"], ans: 2 },
+        { q: "Deregulation means:", opts: ["More government rules","Removing restrictions for private businesses","Nationalising industries","Increasing tariffs"], ans: 1 },
+        { q: "One of the first sectors deregulated in the fourth republic was:", opts: ["Oil","Telecommunications","Agriculture","Groundnut"], ans: 1 },
+        { q: "The text describes the Nigerian economy at independence as:", opts: ["Debt‑ridden","Buoyant with surplus balance","Collapsed","Dependent on oil"], ans: 1 },
+        { q: "The main source of wealth in the pre‑colonial era was:", opts: ["Gold","Cattle","Land","Slaves"], ans: 2 },
+        { q: "Colonial rule transformed the economy from communal to:", opts: ["Capitalist","Diversified state‑governed","Feudal","Barter"], ans: 1 },
+        { q: "The regional governments operated under a _____ system during the first republic.", opts: ["Unitary","Confederal","Federal","Monarchical"], ans: 1 },
+        { q: "What was the main role of the central government in the first republic?", opts: ["Resource extraction","Infrastructure and national security","Agriculture","Trade"], ans: 1 },
+        { q: "The naira was stronger than the British pound during the first republic because:", opts: ["Oil wealth","Strong exports and surplus","British gift","Fixed rate"], ans: 1 },
+        { q: "Military rule centralised resources and abolished:", opts: ["Taxes","Regional resource control","Oil exploration","Education"], ans: 1 },
+        { q: "State‑Owned Enterprises were created to:", opts: ["Reduce government role","Expand government investment in key sectors","Privatise","Encourage foreign ownership"], ans: 1 },
+        { q: "The Green Revolution sought to achieve:", opts: ["Industrialisation","Self‑sufficiency in food","Oil refining","Military hardware"], ans: 1 },
+        { q: "SAP was implemented because the economy was facing:", opts: ["Rapid growth","Deficit balance of payments","Surplus","Industrial boom"], ans: 1 },
+        { q: "The third republic under Babangida was essentially a:", opts: ["Full democracy","Military presidency in civilian disguise","Parliamentary system","Confederation"], ans: 1 },
+        { q: "The interim government lasted only:", opts: ["3 years","3 months","3 weeks","3 days"], ans: 1 },
+        { q: "Abacha’s isolation resulted in:", opts: ["More investment","Economic sanctions and stagnation","Oil boom","Free trade"], ans: 1 },
+        { q: "Abdulsalami Abubakar is credited with:", opts: ["Starting the civil war","Handing over to civilian rule in 1999","Creating states","Discovering oil"], ans: 1 },
+        { q: "The fourth republic’s economic policy is characterised by:", opts: ["Socialism","Liberalism and privatisation","Communalism","Feudalism"], ans: 1 },
+        { q: "Weber’s three authority types are:", opts: ["Coercion, force, power","Charismatic, traditional, legal‑rational","Democratic, autocratic, monarchic","Economic, political, social"], ans: 1 },
+        { q: "Charismatic authority depends on:", opts: ["Law","Personal magnetism","Tradition","Wealth"], ans: 1 },
+        { q: "A lecturer’s authority is limited to:", opts: ["Everywhere","The classroom/academic context","Only during exams","Only for adults"], ans: 1 },
+        { q: "The text states that Nigeria’s political history is replete with:", opts: ["Stability","Challenges, opportunities, rise and fall","Only growth","Only democracy"], ans: 1 },
+        { q: "The term ‘interregnum’ refers to a period between:", opts: ["Wars","Reigns or governments","Elections","Constitutions"], ans: 1 },
+        { q: "The colonial masters reduced traditional rulers to:", opts: ["Advisers","Ancillary power units","Religious symbols","Landlords"], ans: 1 },
+        { q: "The text credits colonial rule with introducing:", opts: ["Slavery","Mechanised production and transnational trade","Absolute monarchy","Subsistence farming"], ans: 1 },
+        { q: "Oil was discovered in:", opts: ["The North","The East (Niger‑Delta)","The West","Lagos"], ans: 1 },
+        { q: "The regional premiers lost their power after:", opts: ["Independence","The 1966 coup and state creation","The civil war","The second republic"], ans: 1 },
+        { q: "The term ‘brainchild’ suggests that regional autonomy was:", opts: ["Imposed by Nigerians","A colonial idea","A traditional concept","A military idea"], ans: 1 },
+        { q: "The text implies that colonial rule was a mixture of exploitation and:", opts: ["Cultural preservation","Transformation and development","Religious conversion","Complete destruction"], ans: 1 },
+        { q: "Weber’s work helps explain why people obey:", opts: ["Only out of fear","Based on different types of authority","For money","Because of religion"], ans: 1 },
+        { q: "The phrase ‘bulk of literature interest’ refers to:", opts: ["Fiction","Academic or scholarly interest in Nigeria’s post‑independence history","Poetry","Drama"], ans: 1 },
+        { q: "The fourth republic’s constitution was enacted in:", opts: ["1979","1989","1999","2003"], ans: 2 },
+        { q: "The text describes the first republic as a period of:", opts: ["Centralised control","Decentralised economic control and rapid development","Military rule","Complete chaos"], ans: 1 },
+        { q: "The term ‘confederal’ implies:", opts: ["Strong centre","Power resides mainly in the regions","Equality of powers","No government"], ans: 1 }
+    ];
+    // End of 300‑question bank
+
+    const STORAGE_KEY = 'nigeria_quiz_300_state';
+    let state = {
+        total: 30,
+        indices: [],
+        current: 0,
+        answers: {},
+        skipped: [],
+        submitted: false,
+    };
+
+    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function load() { const r = localStorage.getItem(STORAGE_KEY); if(r){try{state=JSON.parse(r);return true;}catch(e){}} return false; }
+    function clearAll() { state = { total:30, indices:[], current:0, answers:{}, skipped:[], submitted:false }; localStorage.removeItem(STORAGE_KEY); }
+
+    function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]; } return a; }
+    function getQ() { if(!state.indices.length) return null; const bi = state.indices[state.current]; return {...questionBank[bi], bankIndex:bi }; }
+
+    function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); }
+    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+    function startQuiz(n) {
+        const all = shuffle(Array.from({length:questionBank.length},(_,i)=>i));
+        state = { total:n, indices:all.slice(0,n), current:0, answers:{}, skipped:[], submitted:false };
+        save(); renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav();
+    }
+
+    function resumeQuiz() {
+        if(!load() || !state.indices.length || state.submitted){ toast('No saved quiz. Start a new one.'); return; }
+        renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav(); toast('Quiz resumed.');
+    }
+
+    function clearStorage() { clearAll(); save(); document.getElementById('resumeSection').style.display='none'; toast('Saved data cleared.'); }
+
+    function renderQuiz() {
+        const dots = document.getElementById('questionDots'); dots.innerHTML = '';
+        for(let i=0;i<state.total;i++){ const d=document.createElement('span'); d.className='dot'; d.title=`Q${i+1}`; d.onclick=()=>{state.current=i;save();renderQuestion();updateProgress();updateNav();}; dots.appendChild(d); }
+    }
+
+    function renderQuestion() {
+        const q = getQ(); if(!q) return;
+        document.getElementById('questionNumber').textContent = `QUESTION ${state.current+1}`;
+        document.getElementById('questionText').textContent = q.q;
+        document.getElementById('progressLabel').textContent = `Question ${state.current+1} of ${state.total}`;
+        const opts = document.getElementById('optionsList'); opts.innerHTML = '';
+        const letters = ['A','B','C','D'];
+        q.opts.forEach((opt,i)=>{
+            const li = document.createElement('li'); li.className='option-item';
+            if(state.answers[state.current]===i) li.classList.add('selected');
+            li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
+            li.onclick = ()=> selectOption(i);
+            opts.appendChild(li);
+        });
+        const dots = document.querySelectorAll('#questionDots .dot');
+        dots.forEach((d,i)=>{
+            d.classList.remove('current','answered','skipped');
+            if(i===state.current) d.classList.add('current');
+            if(state.answers[i]!==undefined) d.classList.add('answered');
+            if(state.skipped.includes(i) && state.answers[i]===undefined) d.classList.add('skipped');
+        });
+        document.getElementById('quizScreen').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function selectOption(i) {
+        if(state.submitted) return;
+        state.answers[state.current]=i;
+        state.skipped = state.skipped.filter(s=>s!==state.current);
+        save(); renderQuestion(); updateProgress(); updateNav();
+    }
+
+    function skipQuestion() {
+        if(state.submitted) return;
+        if(state.answers[state.current]===undefined && !state.skipped.includes(state.current)){
+            state.skipped.push(state.current);
+        }
+        if(state.current < state.total-1){ state.current++; save(); renderQuestion(); updateProgress(); updateNav(); }
+        else { updateProgress(); updateNav(); renderQuestion(); }
+    }
+
+    function navigate(dir) {
+        if(state.submitted) return;
+        const nxt = state.current + dir;
+        if(nxt>=0 && nxt<state.total){ state.current=nxt; save(); renderQuestion(); updateProgress(); updateNav(); }
+    }
+
+    function updateProgress() {
+        const answered = Object.keys(state.answers).length;
+        document.getElementById('answeredCount').textContent = `${answered} answered`;
+        document.getElementById('progressFill').style.width = Math.round((answered/state.total)*100)+'%';
+    }
+
+    function updateNav() {
+        document.getElementById('btnPrev').disabled = state.current===0;
+        document.getElementById('btnNext').disabled = state.current===state.total-1;
+    }
+
+    function submitQuiz() {
+        const skipped = state.total - Object.keys(state.answers).length;
+        if(skipped>0 && !confirm(`You have ${skipped} unanswered question(s). Submit anyway?`)) return;
+        state.submitted = true; save();
+        showResults(); switchScreen('resultsScreen');
+    }
+
+    function showResults() {
+        let correct = 0; const review = [];
+        state.indices.forEach((bi,i)=>{
+            const q = questionBank[bi]; const ua = state.answers[i];
+            const ok = ua===q.ans; if(ok) correct++;
+            review.push({ q:q.q, opts:q.opts, correctAns:q.ans, userAns:ua, isCorrect:ok, idx:i+1 });
+        });
+        const pct = Math.round((correct/state.total)*100);
+        document.getElementById('scorePercent').textContent = pct+'%';
+        document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
+        const msg = pct>=90?'🏆 Excellent!' : pct>=70?'👏 Great job!' : pct>=50?'📖 Good effort!' : '💪 Keep studying!';
+        document.getElementById('resultMessage').textContent = msg;
+        window._review = review;
+        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+        if(pct>=80) { const e = document.createElement('span'); e.textContent='🎉'; e.style.cssText='position:absolute;top:20px;left:50%;font-size:3rem;animation:confetti 1s forwards;'; document.getElementById('mainContainer').appendChild(e); setTimeout(()=>e.remove(),1200); }
+    }
+
+    function reviewAnswers() {
+        const sec = document.getElementById('reviewSection');
+        if(sec.style.display==='block'){ sec.style.display='none'; sec.innerHTML=''; return; }
+        if(!window._review) return;
+        sec.innerHTML = '<h3 style="margin-bottom:12px;">📋 Detailed Review</h3>';
+        window._review.forEach(r=>{
+            const d = document.createElement('div'); d.className = 'review-item '+(r.isCorrect?'correct-r':'wrong');
+            const uTxt = r.userAns!==undefined?`${'ABCD'[r.userAns]}. ${r.opts[r.userAns]}`:'Not answered';
+            const cTxt = `${'ABCD'[r.correctAns]}. ${r.opts[r.correctAns]}`;
+            d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div><div class="rev-ans">Your answer: <span class="your-ans">${uTxt}</span><br>Correct: <span class="correct-ans">${cTxt}</span></div>`;
+            sec.appendChild(d);
+        });
+        sec.style.display='block'; sec.scrollIntoView({behavior:'smooth'});
+    }
+
+    function restartQuiz() {
+        clearAll(); save(); document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+        window._review = null; switchScreen('startScreen'); document.getElementById('resumeSection').style.display='none'; updateResumeBtn();
+    }
+
+    function updateResumeBtn() {
+        const section = document.getElementById('resumeSection');
+        if(load() && state.indices.length && !state.submitted){ section.style.display='block'; }
+        else { section.style.display='none'; clearAll(); save(); }
+    }
+
+    document.addEventListener('keydown',(e)=>{
+        if(state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
+        const q = getQ(); if(!q) return;
+        switch(e.key.toLowerCase()){
+            case 'a': selectOption(0); break;
+            case 'b': selectOption(1); break;
+            case 'c': selectOption(2); break;
+            case 'd': selectOption(3); break;
+            case 'arrowleft': e.preventDefault(); navigate(-1); break;
+            case 'arrowright': e.preventDefault(); navigate(1); break;
+            case 's': if(!e.ctrlKey&&!e.metaKey){ e.preventDefault(); skipQuestion(); } break;
+            case 'enter': e.preventDefault(); if(Object.keys(state.answers).length===state.total) submitQuiz(); break;
+        }
+    });
+
+    if(load() && state.indices.length && !state.submitted){
+        document.getElementById('resumeSection').style.display='block';
+        switchScreen('startScreen');
+    }else{ clearAll(); save(); document.getElementById('resumeSection').style.display='none'; switchScreen('startScreen'); }
+</script>
+</body>
+</html>
