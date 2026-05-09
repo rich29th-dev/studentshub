@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTH 102 · Revision Quiz 2025</title>
+    <style>
+        :root {
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --accent: #1a1a2e;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --border: #dfe6e9;
+            --correct: #00b894;
+            --incorrect: #e17055;
+            --warning: #fdcb6e;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --transition: 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 32px 28px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .quiz-header .icon-math {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .quiz-header h1 {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s;
+        }
+        .screen.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .start-options {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 24px 0 18px;
+        }
+        .start-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 22px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card-bg);
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: var(--transition);
+            color: var(--text);
+        }
+        .start-btn:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(26, 115, 232, 0.12);
+            transform: translateY(-2px);
+        }
+        .start-btn .icon {
+            font-size: 2.2rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .start-btn .badge {
+            background: var(--primary);
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+        .start-info {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+        .progress-wrap {
+            margin-bottom: 16px;
+        }
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+        .progress-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #4a9af5);
+            border-radius: 10px;
+            transition: width 0.4s;
+        }
+        .question-dots {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .dot.answered {
+            background: var(--primary);
+            opacity: 0.6;
+        }
+        .dot.current {
+            background: var(--primary);
+            transform: scale(1.5);
+            box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.2);
+        }
+        .dot.skipped {
+            background: var(--warning);
+        }
+        .question-card {
+            background: #fafbfc;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+        .question-number {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .option-item {
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            user-select: none;
+        }
+        .option-item:hover {
+            border-color: #b2bec3;
+            background: #f8f9fa;
+        }
+        .option-item.selected {
+            border-color: var(--primary);
+            background: #e8f0fe;
+            font-weight: 600;
+        }
+        .option-item .radio-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .option-item.selected .radio-dot {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+        .option-item.selected .radio-dot::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        .option-item .opt-letter {
+            font-weight: 700;
+            color: var(--primary);
+            width: 24px;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+        }
+        .btn {
+            padding: 11px 20px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-outline {
+            background: #fff;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: 2px solid var(--primary);
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        .btn-submit {
+            background: var(--accent);
+            color: #fff;
+            border: 2px solid var(--accent);
+            font-size: 1rem;
+            padding: 13px 32px;
+        }
+        .btn-submit:hover {
+            background: #2d2d4e;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .results-card {
+            text-align: center;
+        }
+        .score-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 6px solid var(--primary);
+            font-weight: 700;
+        }
+        .score-circle .big-score {
+            font-size: 2.8rem;
+            color: var(--primary);
+        }
+        .score-circle .total {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        .result-message {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .review-section {
+            text-align: left;
+            margin-top: 24px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        .review-item {
+            background: #fafbfc;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--border);
+            font-size: 0.9rem;
+        }
+        .review-item.wrong {
+            border-left-color: var(--incorrect);
+            background: #fffaf9;
+        }
+        .review-item.correct-r {
+            border-left-color: var(--correct);
+            background: #f9fffb;
+        }
+        .review-item .rev-q {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .review-item .rev-ans {
+            font-size: 0.82rem;
+            color: var(--text-light);
+        }
+        .correct-ans {
+            color: var(--correct);
+            font-weight: 600;
+        }
+        .your-ans {
+            color: var(--incorrect);
+            font-weight: 600;
+            text-decoration: line-through;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 14px;
+            }
+            .start-btn {
+                min-width: 120px;
+                padding: 16px 12px;
+            }
+            .question-text {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <div class="toast" id="toast"></div>
+
+        <!-- START SCREEN -->
+        <div class="screen active" id="startScreen">
+            <div class="quiz-header">
+                <span class="icon-math">📐</span>
+                <h1>MTH 102 · Revision Quiz 2025</h1>
+                <p class="subtitle">174 Questions — Functions, Limits, Differentiation, Integration & More</p>
+            </div>
+            <p style="text-align:center;font-weight:500;">Select quiz length:</p>
+            <div class="start-options">
+                <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📝</span>30 Questions<span class="badge">~25 min</span></button>
+                <button class="start-btn" onclick="startQuiz(60)"><span class="icon">📚</span>60 Questions<span class="badge">~50 min</span></button>
+            </div>
+            <p class="start-info">📋 From a 174‑question bank · randomly drawn · no repeats</p>
+            <p class="start-info">💾 Progress saved locally · resume if you close accidentally</p>
+            <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
+                <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
+                <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#e17055;">🗑 Clear saved</button>
+            </div>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div class="screen" id="quizScreen">
+            <div class="quiz-header"><span class="icon-math">📖</span></div>
+            <div class="progress-wrap">
+                <div class="progress-stats"><span id="progressLabel">Question 1 of 30</span><span id="answeredCount">0 answered</span></div>
+                <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+                <div class="question-dots" id="questionDots"></div>
+            </div>
+            <div class="question-card">
+                <div class="question-number" id="questionNumber">QUESTION 1</div>
+                <div class="question-text" id="questionText"></div>
+            </div>
+            <ul class="options-list" id="optionsList"></ul>
+            <div class="nav-buttons">
+                <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Prev</button>
+                <div class="nav-center">
+                    <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
+                    <button class="btn btn-submit" id="btnSubmit" onclick="submitQuiz()">✅ Submit</button>
+                </div>
+                <button class="btn btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div class="screen" id="resultsScreen">
+            <div class="results-card">
+                <div class="quiz-header"><h1>📊 Quiz Results</h1></div>
+                <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/30</span></div>
+                <div class="result-message" id="resultMessage"></div>
+                <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
+                <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">🔍 Review</button>
+                <div class="review-section" id="reviewSection" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 174-QUESTION BANK ==========
+        const questionBank = [
+            { q: "If f(x) = 15x − 7, find f(8) − f(−5)", opts: ["81", "56", "37", "195"], ans: 3 },
+            { q: "Leading coefficient of f(x) = −2x³ + x − 1 is", opts: ["−2", "1", "−1", "3"], ans: 0 },
+            { q: "Solve: x² − 5x + 6 = 0", opts: ["x = 2, 3", "x = −2, −3", "x = 1, 6", "x = 3, 6"], ans: 0 },
+            { q: "If a² − b² = 0, then", opts: ["a = b", "a = −b", "a = ±b", "None of these"], ans: 2 },
+            { q: "If x + 1/x = 5, then x² + 1/x² =", opts: ["25", "23", "21", "15"], ans: 1 },
+            { q: "If x² + y² = 25 and xy = 12, then (x + y)² =", opts: ["49", "37", "61", "31"], ans: 0 },
+            { q: "Rationalize: 1/(√2 + 1)", opts: ["√2 − 1", "1 − √2", "2 − √2", "None"], ans: 0 },
+            { q: "If a + b = 7 and ab = 10, then a² + b² =", opts: ["49", "39", "25", "19"], ans: 0 },
+            { q: "Factor: x³ − 8", opts: ["(x−2)(x²+2x+4)", "(x+2)(x²−2x+4)", "(x−2)(x²−2x+4)", "None"], ans: 0 },
+            { q: "Solve: (x − 3)(x + 2) = 0", opts: ["x = 3, −2", "x = −3, 2", "x = 3, 2", "x = −3, −2"], ans: 0 },
+            { q: "If (x + y)² = 36 and xy = 5, find x² + y²", opts: ["26", "36", "56", "28"], ans: 0 },
+            { q: "Find the discriminant of x² − 6x + 9", opts: ["0", "36", "81", "−9"], ans: 0 },
+            { q: "For what value of x is (9x−7)/(2x−5) not defined?", opts: ["2/5", "−2", "5/2", "3"], ans: 2 },
+            { q: "Solve for r: 30r + 20 − 10r = −40", opts: ["4", "−3", "3", "−4"], ans: 1 },
+            { q: "Differentiate (2x+6)(7x−4)", opts: ["28x+34", "4x−13", "28x−34", "13x−4"], ans: 0 },
+            { q: "Differentiate sin(9x)", opts: ["9cos(9x)", "cos(9x)", "9sin(9x)", "9cos x"], ans: 0 },
+            { q: "If y = (4x−3)², find dy/dx when x = 7", opts: ["300", "200", "250", "220"], ans: 1 },
+            { q: "For what value of x is (3x−7)/(2x+5) = 0?", opts: ["3/7", "3", "7/3", "−7"], ans: 2 },
+            { q: "If y = 3x⁴−7x+5, find d²y/dx²", opts: ["36x²", "12x³+6", "36x²+6", "36x"], ans: 0 },
+            { q: "If y = −sin(5x−4), find dy/dx", opts: ["cos(5x−4)", "5sin(5x−4)", "5x−4", "−5cos(5x−4)"], ans: 3 },
+            { q: "If f(x) = 9x³−11x²+7x−6, find f′(5)", opts: ["675", "572", "558", "715"], ans: 1 },
+            { q: "Which is NOT a method of evaluating limits?", opts: ["Direct substitution", "The h method", "Orthogonal method", "L'Hôpital method"], ans: 2 },
+            { q: "Evaluate lim(x→5) (x²−25)/(x−5)", opts: ["Undefined", "−10", "10", "5"], ans: 2 },
+            { q: "Evaluate f(x)=3x²−6x+12 as x→10", opts: ["175", "262", "186", "252"], ans: 3 },
+            { q: "Find the inverse of f(x) = 2x−3", opts: ["(x+3)/2", "(x−3)/2", "5x−2", "(3x+2)/3"], ans: 0 },
+            { q: "Which is NOT a type of mapping?", opts: ["One to one", "Many to many", "Zero to many", "One to many"], ans: 2 },
+            { q: "Which is NOT a method of differentiation?", opts: ["Mechanics rule", "Product rule", "Quotient rule", "Chain rule"], ans: 0 },
+            { q: "Differentiate x⁵−3x⁴+7x²−9 three times", opts: ["20x³−36x²+14", "60x³−36x²", "60x²−72x", "120x−36"], ans: 3 },
+            { q: "A relation mapping every input to a unique output is called", opts: ["One to one", "Onto", "One to many", "Many to one"], ans: 0 },
+            { q: "A relation with a domain of individual points is called", opts: ["Continuous", "Discrete", "Orthogonal", "Diagonal"], ans: 1 },
+            { q: "The domain lists all the _____ values.", opts: ["X", "Y", "Z", "odd"], ans: 0 },
+            { q: "Given f(x)=x²−7x+5, find f(3)", opts: ["7", "14", "−7", "−14"], ans: 2 },
+            { q: "Given f(x)=x³−7x²−3, find f(−3)", opts: ["7", "14", "−7", "−93"], ans: 3 },
+            { q: "Evaluate lim(x→5) (x−5)/(x²−25)", opts: ["−1/10", "−1/5", "0", "1/10"], ans: 3 },
+            { q: "Evaluate f(x)=5x−3 for x=−7", opts: ["32", "18", "−38", "−32"], ans: 2 },
+            { q: "Domain of {(0,1),(2,3),(−1,3),(4,5)} is", opts: ["{0,2,−1,4}", "{3}", "{0,2}", "{1,3,5}"], ans: 0 },
+            { q: "A relation where every output has an input is called", opts: ["One to one", "One to many", "Onto", "Many to one"], ans: 2 },
+            { q: "If f(x)=3x³+2x²−7x−6, find f(−3)", opts: ["−60", "−48", "−72", "−54"], ans: 0 },
+            { q: "Evaluate lim(x→2) 3x³−2x²−7x", opts: ["6", "8", "10", "12"], ans: 0 },
+            { q: "lim(x→∞) (x²−4x−5)/(2x²−1) =", opts: ["Undefined", "4", "6", "1/2"], ans: 3 },
+            { q: "The x-values of ordered pairs are called the", opts: ["Range", "Relation", "Domain", "Function"], ans: 2 },
+            { q: "If f(x)=2x³−3x²+7x−5, find f(−2)", opts: ["−36", "47", "−47", "36"], ans: 2 },
+            { q: "Evaluate f(x)=8x−6 for x=−7", opts: ["−62", "−50", "62", "50"], ans: 0 },
+            { q: "Range of {(−3,−2),(5,0),(0,1),(−1,4),(4,5),(2,5)}", opts: ["{−3,0,4,5}", "{−2,0,1,4,5}", "{−3,−1,0,2,4,5}", "{−2,0,1,−5,4}"], ans: 1 },
+            { q: "For what k is (x²−7x+12)/(x−3) not defined?", opts: ["−4", "2/5", "3", "4"], ans: 2 },
+            { q: "For what x is (x+4)/(x²−5x+6)=0?", opts: ["−4", "2/3", "3", "undefined"], ans: 0 },
+            { q: "lim(x→∞) (x+1)/x =", opts: ["1", "0", "∞", "−1"], ans: 0 },
+            { q: "lim(x→0) x·ln(x) =", opts: ["0", "∞", "−∞", "Does not exist"], ans: 0 },
+            { q: "Solve: 2x²−8=0", opts: ["x=2,−2", "x=4,−4", "x=1,−1", "x=0"], ans: 0 },
+            { q: "If lim(x→2⁻)f(x)=1 and lim(x→2⁺)f(x)=3, then lim(x→2)f(x)", opts: ["1", "3", "2", "Does not exist"], ans: 3 },
+            { q: "lim(x→0) (x²+x)/x =", opts: ["0", "1", "x+1", "2"], ans: 1 },
+            { q: "A cubic polynomial has at most how many turning points?", opts: ["3", "2", "1", "0"], ans: 1 },
+            { q: "Which function is continuous but NOT differentiable at x=0?", opts: ["x²", "|x|", "sin x", "eˣ"], ans: 1 },
+            { q: "lim(x→0) (√(1+x)−1)/x =", opts: ["0", "1", "1/2", "∞"], ans: 2 },
+            { q: "lim(x→2) (x³−8)/(x−2) =", opts: ["0", "4", "8", "12"], ans: 3 },
+            { q: "The graph of f(x)=x³ is", opts: ["Discontinuous", "Non-differentiable", "Continuous & smooth", "Piecewise"], ans: 2 },
+            { q: "A function is continuous at a point if", opts: ["It is defined", "Limit exists", "Limit = function value", "All of these"], ans: 3 },
+            { q: "Which function is NOT continuous at x=0?", opts: ["f(x)=1/x", "f(x)=x²", "f(x)=sin x", "f(x)=eˣ"], ans: 0 },
+            { q: "If y=x²−7x+5, find f(7)", opts: ["62", "21", "5", "12"], ans: 2 },
+            { q: "If y=x³−7x²+9x−2, find its value when x=5", opts: ["14", "16", "18", "7"], ans: 2 },
+            { q: "Evaluate lim(x→3) x²−5x+6", opts: ["1", "2", "3", "0"], ans: 3 },
+            { q: "lim(x→0)f(x) exists only if", opts: ["f is increasing", "f is decreasing", "Left & right limits are equal", "None"], ans: 2 },
+            { q: "The function f(x)=|x| is", opts: ["Continuous everywhere", "Not continuous at 0", "Discontinuous everywhere", "Differentiable everywhere"], ans: 0 },
+            { q: "Discontinuity at x=0 occurs in", opts: ["f(x)=x²", "f(x)=sin x", "f(x)=1/x", "f(x)=eˣ"], ans: 2 },
+            { q: "Which has a removable discontinuity?", opts: ["sin(1/x)", "1/x", "(x²−1)/(x−1)", "ln x"], ans: 2 },
+            { q: "A step function is", opts: ["Continuous", "Uniformly continuous", "Discontinuous", "Constant"], ans: 2 },
+            { q: "A function is continuous on [a,b] if", opts: ["Continuous at each point", "Continuous from right at a, left at b", "Both a and b", "None"], ans: 2 },
+            { q: "Graph of a continuous function is", opts: ["Broken curve", "Has gaps", "Smooth without breaks", "Has jumps"], ans: 2 },
+            { q: "f(x)=tan x is discontinuous at", opts: ["x=0", "x=π/2", "x=π", "x=3π/2"], ans: 1 },
+            { q: "Degree of f(x)=x⁵−3x³+2x+7 is", opts: ["3", "5", "7", "2"], ans: 1 },
+            { q: "A polynomial is quadratic if its degree is", opts: ["1", "2", "3", "0"], ans: 1 },
+            { q: "If f(x)=x²+3x+2, then f(1)=", opts: ["6", "3", "4", "5"], ans: 0 },
+            { q: "If x=2 is a root of f(x)=x²−4x+4, then f(2)=", opts: ["0", "2", "4", "1"], ans: 0 },
+            { q: "Zeros of f(x)=x²−5x+6 are", opts: ["1,6", "−2,−3", "2,3", "3,5"], ans: 2 },
+            { q: "If (x−3) is factor of f(x)=x²−6x+9, then f(3)=", opts: ["9", "0", "6", "3"], ans: 1 },
+            { q: "Remainder when f(x)=x²+x+1 is divided by x−1", opts: ["0", "1", "2", "3"], ans: 3 },
+            { q: "Factor completely: x²−1", opts: ["(x+1)²", "(x−1)(x+1)", "(x−1)²", "None"], ans: 1 },
+            { q: "A cubic polynomial with real coefficients can have at most", opts: ["1 real root", "2 real roots", "3 real roots", "4 real roots"], ans: 2 },
+            { q: "A function is best defined as", opts: ["Any formula", "A set of inputs", "A relation with one output per input", "A graph"], ans: 2 },
+            { q: "The domain of a function is", opts: ["Set of outputs", "y-values", "Set of inputs", "Maximum value"], ans: 2 },
+            { q: "The range of a function is", opts: ["x-values", "All possible outputs", "The domain", "The variables"], ans: 1 },
+            { q: "Which is a function?", opts: ["{(1,2),(2,3),(1,4)}", "{(2,3),(3,4),(4,5)}", "{(1,2),(2,2),(2,3)}", "{(5,6),(6,5),(5,7)}"], ans: 1 },
+            { q: "Which is NOT a function?", opts: ["y=x+2", "y=√x", "x=y²", "y=|x|"], ans: 2 },
+            { q: "If f(x)=x², what is f(3)?", opts: ["6", "9", "12", "15"], ans: 1 },
+            { q: "Domain of f(x)=1/x is", opts: ["All real numbers", "x≠0", "x>0", "x<0"], ans: 1 },
+            { q: "Range of f(x)=x² for x∈ℝ is", opts: ["ℝ", "y≥0", "y≤0", "y≠0"], ans: 1 },
+            { q: "If f(x)=2x+1 and g(x)=x−3, f(g(x))=", opts: ["2x−5", "2x+1", "2x−1", "2x−3"], ans: 0 },
+            { q: "g(f(x)) if f(x)=x+1, g(x)=x²", opts: ["x²+1", "x²+2", "(x+1)²", "x²−1"], ans: 2 },
+            { q: "(f∘g)(x) means", opts: ["f(x)×g(x)", "f(g(x))", "g(f(x))", "f(x)+g(x)"], ans: 1 },
+            { q: "Domain of f(x)=√(x−1) is", opts: ["x≥1", "x≤1", "x>1", "x≠1"], ans: 0 },
+            { q: "Inverse of f(x)=2x+3 is", opts: ["x=2y+3", "y=(x−3)/2", "y=(x+3)/2", "y=2x−3"], ans: 1 },
+            { q: "If f(x)=x²+1, the range is", opts: ["y≥0", "y≥1", "y≤1", "All real numbers"], ans: 1 },
+            { q: "Which is one-to-one?", opts: ["y=x²", "y=|x|", "y=2x+1", "y=x²−4"], ans: 2 },
+            { q: "If f(x)=x−2 and g(x)=3x, (f∘g)(x)=", opts: ["3x−2", "3x−6", "x−6", "x−2"], ans: 0 },
+            { q: "The graph of a function passes the", opts: ["Horizontal line test", "Vertical line test", "Slant test", "Derivative test"], ans: 1 },
+            { q: "Which function is even?", opts: ["f(x)=x", "f(x)=x³", "f(x)=x²", "f(x)=x+1"], ans: 2 },
+            { q: "An odd function satisfies", opts: ["f(x)=f(−x)", "f(−x)=−f(x)", "f(x)=x²", "f(−x)=f(x)"], ans: 1 },
+            { q: "f(g(1)) if f(x)=x², g(x)=x+3", opts: ["4", "16", "9", "25"], ans: 1 },
+            { q: "Domain of f(x)=1/√(x−4)", opts: ["x≥4", "x>4", "x≤4", "x<4"], ans: 1 },
+            { q: "Which is a piecewise function?", opts: ["f(x)=x²", "f(x)=|x|", "f(x)=x if x>0,−x if x≤0", "f(x)=2x"], ans: 2 },
+            { q: "Which is NOT continuous?", opts: ["f(x)=x+1", "f(x)=1/x", "f(x)=x²", "f(x)=√x"], ans: 1 },
+            { q: "Range of f(x)=2−x²", opts: ["y≥−2", "y≤2", "y≥2", "y≤−2"], ans: 1 },
+            { q: "Which is NOT one-to-one?", opts: ["f(x)=x+1", "f(x)=x³", "f(x)=√x", "f(x)=x²"], ans: 3 },
+            { q: "Inverse of f(x)=x/2 is", opts: ["x/2", "2x", "x²", "x+2"], ans: 1 },
+            { q: "If f(x)=|x|, then f(−3)=", opts: ["−3", "0", "3", "Undefined"], ans: 2 },
+            { q: "A function f is injective if", opts: ["Every x has one y", "Every y has one x", "Different inputs yield different outputs", "Not defined at x=0"], ans: 2 },
+            { q: "A function f is surjective if", opts: ["Every x has one y", "Every y has one x", "Range = codomain", "f(0)=0"], ans: 2 },
+            { q: "The identity function is", opts: ["f(x)=x²", "f(x)=x", "f(x)=1/x", "f(x)=0"], ans: 1 },
+            { q: "f(x)=x² is defined for", opts: ["x>0", "x<0", "x∈ℝ", "x≥1"], ans: 2 },
+            { q: "f(x)=√x is defined for", opts: ["x>0", "x≥0", "x≠0", "x<0"], ans: 1 },
+            { q: "f(f(x)) if f(x)=x+1", opts: ["x+1", "x+2", "x+3", "x"], ans: 1 },
+            { q: "Range of f(x)=3x+2 for x∈ℝ", opts: ["y≥2", "y∈ℝ", "y>2", "y≤2"], ans: 1 },
+            { q: "f(x)=x³ is", opts: ["Even", "Odd", "Neither", "Periodic"], ans: 1 },
+            { q: "(f+g)(x) if f(x)=2x, g(x)=x+3", opts: ["3x+3", "3x", "x+3", "2x+x+3"], ans: 0 },
+            { q: "If f(x)=x²−2x+1, find f(1)", opts: ["0", "1", "2", "−1"], ans: 0 },
+            { q: "f(2) if f(x)=(x−1)²", opts: ["0", "1", "2", "3"], ans: 1 },
+            { q: "Range of f(x)=|x−2|", opts: ["x≥0", "y≥0", "x≥2", "y>2"], ans: 1 },
+            { q: "Domain of f(x)=ln(x)", opts: ["x>0", "x≠0", "x<0", "x∈ℝ"], ans: 0 },
+            { q: "f(x)=5 is a", opts: ["Constant function", "Linear function", "Cubic", "Rational"], ans: 0 },
+            { q: "Range of f(x)=1/(x−1)", opts: ["x≠1", "y≠0", "x>1", "y>0"], ans: 1 },
+            { q: "Which is NOT defined at x=0?", opts: ["f(x)=x²", "f(x)=1/x", "f(x)=√x", "f(x)=x+1"], ans: 1 },
+            { q: "Domain of f(x)=1/(x²−4)", opts: ["x≠±2", "x≠2", "x≠0", "x≠−2"], ans: 0 },
+            { q: "If f(x)=x², g(x)=x+2, (f∘g)(x)=", opts: ["x²+2", "(x+2)²", "x+4", "x²+4"], ans: 1 },
+            { q: "A function is onto if", opts: ["Each input→unique output", "Each output has a pre-image", "It is linear", "It is one-to-one"], ans: 1 },
+            { q: "If f(x)=√(x+2), domain is", opts: ["x≥−2", "x>−2", "x≤2", "x∈ℝ"], ans: 0 },
+            { q: "f(f(1)) if f(x)=2x", opts: ["4", "2", "1", "8"], ans: 0 },
+            { q: "A function has an inverse only if it is", opts: ["Constant", "Increasing", "One-to-one", "Onto"], ans: 2 },
+            { q: "Which is a rational function?", opts: ["f(x)=x+1", "f(x)=1/x", "f(x)=x²", "f(x)=√x"], ans: 1 },
+            { q: "If f(x)=5x, then f(3)=", opts: ["8", "10", "15", "18"], ans: 2 },
+            { q: "Domain of f(x)=√x is", opts: ["x≥0", "x>0", "All reals", "x<0"], ans: 0 },
+            { q: "Which is a function?", opts: ["{(a,2),(b,3),(c,1)}", "{(2,7),(3,7),(2,8)}", "{(a,1),(a,2),(a,3)}", "{(1,2),(−1,3),(−1,8)}"], ans: 0 },
+            { q: "A mapping where every domain element has a unique image is", opts: ["One to many", "Many to many", "One to one", "Many to one"], ans: 2 },
+            { q: "Which is a quadratic function?", opts: ["f(x)=x", "f(x)=x²", "f(x)=1/x", "f(x)=x+3"], ans: 1 },
+            { q: "f(2) if f(x)=x²−4x+3", opts: ["0", "1", "2", "3"], ans: 1 },
+            { q: "Output of f(x)=x³ when x=−2", opts: ["−6", "−4", "−8", "8"], ans: 2 },
+            { q: "Range of f(x)=x² for x∈{−3,−2,−1,0}", opts: ["{1,2,3,4}", "{0,1,4,9}", "{−9,−4,−1,0}", "{1,2,3,9}"], ans: 1 },
+            { q: "If f(x)=4−x, f(1)=", opts: ["3", "2", "5", "1"], ans: 0 },
+            { q: "A function maps", opts: ["Many inputs→one output", "One input→one output", "One output→many inputs", "Many outputs→one input"], ans: 1 },
+            { q: "f(3) if f(x)=x²+2x", opts: ["15", "12", "13", "14"], ans: 0 },
+            { q: "Range of f(x)=x−5 for x∈{5,6,7}", opts: ["{0,1,2}", "{1,2,3}", "{−1,0,1}", "{5,6,7}"], ans: 0 },
+            { q: "f(2)+f(3) if f(x)=x²", opts: ["12", "13", "14", "15"], ans: 1 },
+            { q: "If f(x)=x+3, g(x)=2x, f(g(2))=", opts: ["6", "7", "8", "9"], ans: 1 },
+            { q: "Domain of f(x)=1/(x−2)", opts: ["x≠2", "x≠0", "x>2", "x<2"], ans: 0 },
+            { q: "f(4) if f(x)=3x−2", opts: ["10", "9", "11", "12"], ans: 0 },
+            { q: "Which is NOT in domain of f(x)=√(x−4)?", opts: ["4", "5", "6", "3"], ans: 3 },
+            { q: "A function is quadratic when it has power", opts: ["1", "2", "Fraction", "Linear"], ans: 1 },
+            { q: "If f(x)=|x|, f(−3)=", opts: ["−3", "0", "3", "1"], ans: 2 },
+            { q: "f(0) if f(x)=x³+2x", opts: ["0", "2", "−1", "1"], ans: 0 },
+            { q: "If f(x)=2x+1, g(x)=x−2, f(g(3))=", opts: ["2", "4", "6", "8"], ans: 1 },
+            { q: "Domain of all polynomial functions is", opts: ["All real numbers", "Positive integers", "Negative numbers", "x>0"], ans: 0 },
+            { q: "If 7(x−1)=2(x+3), find x", opts: ["13/5", "5", "−1", "1"], ans: 0 },
+            { q: "Differentiate y = x·tan x", opts: ["tan x + x·sec²x", "sec²x", "tan x", "x·sec x"], ans: 0 },
+            { q: "If y=3x⁴+6x−9, d²y/dx² when x=4 =", opts: ["288", "576", "144", "72"], ans: 1 },
+            { q: "If x=−5, find (6x−11)−(7x+8)", opts: ["−2", "2", "−12", "12"], ans: 0 },
+            { q: "Differentiate cos(5x)", opts: ["−5sin(5x)", "5sin(5x)", "−sin(5x)", "sin(5x)"], ans: 0 },
+            { q: "In differentiation from first principle, Δx means", opts: ["A large change", "A small change in x", "The derivative", "The limit"], ans: 1 },
+            { q: "Given y=f(x), the point where dy/dx=0 is called", opts: ["Maximum", "Stationary point", "Inflection", "Root"], ans: 1 },
+            { q: "If y=x²−7x+5, dy/dx =", opts: ["2x−7", "x−7", "2x+5", "2x−5"], ans: 0 },
+            { q: "Differentiation & integration form the core of", opts: ["Medicine", "Polynomial", "Calculus", "Temperature"], ans: 2 },
+            { q: "If y=(7x−3)³, dy/dx =", opts: ["21(7x−3)²", "3(7x−3)²", "7(7x−3)²", "21(7x−3)³"], ans: 0 },
+            { q: "Differentiate y=(2x−7)³ twice", opts: ["24(2x−7)", "12(2x−7)", "6(2x−7)²", "24x"], ans: 0 },
+            { q: "If f(x)=3x⁴+7x−11, find f(3)", opts: ["262", "253", "271", "243"], ans: 0 },
+            { q: "Differentiate y=x·sin x", opts: ["sin x + x·cos x", "cos x", "sin x", "x·cos x−sin x"], ans: 0 },
+            { q: "Which is NOT a method of integration?", opts: ["By parts", "By substitution", "By partial fractions", "By formula (all are methods)"], ans: 3 },
+            { q: "Evaluate 12x−3xy when x=9, y=−7", opts: ["297", "108", "189", "−81"], ans: 0 },
+            { q: "Evaluate x³−2xy²+y³ at x=−2, y=−3", opts: ["−7", "−29", "1", "−1"], ans: 2 },
+            { q: "If f(x)=3x⁴+7x−11, find f(−3)", opts: ["211", "−239", "221", "−211"], ans: 1 },
+            { q: "What is cos x / sin x?", opts: ["tan x", "cot x", "sec x", "csc x"], ans: 1 },
+            { q: "Integrate ∫(3x²+4x−3)dx", opts: ["x³+2x²−3x+C", "x³+2x²−3x", "6x+4+C", "x³+4x²−3x+C"], ans: 0 },
+            { q: "Integrate ∫(x−3)² dx", opts: ["(x−3)³/3+C", "2(x−3)+C", "(x−3)³+C", "x²−6x+9+C"], ans: 0 },
+            { q: "If y=(2x−7)³, differentiate twice", opts: ["24(2x−7)", "12(2x−7)", "6(2x−7)²", "48x−168"], ans: 0 }
+        ];
+
+        // ========== STATE MANAGEMENT ==========
+        const STORAGE_KEY = 'mth102_quiz_state';
+        let state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false };
+
+        function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+        function load() { const r = localStorage.getItem(STORAGE_KEY); if (r) { try { state = JSON.parse(r); return true; } catch (e) {} } return false; }
+        function clearAll() { state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false }; localStorage.removeItem(STORAGE_KEY); }
+
+        function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } return a; }
+        function getQ() { if (!state.indices.length) return null; const bi = state.indices[state.current]; return { ...questionBank[bi], bankIndex: bi }; }
+
+        function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2200); }
+        function switchScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+        function startQuiz(n) {
+            const all = shuffle(Array.from({ length: questionBank.length }, (_, i) => i));
+            state = { total: n, indices: all.slice(0, n), current: 0, answers: {}, skipped: [], submitted: false };
+            save(); renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav();
+        }
+
+        function resumeQuiz() {
+            if (!load() || !state.indices.length || state.submitted) { toast('No saved quiz. Start a new one.'); return; }
+            renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav(); toast('Quiz resumed.');
+        }
+
+        function clearStorage() { clearAll(); save(); document.getElementById('resumeSection').style.display = 'none'; toast('Saved data cleared.'); }
+
+        function renderQuiz() {
+            const dots = document.getElementById('questionDots'); dots.innerHTML = '';
+            for (let i = 0; i < state.total; i++) { const d = document.createElement('span'); d.className = 'dot'; d.title = `Q${i + 1}`; d.onclick = () => { state.current = i; save(); renderQuestion(); updateProgress(); updateNav(); }; dots.appendChild(d); }
+        }
+
+        function renderQuestion() {
+            const q = getQ(); if (!q) return;
+            document.getElementById('questionNumber').textContent = `QUESTION ${state.current + 1}`;
+            document.getElementById('questionText').textContent = q.q;
+            document.getElementById('progressLabel').textContent = `Question ${state.current + 1} of ${state.total}`;
+            const opts = document.getElementById('optionsList'); opts.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+            q.opts.forEach((opt, i) => {
+                const li = document.createElement('li'); li.className = 'option-item';
+                if (state.answers[state.current] === i) li.classList.add('selected');
+                li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
+                li.onclick = () => selectOption(i);
+                opts.appendChild(li);
+            });
+            const dots = document.querySelectorAll('#questionDots .dot');
+            dots.forEach((d, i) => { d.classList.remove('current', 'answered', 'skipped'); if (i === state.current) d.classList.add('current'); if (state.answers[i] !== undefined) d.classList.add('answered'); if (state.skipped.includes(i) && state.answers[i] === undefined) d.classList.add('skipped'); });
+            document.getElementById('quizScreen').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function selectOption(i) { if (state.submitted) return; state.answers[state.current] = i; state.skipped = state.skipped.filter(s => s !== state.current); save(); renderQuestion(); updateProgress(); updateNav(); }
+
+        function skipQuestion() {
+            if (state.submitted) return;
+            if (state.answers[state.current] === undefined && !state.skipped.includes(state.current)) state.skipped.push(state.current);
+            if (state.current < state.total - 1) { state.current++; save(); renderQuestion(); updateProgress(); updateNav(); } else { updateProgress(); updateNav(); renderQuestion(); }
+        }
+
+        function navigate(dir) { if (state.submitted) return; const nxt = state.current + dir; if (nxt >= 0 && nxt < state.total) { state.current = nxt; save(); renderQuestion(); updateProgress(); updateNav(); } }
+
+        function updateProgress() { const a = Object.keys(state.answers).length; document.getElementById('answeredCount').textContent = `${a} answered`; document.getElementById('progressFill').style.width = Math.round((a / state.total) * 100) + '%'; }
+
+        function updateNav() { document.getElementById('btnPrev').disabled = state.current === 0; document.getElementById('btnNext').disabled = state.current === state.total - 1; }
+
+        function submitQuiz() {
+            const skipped = state.total - Object.keys(state.answers).length;
+            if (skipped > 0 && !confirm(`You have ${skipped} unanswered question(s). Submit anyway?`)) return;
+            state.submitted = true; save(); showResults(); switchScreen('resultsScreen');
+        }
+
+        function showResults() {
+            let correct = 0; const review = [];
+            state.indices.forEach((bi, i) => { const q = questionBank[bi]; const ua = state.answers[i]; const ok = ua === q.ans; if (ok) correct++; review.push({ q: q.q, opts: q.opts, correctAns: q.ans, userAns: ua, isCorrect: ok, idx: i + 1 }); });
+            const pct = Math.round((correct / state.total) * 100);
+            document.getElementById('scorePercent').textContent = pct + '%';
+            document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
+            document.getElementById('resultMessage').textContent = pct >= 90 ? '🏆 Outstanding!' : pct >= 70 ? '👏 Great job!' : pct >= 50 ? '📖 Good effort — keep practising.' : '💪 Keep studying and try again.';
+            window._review = review;
+            document.getElementById('reviewSection').style.display = 'none'; document.getElementById('reviewSection').innerHTML = '';
+        }
+
+        function reviewAnswers() {
+            const sec = document.getElementById('reviewSection');
+            if (sec.style.display === 'block') { sec.style.display = 'none'; sec.innerHTML = ''; return; }
+            if (!window._review) return;
+            sec.innerHTML = '<h3>📋 Detailed Review</h3>';
+            window._review.forEach(r => {
+                const d = document.createElement('div'); d.className = 'review-item ' + (r.isCorrect ? 'correct-r' : 'wrong');
+                const uTxt = r.userAns !== undefined ? `${'ABCD'[r.userAns]}. ${r.opts[r.userAns]}` : 'Not answered';
+                const cTxt = `${'ABCD'[r.correctAns]}. ${r.opts[r.correctAns]}`;
+                d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div><div class="rev-ans">Your answer: <span class="your-ans">${uTxt}</span><br>Correct: <span class="correct-ans">${cTxt}</span></div>`;
+                sec.appendChild(d);
+            });
+            sec.style.display = 'block'; sec.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function restartQuiz() { clearAll(); save(); document.getElementById('reviewSection').style.display = 'none'; document.getElementById('reviewSection').innerHTML = ''; window._review = null; switchScreen('startScreen'); document.getElementById('resumeSection').style.display = 'none'; updateResumeBtn(); }
+
+        function updateResumeBtn() { const s = document.getElementById('resumeSection'); if (load() && state.indices.length && !state.submitted) { s.style.display = 'block'; } else { s.style.display = 'none'; clearAll(); save(); } }
+
+        document.addEventListener('keydown', (e) => {
+            if (state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
+            switch (e.key.toLowerCase()) {
+                case 'a': selectOption(0); break;
+                case 'b': selectOption(1); break;
+                case 'c': selectOption(2); break;
+                case 'd': selectOption(3); break;
+                case 'arrowleft': e.preventDefault(); navigate(-1); break;
+                case 'arrowright': e.preventDefault(); navigate(1); break;
+                case 's': if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); skipQuestion(); } break;
+                case 'enter': e.preventDefault(); if (Object.keys(state.answers).length === state.total) submitQuiz(); break;
+            }
+        });
+
+        if (load() && state.indices.length && !state.submitted) { document.getElementById('resumeSection').style.display = 'block'; switchScreen('startScreen'); } else { clearAll(); save(); document.getElementById('resumeSection').style.display = 'none'; switchScreen('startScreen'); }
+    </script>
+</body>
+</html>
