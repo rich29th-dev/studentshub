@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STA 112 · Statistics & Probability Quiz</title>
+    <style>
+        :root {
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --primary: #6c3a9e;
+            --primary-dark: #4a2570;
+            --accent: #1a1a2e;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --border: #dfe6e9;
+            --correct: #00b894;
+            --incorrect: #e17055;
+            --warning: #fdcb6e;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --transition: 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 32px 28px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .quiz-header .stat-icon {
+            font-size: 2.2rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .quiz-header h1 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s;
+        }
+        .screen.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .start-options {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 24px 0 18px;
+        }
+        .start-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 22px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card-bg);
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: var(--transition);
+            color: var(--text);
+        }
+        .start-btn:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(108, 58, 158, 0.12);
+            transform: translateY(-2px);
+        }
+        .start-btn .icon {
+            font-size: 2.2rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .start-btn .badge {
+            background: var(--primary);
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+        .start-info {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+        .progress-wrap {
+            margin-bottom: 16px;
+        }
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+        .progress-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #9b59b6);
+            border-radius: 10px;
+            transition: width 0.4s;
+        }
+        .question-dots {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .dot.answered {
+            background: var(--primary);
+            opacity: 0.6;
+        }
+        .dot.current {
+            background: var(--primary);
+            transform: scale(1.5);
+            box-shadow: 0 0 0 4px rgba(108, 58, 158, 0.2);
+        }
+        .dot.skipped {
+            background: var(--warning);
+        }
+        .question-card {
+            background: #fafbfc;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+        .question-number {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .option-item {
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            user-select: none;
+        }
+        .option-item:hover {
+            border-color: #b2bec3;
+            background: #f8f9fa;
+        }
+        .option-item.selected {
+            border-color: var(--primary);
+            background: #f3eef8;
+            font-weight: 600;
+        }
+        .option-item .radio-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .option-item.selected .radio-dot {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+        .option-item.selected .radio-dot::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        .option-item .opt-letter {
+            font-weight: 700;
+            color: var(--primary);
+            width: 24px;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+        }
+        .btn {
+            padding: 11px 20px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-outline {
+            background: #fff;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: 2px solid var(--primary);
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        .btn-submit {
+            background: var(--accent);
+            color: #fff;
+            border: 2px solid var(--accent);
+            font-size: 1rem;
+            padding: 13px 32px;
+        }
+        .btn-submit:hover {
+            background: #2d2d4e;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .results-card {
+            text-align: center;
+        }
+        .score-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 6px solid var(--primary);
+            font-weight: 700;
+        }
+        .score-circle .big-score {
+            font-size: 2.8rem;
+            color: var(--primary);
+        }
+        .score-circle .total {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        .result-message {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .review-section {
+            text-align: left;
+            margin-top: 24px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        .review-item {
+            background: #fafbfc;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--border);
+            font-size: 0.9rem;
+        }
+        .review-item.wrong {
+            border-left-color: var(--incorrect);
+            background: #fffaf9;
+        }
+        .review-item.correct-r {
+            border-left-color: var(--correct);
+            background: #f9fffb;
+        }
+        .review-item .rev-q {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .review-item .rev-ans {
+            font-size: 0.82rem;
+            color: var(--text-light);
+        }
+        .correct-ans {
+            color: var(--correct);
+            font-weight: 600;
+        }
+        .your-ans {
+            color: var(--incorrect);
+            font-weight: 600;
+            text-decoration: line-through;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-dark);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 14px;
+            }
+            .start-btn {
+                min-width: 120px;
+                padding: 16px 12px;
+            }
+            .question-text {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <div class="toast" id="toast"></div>
+
+        <!-- START SCREEN -->
+        <div class="screen active" id="startScreen">
+            <div class="quiz-header">
+                <div class="stat-icon">📊</div>
+                <h1>STA 112 · Statistics & Probability Quiz</h1>
+                <p class="subtitle">120+ Questions — Basic Statistics, Probability, Counting, Distributions & Inference</p>
+            </div>
+            <p style="text-align:center;font-weight:500;">Select quiz length:</p>
+            <div class="start-options">
+                <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📝</span>30 Questions<span class="badge">~25 min</span></button>
+                <button class="start-btn" onclick="startQuiz(60)"><span class="icon">📚</span>60 Questions<span class="badge">~50 min</span></button>
+            </div>
+            <p class="start-info">📋 120+ question bank · randomly drawn · no repeats</p>
+            <p class="start-info">💾 Progress saved locally · resume if you close accidentally</p>
+            <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
+                <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
+                <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#e17055;">🗑 Clear saved</button>
+            </div>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div class="screen" id="quizScreen">
+            <div class="quiz-header"><span style="font-size:1.8rem;">📖</span></div>
+            <div class="progress-wrap">
+                <div class="progress-stats"><span id="progressLabel">Question 1 of 30</span><span id="answeredCount">0 answered</span></div>
+                <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+                <div class="question-dots" id="questionDots"></div>
+            </div>
+            <div class="question-card">
+                <div class="question-number" id="questionNumber">QUESTION 1</div>
+                <div class="question-text" id="questionText"></div>
+            </div>
+            <ul class="options-list" id="optionsList"></ul>
+            <div class="nav-buttons">
+                <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Prev</button>
+                <div class="nav-center">
+                    <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
+                    <button class="btn btn-submit" id="btnSubmit" onclick="submitQuiz()">✅ Submit</button>
+                </div>
+                <button class="btn btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div class="screen" id="resultsScreen">
+            <div class="results-card">
+                <div class="quiz-header"><h1>📊 Quiz Results</h1></div>
+                <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/30</span></div>
+                <div class="result-message" id="resultMessage"></div>
+                <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
+                <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">🔍 Review</button>
+                <div class="review-section" id="reviewSection" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== COMBINED 120+ QUESTION BANK ==========
+        const questionBank = [
+            // From APRIL STA 112 (50 questions)
+            { q: "What is the probability of getting a head when flipping a fair coin?", opts: ["0", "1", "1/2", "2"], ans: 2 },
+            { q: "A die has how many possible outcomes?", opts: ["4", "5", "6", "8"], ans: 2 },
+            { q: "Probability values range between:", opts: ["-1 and 1", "0 and 1", "1 and 10", "-∞ and ∞"], ans: 1 },
+            { q: "What is the probability of an impossible event?", opts: ["1", "0", "1/2", "-1"], ans: 1 },
+            { q: "What is the probability of a certain event?", opts: ["0", "1", "1/2", "2"], ans: 1 },
+            { q: "The mean is also called:", opts: ["Mode", "Median", "Average", "Range"], ans: 2 },
+            { q: "Which measure represents the middle value?", opts: ["Mean", "Mode", "Median", "Range"], ans: 2 },
+            { q: "The most frequent value is:", opts: ["Mean", "Mode", "Median", "Range"], ans: 1 },
+            { q: "Range is calculated as:", opts: ["Highest + Lowest", "Highest - Lowest", "Mean - Median", "Sum of values"], ans: 1 },
+            { q: "A sample is:", opts: ["Entire population", "Subset of population", "A variable", "A constant"], ans: 1 },
+            { q: "Population refers to:", opts: ["Sample only", "Entire group", "Small group", "Random group"], ans: 1 },
+            { q: "Tossing a coin is an example of:", opts: ["Deterministic experiment", "Random experiment", "Constant", "Variable"], ans: 1 },
+            { q: "A variable that can take numerical values is:", opts: ["Qualitative", "Quantitative", "Nominal", "Ordinal"], ans: 1 },
+            { q: "Discrete data are:", opts: ["Continuous", "Countable", "Infinite", "Irrational"], ans: 1 },
+            { q: "Continuous data are:", opts: ["Countable", "Finite", "Measurable", "Whole numbers"], ans: 2 },
+            { q: "Probability of getting 7 on a die:", opts: ["1", "0", "1/6", "7/6"], ans: 1 },
+            { q: "The sum of probabilities of all outcomes is:", opts: ["0", "1", "10", "-1"], ans: 1 },
+            { q: "Standard deviation measures:", opts: ["Central tendency", "Spread", "Frequency", "Probability"], ans: 1 },
+            { q: "Variance is the square of:", opts: ["Mean", "Mode", "Standard deviation", "Median"], ans: 2 },
+            { q: "An event is:", opts: ["Sample space", "Outcome or set of outcomes", "Population", "Mean"], ans: 1 },
+            { q: "Sample space is:", opts: ["One outcome", "All possible outcomes", "Some outcomes", "Mean"], ans: 1 },
+            { q: "Independent events:", opts: ["Affect each other", "Do not affect each other", "Are identical", "Are continuous"], ans: 1 },
+            { q: "Dependent events:", opts: ["Do not affect each other", "Affect each other", "Are equal", "Are independent"], ans: 1 },
+            { q: "Probability of getting an even number on a die:", opts: ["1/2", "1/3", "2/3", "1/6"], ans: 0 },
+            { q: "A histogram is used for:", opts: ["Categorical data", "Continuous data", "Text", "Probability only"], ans: 1 },
+            { q: "A bar chart represents:", opts: ["Continuous data", "Categorical data", "Equations", "Mean"], ans: 1 },
+            { q: "Mean formula is:", opts: ["Sum / count", "Sum × count", "Count / sum", "Difference"], ans: 0 },
+            { q: "Median of odd number of sorted values is:", opts: ["Average of two middle", "Middle value", "Highest value", "Lowest value"], ans: 1 },
+            { q: "Mode can be:", opts: ["Only one", "More than one", "None", "Infinite"], ans: 1 },
+            { q: "Probability of getting tail in a fair coin:", opts: ["0", "1", "1/2", "2"], ans: 2 },
+            { q: "If events are mutually exclusive:", opts: ["Can occur together", "Cannot occur together", "Are equal", "Are independent"], ans: 1 },
+            { q: "P(A or B) for mutually exclusive events =", opts: ["P(A) + P(B)", "P(A) - P(B)", "P(A) × P(B)", "0"], ans: 0 },
+            { q: "P(A and B) for independent events =", opts: ["P(A)+P(B)", "P(A)×P(B)", "P(A)-P(B)", "1"], ans: 1 },
+            { q: "Qualitative data are:", opts: ["Numerical", "Descriptive", "Measurable", "Continuous"], ans: 1 },
+            { q: "Example of discrete data:", opts: ["Height", "Weight", "Number of students", "Temperature"], ans: 2 },
+            { q: "Example of continuous data:", opts: ["Number of cars", "Number of books", "Height", "Count"], ans: 2 },
+            { q: "A fair die means:", opts: ["Biased", "Equal probability for each outcome", "No probability", "Fixed outcome"], ans: 1 },
+            { q: "Skewness measures:", opts: ["Spread", "Asymmetry", "Mean", "Median"], ans: 1 },
+            { q: "If mean > median, distribution is:", opts: ["Symmetric", "Left-skewed", "Right-skewed", "Uniform"], ans: 2 },
+            { q: "If mean < median, distribution is:", opts: ["Right-skewed", "Left-skewed", "Symmetric", "Uniform"], ans: 1 },
+            { q: "Standard deviation is always:", opts: ["Negative", "Zero", "Positive", "Infinite"], ans: 2 },
+            { q: "A dataset with zero variance means:", opts: ["All values equal", "Values differ", "Infinite spread", "No data"], ans: 0 },
+            { q: "Outliers affect mostly the:", opts: ["Mean", "Median", "Mode", "Frequency"], ans: 0 },
+            { q: "Probability of a sure event:", opts: ["0", "1", "1/2", "2"], ans: 1 },
+            { q: "Complement of event A is:", opts: ["A", "Not A", "A and B", "Sample"], ans: 1 },
+            { q: "P(A') =", opts: ["1 - P(A)", "P(A)", "0", "1"], ans: 0 },
+            { q: "A box plot shows:", opts: ["Mean only", "Distribution", "Text", "Frequency only"], ans: 1 },
+            { q: "Interquartile range =", opts: ["Q3 - Q1", "Q1 - Q3", "Q2", "Mean"], ans: 0 },
+            { q: "Quartiles divide data into:", opts: ["2 parts", "3 parts", "4 parts", "5 parts"], ans: 2 },
+            { q: "The likelihood of an event is called:", opts: ["Mean", "Median", "Probability", "Mode"], ans: 2 },
+
+            // From TIFANY STATISTICS AND PROBABILITY (50 questions)
+            { q: "The mean of data (4,6,8,10,12) is:", opts: ["6", "8", "10", "12"], ans: 1 },
+            { q: "The median of (3,7,9,11,15) is:", opts: ["7", "9", "11", "8"], ans: 1 },
+            { q: "Mode refers to:", opts: ["Middle value", "Most frequent value", "Average value", "Range"], ans: 1 },
+            { q: "Range equals:", opts: ["Mean − Median", "Maximum − Minimum", "Sum of data", "Median − Mode"], ans: 1 },
+            { q: "Variance measures:", opts: ["Central tendency", "Spread of data", "Frequency", "Location"], ans: 1 },
+            { q: "Standard deviation is:", opts: ["Square of variance", "Square root of variance", "Half variance", "Mean deviation"], ans: 1 },
+            { q: "If all observations are identical, variance equals:", opts: ["1", "0", "Mean", "Infinity"], ans: 1 },
+            { q: "Coefficient of variation is:", opts: ["Mean/Variance", "SD/Mean", "Mean × SD", "Variance/Mean"], ans: 1 },
+            { q: "Mean of grouped data uses:", opts: ["Class boundaries", "Midpoints", "Frequencies only", "Cumulative frequencies"], ans: 1 },
+            { q: "A histogram represents:", opts: ["Qualitative data", "Continuous data", "Pie data", "Random data"], ans: 1 },
+            { q: "Probability value lies between:", opts: ["-1 and 1", "0 and 1", "1 and 2", "-∞ and ∞"], ans: 1 },
+            { q: "Probability of a sure event:", opts: ["0", "0.5", "1", "-1"], ans: 2 },
+            { q: "Probability of an impossible event:", opts: ["1", "0", "0.5", "-1"], ans: 1 },
+            { q: "If P(A)=0.3, then P(A')=", opts: ["0.3", "0.7", "1.3", "0"], ans: 1 },
+            { q: "For mutually exclusive events:", opts: ["Occur together", "Cannot occur together", "Always independent", "Always equal"], ans: 1 },
+            { q: "Addition law of probability:", opts: ["P(A)+P(B)", "P(A)+P(B)-P(A∩B)", "P(A)P(B)", "P(A)/P(B)"], ans: 1 },
+            { q: "Independent events satisfy:", opts: ["P(A∩B)=P(A)+P(B)", "P(A∩B)=P(A)P(B)", "P(A∩B)=0", "P(A)=P(B)"], ans: 1 },
+            { q: "Sample space means:", opts: ["Outcome list", "Probability value", "Mean value", "Event only"], ans: 0 },
+            { q: "Complementary events sum to:", opts: ["0", "0.5", "1", "2"], ans: 2 },
+            { q: "A fair coin tossed once gives probability of Head:", opts: ["1", "1/3", "1/2", "2"], ans: 2 },
+            { q: "5! =", opts: ["25", "60", "120", "720"], ans: 2 },
+            { q: "Number of ways to arrange 3 objects:", opts: ["3", "6", "9", "12"], ans: 1 },
+            { q: "Combination formula is:", opts: ["nPr", "n!/r!", "n!/(r!(n-r)!)", "n+r"], ans: 2 },
+            { q: "Permutation formula is:", opts: ["nPr=n!/(n-r)!", "n+r", "r!", "n/r"], ans: 0 },
+            { q: "Ways of selecting 2 from 5:", opts: ["5", "10", "20", "25"], ans: 1 },
+            { q: "Random variable is:", opts: ["Fixed number", "Variable outcome", "Constant", "Error term"], ans: 1 },
+            { q: "Discrete variable example:", opts: ["Height", "Temperature", "Number of students", "Time"], ans: 2 },
+            { q: "Continuous variable example:", opts: ["Number of cars", "Dice outcome", "Height", "Students"], ans: 2 },
+            { q: "Expected value equals:", opts: ["Mean of distribution", "Median", "Mode", "Variance"], ans: 0 },
+            { q: "Variance of random variable measures:", opts: ["Spread", "Center", "Frequency", "Probability only"], ans: 0 },
+            { q: "Binomial distribution applies when:", opts: ["Infinite outcomes", "Two outcomes", "Continuous data", "No probability"], ans: 1 },
+            { q: "Binomial probability depends on:", opts: ["Mean only", "Trials & probability", "Range", "Median"], ans: 1 },
+            { q: "Poisson distribution models:", opts: ["Rare events", "Continuous data", "Uniform data", "Normal data"], ans: 0 },
+            { q: "Normal distribution shape:", opts: ["Triangular", "Bell-shaped", "Rectangular", "Skewed only"], ans: 1 },
+            { q: "Mean = Median = Mode occurs in:", opts: ["Binomial", "Normal distribution", "Poisson only", "Uniform"], ans: 1 },
+            { q: "Population refers to:", opts: ["Sample only", "Entire group", "Random value", "Mean value"], ans: 1 },
+            { q: "Sample is:", opts: ["Whole population", "Subset of population", "Error value", "Probability"], ans: 1 },
+            { q: "Parameter describes:", opts: ["Sample", "Population", "Error", "Frequency"], ans: 1 },
+            { q: "Statistic describes:", opts: ["Population", "Sample", "Theory", "Event"], ans: 1 },
+            { q: "Sampling reduces:", opts: ["Cost & time", "Accuracy", "Variance", "Probability"], ans: 0 },
+            { q: "Correlation measures:", opts: ["Spread", "Relationship strength", "Average", "Range"], ans: 1 },
+            { q: "Correlation coefficient range:", opts: ["0 to 10", "-1 to 1", "1 to 5", "-10 to 10"], ans: 1 },
+            { q: "Perfect positive correlation:", opts: ["0", "-1", "1", "0.5"], ans: 2 },
+            { q: "Regression predicts:", opts: ["Past values", "Future/unknown values", "Mean only", "Variance"], ans: 1 },
+            { q: "Scatter diagram shows:", opts: ["Distribution", "Relationship between variables", "Mean", "Probability"], ans: 1 },
+            { q: "Law of large numbers states:", opts: ["Mean stabilizes as sample increases", "Probability decreases", "Variance increases", "Sample equals population"], ans: 0 },
+            { q: "Conditional probability:", opts: ["Independent probability", "Probability given event occurred", "Impossible event", "Equal probability"], ans: 1 },
+            { q: "Bayes' theorem updates:", opts: ["Mean", "Prior probability", "Variance", "Range"], ans: 1 },
+            { q: "Skewness measures:", opts: ["Spread", "Symmetry", "Mean", "Median"], ans: 1 },
+            { q: "Kurtosis measures:", opts: ["Shape peakedness", "Mean", "Range", "Frequency"], ans: 0 },
+
+            // From TIFANY 2 Essay content (25 additional questions derived from solutions)
+            { q: "From the factory data (5,7,8,6,9,10,5,6,7,7), the arithmetic mean is:", opts: ["6", "7", "8", "9"], ans: 1 },
+            { q: "From the factory data, the median is:", opts: ["6", "7", "8", "6.5"], ans: 1 },
+            { q: "From the factory data, the mode is:", opts: ["6", "7", "8", "5"], ans: 1 },
+            { q: "From the factory data, the range is:", opts: ["4", "5", "6", "7"], ans: 1 },
+            { q: "From the factory data, the variance is:", opts: ["2.0", "2.4", "2.8", "3.0"], ans: 1 },
+            { q: "From the factory data, the standard deviation is approximately:", opts: ["1.25", "1.55", "1.75", "2.05"], ans: 1 },
+            { q: "A box has 5 red, 3 blue, and 2 green balls. P(Red) =", opts: ["0.3", "0.4", "0.5", "0.6"], ans: 2 },
+            { q: "From the same box, P(Blue) =", opts: ["0.2", "0.3", "0.4", "0.5"], ans: 1 },
+            { q: "From the same box, P(Not Green) =", opts: ["0.6", "0.7", "0.8", "0.9"], ans: 2 },
+            { q: "Two balls drawn without replacement. P(Both Red) =", opts: ["1/9", "2/9", "3/9", "4/9"], ans: 1 },
+            { q: "Two balls drawn without replacement. P(Blue then Green) =", opts: ["1/10", "1/15", "2/15", "3/10"], ans: 1 },
+            { q: "Two balls drawn without replacement. P(At least one Red) =", opts: ["5/9", "6/9", "7/9", "8/9"], ans: 2 },
+            { q: "Given distribution: X(0,1,2,3) with P(X): 0.2,0.3,0.4,0.1. E(X) =", opts: ["1.2", "1.4", "1.6", "1.8"], ans: 1 },
+            { q: "From the same distribution, E(X²) =", opts: ["2.4", "2.6", "2.8", "3.0"], ans: 2 },
+            { q: "From the same distribution, Var(X) =", opts: ["0.64", "0.74", "0.84", "0.94"], ans: 2 },
+            { q: "For a sample of n=36, mean=68, SD=12, the standard error is:", opts: ["1", "2", "3", "4"], ans: 1 },
+            { q: "The 95% confidence interval is approximately:", opts: ["(62,74)", "(64.08,71.92)", "(66,70)", "(60,76)"], ans: 1 },
+            { q: "The margin of error for the 95% CI is:", opts: ["1.96", "2.92", "3.92", "4.92"], ans: 2 },
+            { q: "Testing H₀: μ=65 vs H₁: μ≠65 with Z=1.5. At α=0.05, the decision is:", opts: ["Reject H₀", "Fail to reject H₀", "Accept H₁", "Insufficient data"], ans: 1 },
+            { q: "The critical Z-value for a two-tailed test at α=0.05 is:", opts: ["±1.64", "±1.96", "±2.33", "±2.58"], ans: 1 },
+            { q: "Classical probability is defined as:", opts: ["Observed frequency", "Favourable outcomes / Total outcomes", "Subjective belief", "Experimental data"], ans: 1 },
+            { q: "The complement rule states P(A') =", opts: ["P(A)", "1 - P(A)", "0", "1 + P(A)"], ans: 1 },
+            { q: "The multiplication law of probability: P(A∩B) =", opts: ["P(A)+P(B)", "P(A)P(B|A)", "P(A)-P(B)", "P(A)/P(B)"], ans: 1 },
+            { q: "A random variable that takes countable values is called:", opts: ["Continuous", "Discrete", "Qualitative", "Ordinal"], ans: 1 },
+            { q: "The expected value of a random variable represents:", opts: ["The mode", "The long-run average outcome", "The variance", "The range"], ans: 1 }
+        ];
+
+        // ========== STATE MANAGEMENT ==========
+        const STORAGE_KEY = 'sta112_quiz_state';
+        let state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false };
+
+        function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+        function load() { const r = localStorage.getItem(STORAGE_KEY); if (r) { try { state = JSON.parse(r); return true; } catch (e) {} } return false; }
+        function clearAll() { state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false }; localStorage.removeItem(STORAGE_KEY); }
+
+        function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } return a; }
+        function getQ() { if (!state.indices.length) return null; const bi = state.indices[state.current]; return { ...questionBank[bi], bankIndex: bi }; }
+
+        function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2200); }
+        function switchScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+        function startQuiz(n) {
+            const all = shuffle(Array.from({ length: questionBank.length }, (_, i) => i));
+            state = { total: n, indices: all.slice(0, n), current: 0, answers: {}, skipped: [], submitted: false };
+            save(); renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav();
+        }
+
+        function resumeQuiz() {
+            if (!load() || !state.indices.length || state.submitted) { toast('No saved quiz. Start a new one.'); return; }
+            renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav(); toast('Quiz resumed.');
+        }
+
+        function clearStorage() { clearAll(); save(); document.getElementById('resumeSection').style.display = 'none'; toast('Saved data cleared.'); }
+
+        function renderQuiz() {
+            const dots = document.getElementById('questionDots'); dots.innerHTML = '';
+            for (let i = 0; i < state.total; i++) { const d = document.createElement('span'); d.className = 'dot'; d.title = `Q${i + 1}`; d.onclick = () => { state.current = i; save(); renderQuestion(); updateProgress(); updateNav(); }; dots.appendChild(d); }
+        }
+
+        function renderQuestion() {
+            const q = getQ(); if (!q) return;
+            document.getElementById('questionNumber').textContent = `QUESTION ${state.current + 1}`;
+            document.getElementById('questionText').textContent = q.q;
+            document.getElementById('progressLabel').textContent = `Question ${state.current + 1} of ${state.total}`;
+            const opts = document.getElementById('optionsList'); opts.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+            q.opts.forEach((opt, i) => {
+                const li = document.createElement('li'); li.className = 'option-item';
+                if (state.answers[state.current] === i) li.classList.add('selected');
+                li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
+                li.onclick = () => selectOption(i);
+                opts.appendChild(li);
+            });
+            const dots = document.querySelectorAll('#questionDots .dot');
+            dots.forEach((d, i) => { d.classList.remove('current', 'answered', 'skipped'); if (i === state.current) d.classList.add('current'); if (state.answers[i] !== undefined) d.classList.add('answered'); if (state.skipped.includes(i) && state.answers[i] === undefined) d.classList.add('skipped'); });
+            document.getElementById('quizScreen').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function selectOption(i) { if (state.submitted) return; state.answers[state.current] = i; state.skipped = state.skipped.filter(s => s !== state.current); save(); renderQuestion(); updateProgress(); updateNav(); }
+
+        function skipQuestion() {
+            if (state.submitted) return;
+            if (state.answers[state.current] === undefined && !state.skipped.includes(state.current)) state.skipped.push(state.current);
+            if (state.current < state.total - 1) { state.current++; save(); renderQuestion(); updateProgress(); updateNav(); } else { updateProgress(); updateNav(); renderQuestion(); }
+        }
+
+        function navigate(dir) { if (state.submitted) return; const nxt = state.current + dir; if (nxt >= 0 && nxt < state.total) { state.current = nxt; save(); renderQuestion(); updateProgress(); updateNav(); } }
+
+        function updateProgress() { const a = Object.keys(state.answers).length; document.getElementById('answeredCount').textContent = `${a} answered`; document.getElementById('progressFill').style.width = Math.round((a / state.total) * 100) + '%'; }
+
+        function updateNav() { document.getElementById('btnPrev').disabled = state.current === 0; document.getElementById('btnNext').disabled = state.current === state.total - 1; }
+
+        function submitQuiz() {
+            const skipped = state.total - Object.keys(state.answers).length;
+            if (skipped > 0 && !confirm(`You have ${skipped} unanswered question(s). Submit anyway?`)) return;
+            state.submitted = true; save(); showResults(); switchScreen('resultsScreen');
+        }
+
+        function showResults() {
+            let correct = 0; const review = [];
+            state.indices.forEach((bi, i) => { const q = questionBank[bi]; const ua = state.answers[i]; const ok = ua === q.ans; if (ok) correct++; review.push({ q: q.q, opts: q.opts, correctAns: q.ans, userAns: ua, isCorrect: ok, idx: i + 1 }); });
+            const pct = Math.round((correct / state.total) * 100);
+            document.getElementById('scorePercent').textContent = pct + '%';
+            document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
+            document.getElementById('resultMessage').textContent = pct >= 90 ? '🏆 Outstanding!' : pct >= 70 ? '👏 Great job!' : pct >= 50 ? '📖 Good effort — keep practising.' : '💪 Keep studying and try again.';
+            window._review = review;
+            document.getElementById('reviewSection').style.display = 'none'; document.getElementById('reviewSection').innerHTML = '';
+        }
+
+        function reviewAnswers() {
+            const sec = document.getElementById('reviewSection');
+            if (sec.style.display === 'block') { sec.style.display = 'none'; sec.innerHTML = ''; return; }
+            if (!window._review) return;
+            sec.innerHTML = '<h3>📋 Detailed Review</h3>';
+            window._review.forEach(r => {
+                const d = document.createElement('div'); d.className = 'review-item ' + (r.isCorrect ? 'correct-r' : 'wrong');
+                const uTxt = r.userAns !== undefined ? `${'ABCD'[r.userAns]}. ${r.opts[r.userAns]}` : 'Not answered';
+                const cTxt = `${'ABCD'[r.correctAns]}. ${r.opts[r.correctAns]}`;
+                d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div><div class="rev-ans">Your answer: <span class="your-ans">${uTxt}</span><br>Correct: <span class="correct-ans">${cTxt}</span></div>`;
+                sec.appendChild(d);
+            });
+            sec.style.display = 'block'; sec.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function restartQuiz() { clearAll(); save(); document.getElementById('reviewSection').style.display = 'none'; document.getElementById('reviewSection').innerHTML = ''; window._review = null; switchScreen('startScreen'); document.getElementById('resumeSection').style.display = 'none'; updateResumeBtn(); }
+
+        function updateResumeBtn() { const s = document.getElementById('resumeSection'); if (load() && state.indices.length && !state.submitted) { s.style.display = 'block'; } else { s.style.display = 'none'; clearAll(); save(); } }
+
+        document.addEventListener('keydown', (e) => {
+            if (state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
+            switch (e.key.toLowerCase()) {
+                case 'a': selectOption(0); break;
+                case 'b': selectOption(1); break;
+                case 'c': selectOption(2); break;
+                case 'd': selectOption(3); break;
+                case 'arrowleft': e.preventDefault(); navigate(-1); break;
+                case 'arrowright': e.preventDefault(); navigate(1); break;
+                case 's': if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); skipQuestion(); } break;
+                case 'enter': e.preventDefault(); if (Object.keys(state.answers).length === state.total) submitQuiz(); break;
+            }
+        });
+
+        if (load() && state.indices.length && !state.submitted) { document.getElementById('resumeSection').style.display = 'block'; switchScreen('startScreen'); } else { clearAll(); save(); document.getElementById('resumeSection').style.display = 'none'; switchScreen('startScreen'); }
+    </script>
+</body>
+</html>
