@@ -8,104 +8,113 @@
         :root {
             --bg: #f5f6fa;
             --card-bg: #ffffff;
-            --primary: #2c3e50;
-            --primary-light: #34495e;
-            --accent: #e67e22;
-            --accent-dark: #d35400;
+            --primary: #1e3a5f;
+            --primary-dark: #0f2440;
+            --accent: #c0392b;
             --text: #2d3436;
             --text-light: #636e72;
             --border: #dfe6e9;
             --correct: #00b894;
             --incorrect: #e17055;
             --warning: #fdcb6e;
-            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --radius: 16px;
             --transition: 0.3s ease;
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
             background: var(--bg);
             min-height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            padding: 20px; line-height: 1.6; color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.6;
+            color: var(--text);
         }
         .container {
-            width: 100%; max-width: 800px;
-            background: var(--card-bg); border-radius: var(--radius);
-            box-shadow: var(--shadow); padding: 32px 28px;
-            position: relative; overflow: hidden; transition: var(--transition);
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 32px 28px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
         }
-        .header { text-align: center; margin-bottom: 24px; }
-        .header .icon { font-size: 2.5rem; display: block; margin-bottom: 6px; }
-        .header h1 { font-size: 1.5rem; color: var(--primary); font-weight: 700; }
+        .quiz-header { text-align: center; margin-bottom: 20px; }
+        .quiz-header .gear-icon {
+            font-size: 2rem;
+            display: inline-block;
+            animation: spin 10s linear infinite;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .quiz-header h1 { font-size: 1.5rem; color: var(--primary); font-weight: 700; }
         .subtitle { font-size: 0.85rem; color: var(--text-light); margin-top: 4px; }
         .screen { display: none; animation: fadeIn 0.4s; }
         .screen.active { display: block; }
-        @keyframes fadeIn { from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:translateY(0); } }
-
-        .mode-select { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 24px 0; }
-        .mode-card {
-            flex:1; min-width:180px; padding:20px; border:2px solid var(--border);
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .start-options { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 24px 0 18px; }
+        .start-btn {
+            flex: 1; min-width: 150px; padding: 22px 16px; border: 2px solid var(--border);
             border-radius: var(--radius); background: var(--card-bg); cursor: pointer;
-            text-align: center; transition: var(--transition); font-weight:600;
+            text-align: center; font-weight: 600; transition: var(--transition); color: var(--text);
         }
-        .mode-card:hover { border-color: var(--primary); box-shadow:0 8px 25px rgba(0,0,0,0.1); transform: translateY(-2px); }
-        .mode-card .mode-icon { font-size: 2.5rem; display: block; margin-bottom: 8px; }
-        .mode-card .mode-title { font-size: 1.1rem; color: var(--primary); }
-        .mode-card .mode-desc { font-size:0.8rem; color:var(--text-light); margin-top:6px; }
-        .mode-card.selected { border-color: var(--accent); background: #fef5ec; }
-
-        .config-section { text-align:center; margin-bottom:20px; }
-        .config-section label { font-weight:600; margin-right:8px; }
-        .config-section input[type=number] { width:70px; padding:8px; border-radius:8px; border:2px solid var(--border); font-size:1rem; text-align:center; }
-        .btn { padding:11px 24px; border-radius:25px; border:none; cursor:pointer; font-weight:600; font-size:0.9rem; transition:var(--transition); display:inline-flex; align-items:center; gap:6px; }
-        .btn-primary { background:var(--primary); color:#fff; }
-        .btn-primary:hover { background:var(--primary-light); }
-        .btn-accent { background:var(--accent); color:#fff; }
-        .btn-accent:hover { background:var(--accent-dark); }
-        .btn-outline { background:#fff; border:2px solid var(--border); color:var(--text); }
-        .btn-outline:hover { border-color:var(--primary); color:var(--primary); }
-
-        .progress-wrap { margin-bottom:16px; }
-        .progress-stats { display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-light); margin-bottom:4px; }
-        .progress-bar { height:8px; background:var(--border); border-radius:10px; overflow:hidden; }
-        .progress-fill { height:100%; background:linear-gradient(90deg, var(--primary), var(--accent)); border-radius:10px; transition: width 0.4s; }
-        .question-dots { display:flex; gap:4px; flex-wrap:wrap; justify-content:center; margin-top:8px; }
-        .dot { width:10px; height:10px; border-radius:50%; background:var(--border); cursor:pointer; transition:var(--transition); }
-        .dot.answered { background:var(--primary); opacity:0.6; }
-        .dot.current { background:var(--accent); transform:scale(1.5); box-shadow:0 0 0 4px rgba(230,126,34,0.2); }
-        .dot.skipped { background:var(--warning); }
-        .timer-box { font-size:1.4rem; font-weight:700; color:var(--accent); text-align:center; margin:10px 0; }
-        .points-box { display:flex; justify-content:center; gap:30px; font-weight:600; margin:8px 0; }
-        .question-card { background:#fafbfc; border-radius:12px; padding:18px; margin-bottom:12px; border:1px solid var(--border); }
-        .question-number { font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); font-weight:700; margin-bottom:6px; }
-        .question-text { font-size:1.05rem; font-weight:600; color:var(--text); }
-        .options-list { list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:12px; }
-        .option-item { padding:14px 16px; border:2px solid var(--border); border-radius:10px; cursor:pointer; background:#fff; display:flex; align-items:center; gap:10px; transition:var(--transition); font-size:0.95rem; }
-        .option-item:hover { border-color:#b2bec3; background:#f8f9fa; }
-        .option-item.selected { border-color:var(--primary); background:#e8f0fe; font-weight:600; }
-        .option-item.correct { border-color:var(--correct); background:#e6fff8; }
-        .option-item.wrong { border-color:var(--incorrect); background:#fff0ed; }
-        .option-item .radio-dot { width:20px; height:20px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-        .option-item.selected .radio-dot { border-color:var(--primary); background:var(--primary); }
-        .option-item.selected .radio-dot::after { content:''; width:6px; height:6px; background:#fff; border-radius:50%; }
-        .nav-buttons { display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between; align-items:center; margin-top:18px; }
-        .btn:disabled { opacity:0.5; pointer-events:none; }
-
-        .results-card { text-align:center; }
-        .score-circle { width:130px; height:130px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; flex-direction:column; border:6px solid var(--accent); font-weight:700; }
-        .score-circle .big-score { font-size:2.8rem; color:var(--accent); }
-        .review-section { text-align:left; margin-top:24px; max-height:400px; overflow-y:auto; padding-right:8px; }
-        .review-item { background:#fafbfc; border-radius:10px; padding:14px; margin-bottom:10px; border-left:4px solid var(--border); font-size:0.9rem; }
-        .review-item.wrong { border-left-color:var(--incorrect); background:#fffaf9; }
-        .review-item.correct-r { border-left-color:var(--correct); background:#f9fffb; }
-        .review-item .rev-q { font-weight:600; margin-bottom:4px; }
-        .correct-ans { color:var(--correct); font-weight:600; }
-        .your-ans { color:var(--incorrect); font-weight:600; text-decoration:line-through; }
-        .toast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:var(--primary); color:#fff; padding:10px 24px; border-radius:25px; font-size:0.85rem; font-weight:600; z-index:999; opacity:0; transition:opacity 0.3s; }
-        .toast.show { opacity:1; }
-        @media (max-width:600px) { .container { padding:20px 14px; } .mode-card { min-width:140px; padding:14px; } }
+        .start-btn:hover { border-color: var(--primary); box-shadow: 0 8px 20px rgba(30,58,95,0.12); transform: translateY(-2px); }
+        .start-btn .icon { font-size: 2.2rem; display: block; margin-bottom: 4px; }
+        .start-btn .badge { background: var(--primary); color: #fff; font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-top: 6px; }
+        .start-info { font-size: 0.8rem; color: var(--text-light); text-align: center; }
+        .progress-wrap { margin-bottom: 16px; }
+        .progress-stats { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px; }
+        .progress-bar { height: 8px; background: var(--border); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #2e5a8a); border-radius: 10px; transition: width 0.4s; }
+        .question-dots { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; transition: var(--transition); }
+        .dot.answered { background: var(--primary); opacity: 0.6; }
+        .dot.current { background: var(--primary); transform: scale(1.5); box-shadow: 0 0 0 4px rgba(30,58,95,0.2); }
+        .dot.skipped { background: var(--warning); }
+        .question-card { background: #fafbfc; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .question-number { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); font-weight: 700; margin-bottom: 6px; }
+        .question-text { font-size: 1.05rem; font-weight: 600; color: var(--text); }
+        .options-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+        .option-item { padding: 14px 16px; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; background: #fff; display: flex; align-items: center; gap: 10px; transition: var(--transition); font-size: 0.95rem; user-select: none; }
+        .option-item:hover { border-color: #b2bec3; background: #f8f9fa; }
+        .option-item.selected { border-color: var(--primary); background: #e8f0fe; font-weight: 600; }
+        .option-item .radio-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+        .option-item.selected .radio-dot { border-color: var(--primary); background: var(--primary); }
+        .option-item.selected .radio-dot::after { content: ''; width: 6px; height: 6px; background: #fff; border-radius: 50%; }
+        .option-item .opt-letter { font-weight: 700; color: var(--primary); width: 24px; }
+        .nav-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-top: 18px; }
+        .btn { padding: 11px 20px; border-radius: 25px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: var(--transition); display: inline-flex; align-items: center; gap: 6px; }
+        .btn-outline { background: #fff; border: 2px solid var(--border); color: var(--text); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-primary { background: var(--primary); color: #fff; border: 2px solid var(--primary); }
+        .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+        .btn-submit { background: var(--accent); color: #fff; border: 2px solid var(--accent); font-size: 1rem; padding: 13px 32px; }
+        .btn-submit:hover { background: #a93226; }
+        .btn:disabled { opacity: 0.5; pointer-events: none; }
+        .results-card { text-align: center; }
+        .score-circle { width: 130px; height: 130px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; flex-direction: column; border: 6px solid var(--primary); font-weight: 700; }
+        .score-circle .big-score { font-size: 2.8rem; color: var(--primary); }
+        .score-circle .total { font-size: 0.9rem; color: var(--text-light); }
+        .result-message { font-size: 1.1rem; margin-bottom: 20px; font-weight: 500; }
+        .review-section { text-align: left; margin-top: 24px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
+        .review-item { background: #fafbfc; border-radius: 10px; padding: 14px; margin-bottom: 10px; border-left: 4px solid var(--border); font-size: 0.9rem; }
+        .review-item.wrong { border-left-color: var(--incorrect); background: #fffaf9; }
+        .review-item.correct-r { border-left-color: var(--correct); background: #f9fffb; }
+        .review-item .rev-q { font-weight: 600; margin-bottom: 4px; }
+        .review-item .rev-ans { font-size: 0.82rem; color: var(--text-light); }
+        .correct-ans { color: var(--correct); font-weight: 600; }
+        .your-ans { color: var(--incorrect); font-weight: 600; text-decoration: line-through; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--primary-dark); color: #fff; padding: 10px 22px; border-radius: 25px; font-size: 0.85rem; font-weight: 600; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .toast.show { opacity: 1; }
+        @media (max-width: 600px) {
+            .container { padding: 20px 14px; }
+            .start-btn { min-width: 120px; padding: 16px 12px; }
+            .question-text { font-size: 0.95rem; }
+        }
     </style>
 </head>
 <body>
@@ -114,44 +123,32 @@
 
     <!-- START SCREEN -->
     <div class="screen active" id="startScreen">
-        <div class="header">
-            <span class="icon">📐</span>
+        <div class="quiz-header">
+            <div class="gear-icon">⚙️</div>
             <h1>GET 102 · Engineering Graphics & Solid Modeling</h1>
-            <p class="subtitle">200 Questions · Standard & Timed Challenge Modes</p>
+            <p class="subtitle">200 most likely questions – Design Thinking to Solid Modeling</p>
         </div>
-        <div class="config-section">
-            <label for="numQuestions">Number of questions (10‑200):</label>
-            <input type="number" id="numQuestions" value="30" min="10" max="200" step="5">
+        <p style="text-align:center;font-weight:500;">Select quiz length:</p>
+        <div class="start-options">
+            <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📝</span>30 Questions<span class="badge">~25 min</span></button>
+            <button class="start-btn" onclick="startQuiz(60)"><span class="icon">📚</span>60 Questions<span class="badge">~50 min</span></button>
         </div>
-        <p style="text-align:center;font-weight:500;">Choose mode:</p>
-        <div class="mode-select" id="modeSelect">
-            <div class="mode-card" data-mode="standard" onclick="selectMode('standard')">
-                <span class="mode-icon">📖</span>
-                <span class="mode-title">Standard Mode</span>
-                <p class="mode-desc">No timer, navigate freely, review answers</p>
-            </div>
-            <div class="mode-card" data-mode="timed" onclick="selectMode('timed')">
-                <span class="mode-icon">⏱️</span>
-                <span class="mode-title">Timed Challenge</span>
-                <p class="mode-desc">30s per question · Points · Streaks!</p>
-            </div>
+        <p class="start-info">📋 200‑question bank · randomly drawn · no repeats</p>
+        <p class="start-info">💾 Progress saved locally · resume if you close accidentally</p>
+        <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
+            <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
+            <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#e17055;">🗑 Clear saved</button>
         </div>
-        <div style="text-align:center; margin-top:16px;" id="startActions">
-            <button class="btn btn-accent" id="btnStart" onclick="startQuiz()">Start Quiz</button>
-            <button class="btn btn-outline" id="btnResume" onclick="resumeQuiz()" style="display:none;">Resume previous (Standard)</button>
-        </div>
-        <p class="start-info" style="margin-top:12px;font-size:0.8rem;color:var(--text-light);">💾 Standard mode saves progress locally · Timed mode runs fresh each time</p>
     </div>
 
     <!-- QUIZ SCREEN -->
     <div class="screen" id="quizScreen">
-        <div class="header"><span class="icon">📝</span><div id="modeIndicator"></div></div>
+        <div class="quiz-header"><span style="font-size:1.8rem;">📐</span></div>
         <div class="progress-wrap">
             <div class="progress-stats"><span id="progressLabel">Question 1 of 30</span><span id="answeredCount">0 answered</span></div>
             <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+            <div class="question-dots" id="questionDots"></div>
         </div>
-        <div id="timerDisplay" class="timer-box" style="display:none;"></div>
-        <div id="pointsDisplay" class="points-box" style="display:none;"></div>
         <div class="question-card">
             <div class="question-number" id="questionNumber">QUESTION 1</div>
             <div class="question-text" id="questionText"></div>
@@ -159,24 +156,22 @@
         <ul class="options-list" id="optionsList"></ul>
         <div class="nav-buttons">
             <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Prev</button>
-            <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
+            <div class="nav-center">
+                <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
+                <button class="btn btn-submit" id="btnSubmit" onclick="submitQuiz()">✅ Submit</button>
+            </div>
             <button class="btn btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
-            <button class="btn btn-accent" id="btnSubmit" onclick="submitQuiz()">✅ Submit</button>
         </div>
     </div>
 
     <!-- RESULTS SCREEN -->
     <div class="screen" id="resultsScreen">
         <div class="results-card">
-            <div class="header"><h1>📊 Quiz Results</h1></div>
+            <div class="quiz-header"><h1>📊 Quiz Results</h1></div>
             <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/30</span></div>
-            <div id="pointsResult" style="display:none; margin-bottom:12px;">
-                <p style="font-size:1.2rem;">Total Points: <strong id="totalPoints">0</strong></p>
-                <p>Highest Streak: <strong id="bestStreak">0</strong> 🔥</p>
-            </div>
             <div class="result-message" id="resultMessage"></div>
-            <button class="btn btn-accent" onclick="restartQuiz()">🔄 New Quiz</button>
-            <button class="btn btn-outline" onclick="reviewAnswers()">🔍 Review</button>
+            <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
+            <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">🔍 Review</button>
             <div class="review-section" id="reviewSection" style="display:none;"></div>
         </div>
     </div>
@@ -185,408 +180,340 @@
 <script>
     // ========== 200-QUESTION BANK ==========
     const questionBank = [
-        { q: "Design thinking is best defined as:", opts: ["A linear engineering process", "A human-centred, collaborative approach to finding needs and creating solutions", "A method for cost analysis", "A way to write code"], ans: 1 },
-        { q: "What is the core of design thinking?", opts: ["Technology", "Human being (user)", "Profit", "Competition"], ans: 1 },
-        { q: "Which term is used almost synonymously with design thinking?", opts: ["Agile development", "Human-centred design", "Lean manufacturing", "Six Sigma"], ans: 1 },
-        { q: "In a design thinking team, diversity refers to:", opts: ["Only gender", "Backgrounds, skills, and perspectives", "Uniform qualifications", "Same age group"], ans: 1 },
-        { q: "The concept of the 'T‑shaped person' in design thinking describes:", opts: ["Depth in one area and ability to collaborate across disciplines", "A person with two equal skills", "A manager and a worker", "A technical expert only"], ans: 0 },
-        { q: "Which is NOT a core element of design thinking according to the material?", opts: ["People", "Place", "Process", "Profit"], ans: 3 },
-        { q: "In design thinking, empathy means:", opts: ["Sympathy", "Understanding people's needs, emotions, and context", "Pity for users", "Indifference"], ans: 1 },
-        { q: "How do you empathize in design thinking?", opts: ["Observe, engage, watch & listen", "Only survey", "Assume user needs", "Read reports only"], ans: 0 },
-        { q: "The 'Define' mode in design thinking is about:", opts: ["Generating solutions", "Crafting a meaningful problem statement (point‑of‑view)", "Building prototypes", "Testing"], ans: 1 },
-        { q: "Which statement is true about the design thinking process?", opts: ["It is strictly linear", "It is iterative and often non‑linear", "It has no structure", "It is only for designers"], ans: 1 },
-        { q: "Engineering graphics is primarily:", opts: ["Artistic drawing", "The language of engineers for conveying technical ideas", "Marketing material", "Freehand sketching only"], ans: 1 },
-        { q: "Why is engineering drawing considered a universal language?", opts: ["Because it uses pictures only", "Standard symbols and practices make it understandable worldwide", "It is written in English", "It is simple"], ans: 1 },
-        { q: "Which of the following is NOT a classification of engineering drawing?", opts: ["Machine drawing", "Working drawing", "Assembly drawing", "Photographic drawing"], ans: 3 },
-        { q: "A working drawing is also called:", opts: ["Assembly drawing", "Production drawing", "Part drawing", "Schematic drawing"], ans: 1 },
-        { q: "Machine drawing is primarily concerned with:", opts: ["Architectural plans", "Machine parts or components", "Landscaping", "Electrical circuits"], ans: 1 },
-        { q: "An assembly drawing shows:", opts: ["Only one part", "All parts in their proper working positions relative to each other", "Only dimensions", "Only tolerances"], ans: 1 },
-        { q: "A part drawing with production details is known as:", opts: ["Assembly drawing", "Working drawing", "Isometric drawing", "Freehand sketch"], ans: 1 },
-        { q: "Orthographic projection is a type of projection where:", opts: ["Projectors are parallel and perpendicular to the plane", "Projectors converge to a point", "Distorted views are drawn", "Only one view is used"], ans: 0 },
-        { q: "The two main planes used in orthographic projection are:", opts: ["Horizontal and Profile", "Horizontal and Vertical", "Vertical and Auxiliary", "Frontal and Oblique"], ans: 1 },
-        { q: "In orthographic projection, the Front View is projected onto the:", opts: ["Horizontal Plane", "Vertical Plane", "Profile Plane", "Auxiliary Plane"], ans: 1 },
-        { q: "Top View is projected onto the:", opts: ["Vertical Plane", "Horizontal Plane", "Profile Plane", "Section Plane"], ans: 1 },
-        { q: "Which angle projection is most commonly used in Europe?", opts: ["First Angle", "Third Angle", "Second Angle", "Fourth Angle"], ans: 0 },
-        { q: "In first angle projection, the object is placed in which quadrant?", opts: ["First", "Third", "Second", "Fourth"], ans: 0 },
-        { q: "In third angle projection, the object is in the _____ quadrant.", opts: ["First", "Third", "Second", "Fourth"], ans: 1 },
-        { q: "In first angle projection, the view from above (plan) is placed:", opts: ["Above the front view", "Below the front view", "To the left", "To the right"], ans: 1 },
-        { q: "In third angle projection, the top view is placed:", opts: ["Above the front view", "Below the front view", "To the left", "To the right"], ans: 0 },
-        { q: "The symbol for first angle projection is:", opts: ["Two concentric circles", "A truncated cone with two lines", "A triangle", "A rectangle"], ans: 1 },
-        { q: "Isometric drawing is a type of:", opts: ["Orthographic projection", "Pictorial drawing", "Sectional view", "Development"], ans: 1 },
-        { q: "In an isometric drawing, the three axes are spaced at:", opts: ["90° to each other", "120° to each other", "45° to each other", "30° and 60°"], ans: 1 },
-        { q: "In isometric drawing, a circle appears as:", opts: ["A true circle", "An ellipse", "A square", "A line"], ans: 1 },
-        { q: "Lines that are not parallel to the isometric axes are called:", opts: ["Isometric lines", "Non‑isometric lines", "Orthographic lines", "Construction lines"], ans: 1 },
-        { q: "A sectional view is used to:", opts: ["Show exterior details only", "Reveal hidden internal features", "Draw only for aesthetics", "Replace dimensions"], ans: 1 },
-        { q: "The cut surface in a section is indicated by:", opts: ["Dots", "Section lining (hatching)", "Color", "No marking"], ans: 1 },
-        { q: "Section lining is generally drawn at what angle?", opts: ["30°", "45°", "60°", "90°"], ans: 1 },
-        { q: "Which is NOT a type of section?", opts: ["Full section", "Half section", "Offset section", "Perspective section"], ans: 3 },
-        { q: "In a half section, what portion of the object is shown in section?", opts: ["One‑quarter", "One‑half (usually the right half)", "Three‑quarters", "Full"], ans: 1 },
-        { q: "Conventional breaks are used to:", opts: ["Add details", "Reduce the length of a long uniform part on a drawing", "Enlarge views", "Show threads"], ans: 1 },
-        { q: "Bolts, nuts, and shafts are usually:", opts: ["Sectioned", "Not sectioned (shown in outside view)", "Drawn in color", "Omitted"], ans: 1 },
-        { q: "A cone is formed by rotating a ____ triangle about its altitude.", opts: ["Right‑angled", "Equilateral", "Isosceles", "Scalene"], ans: 0 },
-        { q: "When a cone is cut by a plane perpendicular to the axis (α=90°), the section is:", opts: ["Ellipse", "Parabola", "Hyperbola", "Circle"], ans: 3 },
-        { q: "If the cutting plane is parallel to the slant side of the cone (α=θ), the conic is a:", opts: ["Circle", "Ellipse", "Parabola", "Hyperbola"], ans: 2 },
-        { q: "Eccentricity of a parabola is:", opts: ["<1", ">1", "1", "0"], ans: 2 },
-        { q: "For an ellipse, eccentricity is:", opts: ["1", ">1", "<1", "0"], ans: 2 },
-        { q: "The fixed point in a conic section is called:", opts: ["Directrix", "Focus", "Vertex", "Axis"], ans: 1 },
-        { q: "The fixed straight line in a conic is the:", opts: ["Focus", "Directrix", "Axis", "Vertex"], ans: 1 },
-        { q: "Development of surfaces is used for:", opts: ["3D printing only", "Sheet metal work (cutting and folding)", "Casting", "Forging"], ans: 1 },
-        { q: "Freehand sketching is:", opts: ["Drawing with instruments", "Drawing without drafting equipment", "CAD drawing", "Tracing"], ans: 1 },
-        { q: "The main goal of freehand sketching is to:", opts: ["Produce final production drawings", "Visualize an object and capture proportions quickly", "Annotate dimensions exactly", "Create artistic pieces"], ans: 1 },
-        { q: "Multiview sketching uses which projection method?", opts: ["Perspective", "Orthographic", "Oblique", "Isometric"], ans: 1 },
-        { q: "In multiview drawing, which view shows width and height?", opts: ["Top view", "Front view", "Right side view", "Bottom view"], ans: 1 },
-        { q: "True shape (TS) in a multiview sketch occurs when the surface is:", opts: ["Parallel to the projection plane", "Perpendicular to the projection plane", "Inclined", "Curved"], ans: 0 },
-        { q: "3D solid modeling is:", opts: ["Only surface representation", "Constructing complete geometric forms with interior and exterior properties", "2D drawing", "Freehand sketch"], ans: 1 },
-        { q: "Boolean operations in solid modeling include:", opts: ["Union, subtraction, intersection", "Cut, copy, paste", "Move, rotate, scale", "Draw, erase, trim"], ans: 0 },
-        { q: "What is a primitive geometry?", opts: ["Complex shape", "Basic form like sphere, cube, cylinder, cone", "A assembly", "A surface texture"], ans: 1 },
-        { q: "Extrusion in CAD means:", opts: ["Cutting a hole", "Pulling a 2D shape along a third axis to create a 3D form", "Rotating a shape", "Surface texturing"], ans: 1 },
-        { q: "Sweeping in 3D modeling is:", opts: ["Running a 2D geometry along a path to create a 3D volume", "Deleting a face", "Scaling", "Measuring"], ans: 0 },
-        { q: "The symbol for third angle projection is:", opts: ["Two concentric circles", "A truncated cone with two lines (different order)", "A square inside a circle", "A cross"], ans: 0 },
-        { q: "The 'Define' mode in design thinking produces a:", opts: ["Prototype", "Problem statement (POV)", "Solution", "Business plan"], ans: 1 },
-        { q: "Which of these is NOT a method for generating an ellipse?", opts: ["Focus‑directrix method", "Concentric circle method", "Oblong method", "Tangent method"], ans: 3 },
-        { q: "In an ellipse, the sum of distances from any point to the two foci equals:", opts: ["Minor axis", "Major axis", "Half major axis", "Distance between foci"], ans: 1 },
-        { q: "The rectangular method for parabola requires:", opts: ["Focus and directrix", "Abscissa and double ordinate", "Conjugate axes", "Eccentricity"], ans: 1 },
-        { q: "A parabola can be drawn using the tangent method when what is given?", opts: ["Focus only", "Base and inclination of tangents", "Directrix", "Eccentricity"], ans: 1 },
-        { q: "The directrix is a:", opts: ["Fixed point", "Fixed straight line", "Curved line", "Axis"], ans: 1 },
-        { q: "In development of a cylinder, the layout is a:", opts: ["Triangle", "Rectangle", "Circle", "Trapezoid"], ans: 1 },
-        { q: "A pyramid's development consists of:", opts: ["Only rectangles", "Triangles connected", "Circles", "Hexagons"], ans: 1 },
-        { q: "In first angle projection, the end view from the left is placed:", opts: ["On the left", "On the right", "Above", "Below"], ans: 1 },
-        { q: "In third angle, the right side view is placed:", opts: ["On the left", "On the right", "Above", "Below"], ans: 1 },
-        { q: "Hidden detail in orthographic projection is shown by:", opts: ["Solid thick lines", "Dashed (hidden) lines", "Thin continuous lines", "No lines"], ans: 1 },
-        { q: "Spacing of views should allow:", opts: ["No space", "Enough room for dimensions and notes", "Crowding", "Only one view per sheet"], ans: 1 },
-        { q: "Which of these is an advantage of orthographic projection?", opts: ["Shows true shape of each face", "Single view only", "Shows perspective", "Distorts circles"], ans: 0 },
-        { q: "In sectioning, if two adjacent cut faces exist, hatching should be:", opts: ["Same angle", "Different angles", "Omitted", "Dotted"], ans: 1 },
-        { q: "Which material is indicated by general purpose hatching (cast iron)?", opts: ["Steel", "General use (cast iron symbol)", "Aluminum", "Wood"], ans: 1 },
-        { q: "A broken‑out section shows:", opts: ["Full interior", "Half interior", "A partial cut to reveal a small internal feature", "Only exterior"], ans: 2 },
-        { q: "Revolved section is also called:", opts: ["Offset section", "Superimposed section", "Removed section", "Broken section"], ans: 1 },
-        { q: "In design thinking, the 'Ideate' phase involves:", opts: ["Building prototypes", "Generating a wide range of solutions", "Defining the problem", "Testing"], ans: 1 },
-        { q: "Prototype in design thinking is for:", opts: ["Final product", "Quick, low‑cost representation to test ideas", "Business plan", "Archiving"], ans: 1 },
-        { q: "Which is NOT a part of the empathic process?", opts: ["Observe", "Engage", "Watch and listen", "Criticize"], ans: 3 },
-        { q: "A T‑shaped person has deep expertise in one area (vertical) and the ability to cross disciplines (horizontal). This:", opts: ["Limits collaboration", "Bridges gaps between disciplines", "Focuses on management", "Is irrelevant"], ans: 1 },
-        { q: "In an isometric drawing, dimensions are measured along:", opts: ["Any direction", "Isometric axes or lines parallel to them", "Only vertical", "Only horizontal"], ans: 1 },
-        { q: "Which method is approximated to draw an isometric circle using arcs?", opts: ["Ellipse template", "Four‑centre method", "Freehand", "Concentric circles"], ans: 1 },
-        { q: "A cutting plane line is drawn using:", opts: ["Thin continuous line", "Long chain line thick at ends", "Dashed line", "Dotted line"], ans: 1 },
-        { q: "If the eccentricity of a conic is >1, it is a:", opts: ["Ellipse", "Parabola", "Hyperbola", "Circle"], ans: 2 },
-        { q: "The vertex of a conic is:", opts: ["The point where the conic cuts its axis", "The focus", "The directrix", "The centre"], ans: 0 },
-        { q: "In the concentric circle method of ellipse, you divide:", opts: ["Both circles into the same number of parts", "Only major circle", "Only minor circle", "Rectangle"], ans: 0 },
-        { q: "The oblong method for ellipse is also known as:", opts: ["Concentric method", "Rectangle method (for ellipse)", "Tangent method", "Focus method"], ans: 1 },
-        { q: "For a parabola, the distance from the focus to any point equals:", opts: ["Distance to the directrix", "Twice distance to directrix", "Half distance to directrix", "Major axis length"], ans: 0 },
-        { q: "The latus rectum of a parabola is:", opts: ["Any chord", "Double ordinate through the focus", "Axis", "Vertex"], ans: 1 },
-        { q: "In the design thinking process, the stage where you 'gain empathy' includes:", opts: ["Testing", "Observing, engaging, and immersing with users", "Building prototypes", "Pitching ideas"], ans: 1 },
-        { q: "Which of these is a core value of Iginedion University as stated?", opts: ["Profit", "Scholarship (SITER)", "Competition", "Speed"], ans: 1 },
-        { q: "The 'S' in SITER stands for:", opts: ["Service", "Scholarship", "Science", "System"], ans: 1 },
-        { q: "The Vision of the Mechanical Engineering department includes:", opts: ["Being a national resource for economic diversification", "Only teaching", "Maximizing profit", "Local recognition only"], ans: 0 },
-        { q: "Which Program Outcome (PO) relates to applying knowledge of mathematics and science to solve engineering problems?", opts: ["PO1", "PO2", "PO3", "PO4"], ans: 0 },
-        { q: "PO3 is about:", opts: ["Problem analysis", "Design/development of solutions", "Modern tool usage", "Environment"], ans: 1 },
-        { q: "Lifelong learning is:", opts: ["PO8", "PO12", "PO5", "PO1"], ans: 1 },
-        { q: "PSO1 stands for:", opts: ["Program Specific Outcome 1: apply law in engineering practices", "Project Management", "Product Design", "Process Optimization"], ans: 0 },
-        { q: "In Bloom's Taxonomy, 'Analyzing' is level:", opts: ["1", "2", "3", "4"], ans: 3 },
-        { q: "The highest level of Bloom's Taxonomy is:", opts: ["Remembering", "Understanding", "Applying", "Creating"], ans: 3 },
-        { q: "Evaluation weightage for Examination in GET102:", opts: ["10%", "20%", "70%", "50%"], ans: 2 },
-        { q: "Which unit covers 'Design Thinking'?", opts: ["Unit 2", "Unit 1", "Unit 3", "Unit 8"], ans: 1 },
-        { q: "Unit 5 deals with:", opts: ["Isometric Drawing", "Sectioning and Conventional Practices", "Conic Sections", "Solid Modeling"], ans: 1 },
-        { q: "How many lecture hours for Unit 3 (First and Third Angle Orthographic Projection)?", opts: ["4", "6", "2", "8"], ans: 1 },
-        { q: "The course objective CO2 is to:", opts: ["Explain design thinking", "Differentiate between graphic design and engineering graphics", "Present 2D orthographic forms", "Describe isometric space"], ans: 1 },
-        { q: "Which of these is NOT a learning objective of Unit 4?", opts: ["Understand isometric axes", "Produce drawing with non‑isometric lines", "Apply third angle projection", "Produce drawings with curved profiles"], ans: 2 },
-        { q: "The mapping of COs and POs for GET102 shows that CO1 has a correlation level 3 with PO1. Level 3 means:", opts: ["Low", "Medium", "High", "Not applicable"], ans: 2 },
-        { q: "A design thinking team ideally works by:", opts: ["Cooperation (divided tasks)", "Collaboration (everyone involved in all steps)", "Individual work", "Competition"], ans: 1 },
-        { q: "The point where dy/dx=0 in a function graph is called (as mentioned in the math part, but used in engineering context) – not directly, skip. Which is not a type of mapping? (no) Let's create a design thinking Q.", skip },
-        { q: "What is the primary purpose of empathy in design thinking?", opts: ["To feel sorry for users", "To understand users' physical and emotional needs and context", "To criticize user behavior", "To ignore user feedback"], ans: 1 },
-        { q: "When you move from the Empathize to Define mode, what should you do first?", opts: ["Start prototyping", "Unpack observations and synthesize to form insights", "Immediately ideate", "Write a report"], ans: 1 },
-        { q: "A 'How might we...?' question is used in transition from:", opts: ["Define to Ideate", "Empathize to Define", "Ideate to Prototype", "Test to Empathize"], ans: 0 },
-        { q: "In prototyping, you should:", opts: ["Bring only one perfect idea", "Carry multiple ideas forward to preserve innovation potential", "Avoid user testing", "Spend all budget"], ans: 1 },
-        { q: "Testing a prototype is primarily an opportunity to:", opts: ["Prove your solution is perfect", "Solicit feedback and gain deeper empathy", "Launch the product", "Finish the project"], ans: 1 },
-        { q: "Which of these is a conventional break for round solid cross‑section?", opts: ["Zigzag line", "Curved 'wood' break", "A pair of curved lines", "A serrated line"], ans: 0 },
-        { q: "In sectioning, webs and ribs are:", opts: ["Always sectioned", "Usually not sectioned (shown in outside view)", "Drawn in colour", "Omitted"], ans: 1 },
-        { q: "The helix in a broken thread is represented using:", opts: ["Thick line", "Thin line", "Chain line", "Dashed line"], ans: 1 },
-        { q: "Which of these is a non‑isometric line? A line inclined at:", opts: ["30° to horizontal (isometric)", "30° to horizontal but not parallel to axes", "90° to horizontal", "60° to horizontal (isometric)"], ans: 1 },
-        { q: "In isometric drawing, angles:", opts: ["Are drawn true size", "Appear as true sizes", "Cannot be laid off directly because they appear distorted", "Are always 45°"], ans: 2 },
-        { q: "The four‑centre method for isometric circles uses:", opts: ["Two arcs", "Four circular arcs", "Freehand curves", "Ellipse template"], ans: 1 },
-        { q: "In development of a truncated cylinder, the cut profile is usually:", opts: ["A straight line", "A sine curve (or ellipse in true shape)", "A circle", "A rectangle"], ans: 1 },
-        { q: "Freehand sketching is useful for:", opts: ["Final production drawing", "Quickly capturing design ideas and proportions", "Precision machining", "Archiving"], ans: 1 },
-        { q: "In multiview sketching, the front view typically shows the most:", opts: ["Hidden lines", "Detail", "Dimensions", "Color"], ans: 1 },
-        { q: "A foreshortened shape (FS) occurs when a surface is:", opts: ["Parallel to projection plane", "Perpendicular to projection plane", "Inclined to projection plane", "Curved"], ans: 2 },
-        { q: "An edge view (EV) is a surface that appears as a:", opts: ["True shape", "Foreshortened plane", "Line", "Curve"], ans: 2 },
-        { q: "3D solid models are used for:", opts: ["Only visualization", "Design, simulation, testing, and manufacturing", "Only 2D representation", "Only marketing"], ans: 1 },
-        { q: "Which Boolean operation combines two volumes into one?", opts: ["Subtraction", "Union", "Intersection", "Sweep"], ans: 1 },
-        { q: "If you subtract a cylinder from a block, you use:", opts: ["Union", "Intersection", "Difference (Subtraction)", "Extrusion"], ans: 2 },
-        { q: "Texture mapping applies:", opts: ["Physical material", "A visual and tactile quality to the surface", "Dimensions", "Weight"], ans: 1 },
-        { q: "Rendering in 3D software produces:", opts: ["A realistic image with lighting and shadows", "A 2D line drawing", "A wireframe", "Only mesh"], ans: 0 },
-        { q: "In design thinking, the 'Place' element emphasizes:", opts: ["Working in a rigid, traditional office", "A flexible, inspiration‑friendly space", "Only outdoors", "No workspace needed"], ans: 1 },
-        { q: "The department's vision includes producing ________ engineers.", opts: ["Environmentally‑friendly", "High‑paid", "Foreign", "Temporary"], ans: 0 },
-        { q: "Engineering graphics uses standards so that:", opts: ["Drawings are unique to each country", "Anyone trained can read them universally", "Only the creator understands", "They are never shared"], ans: 1 },
-        { q: "Which course outcome (CO) relates to solid modeling?", opts: ["CO1", "CO4", "CO8", "CO6"], ans: 2 },
-        { q: "To present hidden details in components, you use:", opts: ["Dimensions", "Sections", "Colours", "Scale"], ans: 1 },
-        { q: "CO5 states: Present hidden details using:", opts: ["Dimensions", "Conventions", "Sections", "Freehand sketches"], ans: 1 },
-        { q: "In the development of a pentagonal prism, the lateral surface is:", opts: ["One pentagon", "Five rectangles", "Five triangles", "One rectangle"], ans: 1 }
+        // Unit 1: Design Thinking (25 questions)
+        { q: "Design thinking is best described as:", opts: ["A linear problem-solving method", "A human-centred, collaborative approach to finding new solutions", "An engineering-only design process", "A computer-aided drafting technique"], ans: 1 },
+        { q: "Which of the following is NOT a core element of design thinking?", opts: ["People", "Place", "Process", "Profit"], ans: 3 },
+        { q: "In design thinking, the term 'T-shaped person' refers to someone with:", opts: ["Only broad interdisciplinary knowledge", "Deep expertise in one area and the ability to collaborate across disciplines", "A specific technical skill without teamwork", "Only managerial capabilities"], ans: 1 },
+        { q: "The main focus of the empathy stage in design thinking is:", opts: ["Generating many ideas", "Understanding the user's needs and context", "Building prototypes", "Testing the final product"], ans: 1 },
+        { q: "According to the course material, design thinking teams should ideally be:", opts: ["Homogeneous in background", "Multidisciplinary and diverse", "Composed only of engineers", "Led by a single expert"], ans: 1 },
+        { q: "Which of the following best defines the 'Define' mode in design thinking?", opts: ["Creating a detailed prototype", "Crafting a meaningful and actionable problem statement", "Brainstorming solutions", "Testing the solution with users"], ans: 1 },
+        { q: "In the design thinking process, 'How might we...?' questions are typically used in the transition from:", opts: ["Empathize to Define", "Define to Ideate", "Ideate to Prototype", "Prototype to Test"], ans: 1 },
+        { q: "Which of these is a primary reason for empathy in design thinking?", opts: ["To speed up the process", "To understand the user's physical and emotional needs", "To reduce costs", "To eliminate the need for testing"], ans: 1 },
+        { q: "The term 'human-centred design' is often used synonymously with:", opts: ["Graphic design", "Design thinking", "Computer-aided design", "Engineering drawing"], ans: 1 },
+        { q: "During the 'Prototype' phase, the recommended approach is to:", opts: ["Build only one perfect prototype", "Carry multiple ideas forward to maintain innovation potential", "Skip prototyping and go to testing", "Only use digital prototypes"], ans: 1 },
+        { q: "In design thinking, collaboration is preferred over cooperation because:", opts: ["Cooperation is too slow", "Collaboration ensures all team members are involved in all steps", "Cooperation involves only one expert", "Collaboration is cheaper"], ans: 1 },
+        { q: "What does the 'Test' mode primarily involve?", opts: ["Finalizing the design", "Gathering feedback on prototypes from users", "Writing the project report", "Selecting the best idea"], ans: 1 },
+        { q: "According to the text, the design thinker's workspace should be:", opts: ["Fixed and formal", "Flexible and inspiring", "Completely digital", "Isolated from the team"], ans: 1 },
+        { q: "Empathizing involves all of the following EXCEPT:", opts: ["Observing users in context", "Engaging in conversations", "Ignoring user feedback", "Watching and listening"], ans: 2 },
+        { q: "A good problem statement in design thinking is also called a:", opts: ["Design brief", "Point of view", "Project charter", "Mission statement"], ans: 1 },
+        { q: "The transition from Ideate to Prototype often uses a process of:", opts: ["Random selection", "Considered selection with voting criteria", "Only choosing the cheapest idea", "Managerial decree"], ans: 1 },
+        { q: "Which of the following is NOT one of the core elements of design thinking mentioned in the text?", opts: ["Team and their experience", "Audience and their context", "Budget and timeline", "Mindfulness of process"], ans: 2 },
+        { q: "The text suggests that design thinking is particularly useful when:", opts: ["The solution is obvious", "Challenges are complex and can be solved in many ways", "Only one discipline is involved", "Time is not a constraint"], ans: 1 },
+        { q: "In the context of design thinking, 'unpacking' refers to:", opts: ["Removing packaging from products", "Processing empathy findings to discover insights", "Disassembling a prototype", "Writing a report"], ans: 1 },
+        { q: "Which statement about the design thinking process is true?", opts: ["It is strictly linear", "The final outcome is known from the beginning", "It involves iterative loops and transitions between modes", "It does not involve user interaction"], ans: 2 },
+        { q: "The 'Ideate' mode focuses on:", opts: ["Defining the problem", "Generating a wide range of possible solutions", "Building the final product", "Testing with users"], ans: 1 },
+        { q: "Which of these is a method to empathize according to the text?", opts: ["Conducting surveys only", "Observe, engage, watch and listen", "Only reading books", "Using CAD software"], ans: 1 },
+        { q: "Design thinking originally evolved from:", opts: ["Traditional design practice", "Software engineering", "Electrical engineering", "Mathematics"], ans: 0 },
+        { q: "The 'audience' in design thinking refers to:", opts: ["Only paying customers", "The people the solution ultimately serves", "The project sponsors", "The design team only"], ans: 1 },
+        { q: "In the Empathize mode, a common technique is to:", opts: ["Start coding immediately", "Ask 'Why?' repeatedly to uncover deeper meaning", "Avoid talking to users", "Finalize the budget"], ans: 1 },
+
+        // Unit 2: Engineering Graphics (20 questions)
+        { q: "Engineering graphics is primarily the language of:", opts: ["Mathematicians", "Engineers", "Artists", "Managers"], ans: 1 },
+        { q: "Which of the following best describes engineering drawing?", opts: ["An artistic representation", "A geometric representation according to standards", "A freehand sketch without rules", "A photograph of an object"], ans: 1 },
+        { q: "Engineering drawings can be understood internationally because they are:", opts: ["Written in English", "Standardized with symbols and practices", "Always in colour", "Only used in one country"], ans: 1 },
+        { q: "One importance of engineering graphics is:", opts: ["To decorate offices", "To communicate technical information without ambiguity", "To replace written reports", "To entertain workers"], ans: 1 },
+        { q: "Machine drawing is concerned with:", opts: ["Architectural buildings", "Machine parts or components", "Electrical circuits", "Landscapes"], ans: 1 },
+        { q: "A working drawing is also called a:", opts: ["Assembly drawing", "Production drawing", "Pictorial drawing", "Isometric drawing"], ans: 1 },
+        { q: "Which drawing type shows the various parts of a machine in their proper working positions?", opts: ["Part drawing", "Assembly drawing", "Sketch", "Schematic"], ans: 1 },
+        { q: "Engineering graphics is technically referred to as:", opts: ["Graphic design", "Engineering drawing", "Technical art", "Blueprint"], ans: 1 },
+        { q: "Which of the following is NOT a classification of drawing mentioned in the text?", opts: ["Machine drawing", "Working drawing", "Architectural drawing", "Part drawing"], ans: 2 },
+        { q: "Part drawing with production details becomes a:", opts: ["Freehand sketch", "Working drawing", "Pictorial view", "Concept drawing"], ans: 1 },
+        { q: "Engineering is defined as the profession that applies knowledge of mathematics and science to develop solutions:", opts: ["Without any standards", "For aesthetic purposes only", "In tandem with codes and standards", "Only for profit"], ans: 2 },
+        { q: "Graphic design differs from engineering graphics because graphic design:", opts: ["Uses only computers", "Combines pictures, words, and decoration for publications", "Is based on strict international standards", "Is always done by engineers"], ans: 1 },
+        { q: "Which of the following is NOT an application of engineering graphics mentioned in the text?", opts: ["Product development", "Assembly guide in industries", "Writing software code", "Facility maintenance"], ans: 2 },
+        { q: "The working drawing contains information about:", opts: ["Only the shape", "Dimensions, limits, surface finish, and material", "Only the colour", "Only the weight"], ans: 1 },
+        { q: "Assembly drawing is a design document showing:", opts: ["Individual parts only", "Full representation of a machine for assembly and production", "Only the exterior view", "Only electrical wiring"], ans: 1 },
+        { q: "Component or part drawing facilitates:", opts: ["Marketing", "Production of the component", "Only design brainstorming", "Customer feedback"], ans: 1 },
+        { q: "Engineering graphics is considered a universal language because:", opts: ["It uses words", "Standardized symbols convey the same idea to trained personnel globally", "It is only used in English-speaking countries", "It requires no training"], ans: 1 },
+        { q: "The term 'drawing as an art' refers to:", opts: ["Engineering graphics", "Pictorial representation of imagination by an artist without standard guidelines", "Technical drawing", "CAD modeling"], ans: 1 },
+        { q: "One reason engineering drawings must be correctly drawn is:", opts: ["To look beautiful", "To ensure they convey the exact picture of an object", "To pass inspection", "To reduce paper usage"], ans: 1 },
+        { q: "Which of the following is a type of drawing that contains all dimensions and finishing processes for manufacturing?", opts: ["Freehand sketch", "Working drawing", "Isometric drawing", "Perspective drawing"], ans: 1 },
+
+        // Unit 3: Orthographic Projection (30 questions)
+        { q: "Orthographic projection uses projectors that are:", opts: ["Converging", "Parallel and at right angles to the projection plane", "At acute angles", "Curved"], ans: 1 },
+        { q: "In orthographic projection, the object is generally positioned so that its main faces are:", opts: ["At 45° to the planes", "Parallel to the projection planes", "Perpendicular to the ground", "Randomly oriented"], ans: 1 },
+        { q: "The two types of orthographic projection used in engineering practice are:", opts: ["Second and Fourth angle", "First and Third angle", "First and Second angle", "Third and Fourth angle"], ans: 1 },
+        { q: "In first angle projection, the object is placed in which quadrant?", opts: ["Second", "Third", "First", "Fourth"], ans: 2 },
+        { q: "In first angle projection, the view from above is placed:", opts: ["Above the front view", "Underneath the front view", "To the left", "To the right"], ans: 1 },
+        { q: "In third angle projection, the view from above is placed:", opts: ["Underneath the front view", "Above the front view", "To the left", "To the right"], ans: 1 },
+        { q: "The symbol for first angle projection is:", opts: ["Two concentric circles", "A truncated cone with the top view above the front view", "A truncated cone with the top view below the front view", "A square and a circle"], ans: 1 },
+        { q: "Which of the following is an advantage of orthographic projection?", opts: ["It shows true size and shape of faces", "It is always in colour", "It requires only one view", "It eliminates hidden lines"], ans: 0 },
+        { q: "In first angle projection, the object is between the observer and the:", opts: ["Light source", "Plane of projection", "Drawing board", "Horizontal plane"], ans: 1 },
+        { q: "The reference planes used in orthographic projection are:", opts: ["Only one plane", "Horizontal, vertical, and profile planes", "Only the vertical plane", "Inclined planes only"], ans: 1 },
+        { q: "Front view in orthographic projection is projected on the:", opts: ["Horizontal plane", "Vertical plane", "Profile plane", "Auxiliary plane"], ans: 1 },
+        { q: "Top view is projected on the:", opts: ["Vertical plane", "Horizontal plane", "Profile plane", "Inclined plane"], ans: 1 },
+        { q: "In third angle projection, the view from the left is placed on the:", opts: ["Right", "Left", "Above", "Below"], ans: 1 },
+        { q: "The number of views required to describe an object depends on:", opts: ["The colour of the object", "The complexity and symmetry of the object", "The size of the paper", "The drawing instrument"], ans: 1 },
+        { q: "For a highly symmetrical object, the minimum number of views required may be:", opts: ["Four", "Three", "Two", "Five"], ans: 2 },
+        { q: "Spacing between views in orthographic drawing should be enough to:", opts: ["Make it look artistic", "Accommodate dimensions and notes without overcrowding", "Save paper", "Hide details"], ans: 1 },
+        { q: "Hidden detail in orthographic drawing should:", opts: ["Always be shown", "Only be used when essential for complete description", "Never be shown", "Be drawn with thick lines"], ans: 1 },
+        { q: "The projection plane is always __________ to the side of the object being drawn.", opts: ["Parallel", "Perpendicular", "Inclined", "Curved"], ans: 1 },
+        { q: "In third angle projection, the plan comes between the observer and the:", opts: ["Object", "Projection plane", "Light", "Floor"], ans: 0 },
+        { q: "In orthographic projection, the line where the horizontal and vertical planes intersect is called the:", opts: ["Centre line", "Ground line (or reference line)", "Hidden line", "Dimension line"], ans: 1 },
+        { q: "Which view typically shows the most detail and is the basis for other views?", opts: ["Top view", "Side view", "Front view", "Bottom view"], ans: 2 },
+        { q: "The symbol for third angle projection is:", opts: ["A truncated cone with the top view above the front view", "A truncated cone with the top view below the front view", "A rectangle with an X", "Two intersecting circles"], ans: 0 },
+        { q: "In first angle projection, the view from the left is placed on the:", opts: ["Left", "Right", "Above", "Below"], ans: 1 },
+        { q: "Which of the following is a correct arrangement for first angle projection?", opts: ["Top view above front view", "Top view below front view", "Left view on left", "Right view on right"], ans: 1 },
+        { q: "When the object is placed in the third quadrant, the resulting projection is called:", opts: ["First angle", "Second angle", "Third angle", "Fourth angle"], ans: 2 },
+        { q: "The selection of views principle states that you should:", opts: ["Use as many views as possible", "Use the minimum number of views to completely describe the object", "Only use the front view", "Use only pictorial views"], ans: 1 },
+        { q: "In orthographic projection, if a surface is parallel to the projection plane, it appears as:", opts: ["A foreshortened shape", "True shape and size", "An edge view", "A curved line"], ans: 1 },
+        { q: "The term 'ortho' in orthographic means:", opts: ["Curved", "Straight or right", "Oblique", "Circular"], ans: 1 },
+        { q: "In an orthographic projection, the rays of sight are:", opts: ["Diverging", "Parallel to each other", "Converging to a point", "Random"], ans: 1 },
+        { q: "Which of the following is NOT a type of orthographic projection plane?", opts: ["Horizontal", "Vertical", "Profile", "Isometric"], ans: 3 },
+        { q: "When building up views, it is recommended to:", opts: ["Draw each view independently", "Build all views together to maintain alignment", "Only draw the front view first", "Skip hidden lines completely"], ans: 1 },
+
+        // Unit 4: Isometric Drawing (20 questions)
+        { q: "Isometric drawing is a type of:", opts: ["Orthographic projection", "Pictorial drawing", "Perspective drawing", "Freehand sketch only"], ans: 1 },
+        { q: "In isometric drawing, lines are drawn at which angles to the horizontal?", opts: ["45°", "30°", "60°", "90°"], ans: 1 },
+        { q: "Isometric axes are separated by:", opts: ["45°", "30°", "120°", "90°"], ans: 2 },
+        { q: "A circle in an isometric drawing appears as a(n):", opts: ["Circle", "Ellipse", "Parabola", "Hyperbola"], ans: 1 },
+        { q: "Lines that are parallel to the isometric axes are called:", opts: ["Non-isometric lines", "Isometric lines", "Hidden lines", "Dimension lines"], ans: 1 },
+        { q: "Angles cannot be laid off directly in an isometric drawing because:", opts: ["They are too small", "They do not appear as their true sizes", "The paper is not large enough", "Only right angles can be drawn"], ans: 1 },
+        { q: "Non-isometric lines are drawn by:", opts: ["Estimating the angle", "Using protractor directly", "Fixing their ends with ordinates (coordinates)", "Using a compass"], ans: 2 },
+        { q: "In the approximate method for drawing an isometric circle, the ellipse is constructed using:", opts: ["A French curve", "Circular arcs", "Freehand sketching", "A single circle"], ans: 1 },
+        { q: "Which method for an isometric circle uses an enclosing square with corner points?", opts: ["Approximate method", "Method I (using a French curve)", "Tangent method", "Oblong method"], ans: 1 },
+        { q: "Isometric drawing shows how many views of an object?", opts: ["One", "Two", "Three", "All six"], ans: 2 },
+        { q: "All dimensions in an isometric drawing must be measured along:", opts: ["Any convenient direction", "Isometric axes or lines parallel to them", "Only vertical lines", "Only horizontal lines"], ans: 1 },
+        { q: "Objects composed entirely of isometric lines are drawn by:", opts: ["First drawing a box and building up the shape inside", "Using only freehand", "Using a camera", "Only measuring angles"], ans: 0 },
+        { q: "When drawing a non-isometric line, the angle is laid off in the orthographic view and transferred to the isometric view using:", opts: ["A protractor", "Ordinates", "A compass", "A divider"], ans: 1 },
+        { q: "In the isometric square method for a circle, the centre lines intersect at:", opts: ["A corner of the square", "The centre of the square", "A point outside the square", "The midpoint of a side"], ans: 1 },
+        { q: "The long diagonal of the isometric square is used to locate:", opts: ["The centre of the ellipse", "Arc centres for the approximate ellipse", "The major axis", "The minor axis"], ans: 1 },
+        { q: "Isometric drawing is also called:", opts: ["Perspective drawing", "Oblique drawing", "Isometric projection", "Orthographic drawing"], ans: 2 },
+        { q: "An isometric circle drawn with the approximate method is accurate enough for most:", opts: ["Mathematical proofs", "Engineering drawings", "Artistic sketches", "Photographs"], ans: 1 },
+        { q: "Which of the following statements is true about isometric drawing?", opts: ["All lines are true length", "Only isometric lines are true length", "No line is true length", "Dimensions are not important"], ans: 1 },
+        { q: "In isometric drawing, receding lines are drawn at:", opts: ["45° to the horizontal", "30° to the horizontal", "60° to the horizontal", "90° to the horizontal"], ans: 1 },
+        { q: "A French curve is used in isometric drawing to:", opts: ["Draw straight lines", "Draw the isometric ellipse in Method I", "Measure angles", "Erase lines"], ans: 1 },
+
+        // Unit 5: Sectioning & Conventional Practices (25 questions)
+        { q: "A sectional view is obtained by:", opts: ["Removing hidden lines", "Cutting the object with an imaginary cutting plane", "Using only thick lines", "Drawing only the exterior"], ans: 1 },
+        { q: "The cut surface in a sectional view is indicated by:", opts: ["Thick lines", "Cross-hatching (section lining)", "Dotted lines", "Colour shading"], ans: 1 },
+        { q: "Section lines (hatching) are usually drawn at an angle of:", opts: ["30°", "45°", "60°", "90°"], ans: 1 },
+        { q: "If two adjacent cut faces are in a section, the hatching should be:", opts: ["At the same angle and spacing", "At different angles", "Omitted", "Drawn with continuous lines"], ans: 1 },
+        { q: "Which of the following is a type of section?", opts: ["Full section", "Half section", "Offset section", "All of the above"], ans: 3 },
+        { q: "A full section is obtained when the cutting plane:", opts: ["Cuts only a quarter of the object", "Extends through the entire object", "Is broken at the centre", "Is a zigzag line"], ans: 1 },
+        { q: "A half section is particularly useful for:", opts: ["Asymmetrical objects", "Symmetrical objects", "Objects with no interior", "Only cubes"], ans: 1 },
+        { q: "In a half section, how much of the object is imagined to be removed?", opts: ["Half", "One quarter", "Three quarters", "The entire object"], ans: 1 },
+        { q: "An offset section uses a cutting plane that:", opts: ["Is straight", "Changes direction (zigzag)", "Is curved", "Is horizontal only"], ans: 1 },
+        { q: "Which of the following features is usually NOT sectioned (shown in outside view)?", opts: ["Webs and ribs", "Solid blocks", "Cylindrical parts", "Base plates"], ans: 0 },
+        { q: "Bolts, nuts, washers, and screws are typically:", opts: ["Sectioned with cross-hatching", "Shown in outside view within a section", "Never drawn", "Drawn with thick lines only"], ans: 1 },
+        { q: "Conventional breaks are used to:", opts: ["Show true size", "Reduce the length of a long part on a drawing", "Indicate material", "Show hidden detail"], ans: 1 },
+        { q: "The general-purpose section line symbol (for cast iron) is:", opts: ["Thick continuous line", "Thin continuous irregular line", "Hatching at 45°", "Dashed line"], ans: 2 },
+        { q: "In sectioning, the cutting plane is indicated by:", opts: ["A thin continuous line", "A long chain line, thick at ends with arrows", "A dashed line", "A wavy line"], ans: 1 },
+        { q: "If the cutting plane is obviously along the centre line, the cutting plane line:", opts: ["Must always be drawn", "Need not be drawn", "Should be drawn with a different colour", "Is replaced by a solid line"], ans: 1 },
+        { q: "A revolved section is also called a:", opts: ["Removed section", "Superimposed section", "Half section", "Full section"], ans: 1 },
+        { q: "In a removed section, the section is drawn:", opts: ["Directly on the object", "On the extension of the cutting plane line", "Inside the front view", "In a separate note"], ans: 1 },
+        { q: "A partial or broken-out section is used when:", opts: ["A full section is always required", "Only a small portion of interior needs to be shown", "The object is symmetrical", "No hidden detail exists"], ans: 1 },
+        { q: "Conventional section materials are used to:", opts: ["Identify different materials in the drawing", "Save ink", "Simplify the drawing", "Avoid drawing"], ans: 0 },
+        { q: "In a half section, the line separating the sectioned half from the unsectioned half is the:", opts: ["Hidden line", "Centre line", "Thick continuous line", "Phantom line"], ans: 1 },
+        { q: "Which of the following is NOT a rule of sectioning?", opts: ["Cut face should be hatched", "Adjacent faces should have different hatching angles", "All hidden lines must be shown within the section", "The cutting plane should be shown in the relevant view"], ans: 2 },
+        { q: "When a cutting plane passes through a web, the web is:", opts: ["Always hatched", "Not hatched (treated as outside)", "Drawn with a different colour", "Removed entirely"], ans: 1 },
+        { q: "The main purpose of sectioning is to:", opts: ["Make drawing look complex", "Show interior details clearly", "Reduce the number of views", "Eliminate the need for dimensions"], ans: 1 },
+        { q: "A cutting plane line is typically a:", opts: ["Thick continuous line", "Chain line thick at ends and at changes of direction", "Thin continuous line", "Dotted line"], ans: 1 },
+        { q: "Conventional section lines for different materials are standardized by:", opts: ["Individual companies only", "National and international standards", "The artist's preference", "No standards exist"], ans: 1 },
+
+        // Unit 6: Conic Sections & Development (35 questions)
+        { q: "A cone is formed by rotating a __________ about its altitude.", opts: ["Circle", "Right-angled triangle", "Rectangle", "Square"], ans: 1 },
+        { q: "When a cone is cut by a plane at 90° to its axis, the section obtained is a:", opts: ["Ellipse", "Parabola", "Circle", "Hyperbola"], ans: 2 },
+        { q: "A section plane cutting a cone at an angle greater than half the apex angle but less than 90° produces a:", opts: ["Circle", "Ellipse", "Parabola", "Hyperbola"], ans: 1 },
+        { q: "When the cutting plane is parallel to the slant side of the cone, the curve obtained is a:", opts: ["Circle", "Ellipse", "Parabola", "Hyperbola"], ans: 2 },
+        { q: "If the cutting plane angle is less than the semi-vertical angle, the section is a:", opts: ["Circle", "Ellipse", "Parabola", "Hyperbola"], ans: 3 },
+        { q: "Eccentricity of a parabola is always:", opts: ["Less than 1", "Equal to 1", "Greater than 1", "Zero"], ans: 1 },
+        { q: "Eccentricity of an ellipse is:", opts: ["Equal to 1", "Greater than 1", "Less than 1", "Zero"], ans: 2 },
+        { q: "The fixed point in a conic is called the:", opts: ["Directrix", "Focus", "Vertex", "Eccentricity"], ans: 1 },
+        { q: "The fixed straight line in a conic is called the:", opts: ["Axis", "Focus", "Directrix", "Vertex"], ans: 2 },
+        { q: "In an ellipse, the sum of distances from any point on the curve to the two foci is equal to the:", opts: ["Minor axis", "Major axis", "Latus rectum", "Eccentricity"], ans: 1 },
+        { q: "Which method for generating an ellipse uses the major and minor axes as diameters of circles?", opts: ["Focus-directrix method", "Concentric circle method", "Oblong method", "Tangent method"], ans: 1 },
+        { q: "The oblong method for ellipse construction uses a:", opts: ["Circle", "Rectangle", "Triangle", "Square only"], ans: 1 },
+        { q: "A parabola can be generated by the rectangle method when:", opts: ["The focus and directrix are given", "The abscissa and double ordinate are known", "Only the axis is known", "The eccentricity is greater than 1"], ans: 1 },
+        { q: "In the tangent method for a parabola, the base and the __________ are known.", opts: ["Focus", "Directrix", "Inclination of tangents at open ends", "Eccentricity"], ans: 2 },
+        { q: "The double ordinate passing through the focus of a parabola is called the:", opts: ["Vertex", "Latus rectum", "Abscissa", "Directrix"], ans: 1 },
+        { q: "Development of surfaces is a technique used mainly in:", opts: ["Casting", "Sheet metal work", "Forging", "Machining"], ans: 1 },
+        { q: "The development of a cylinder is a:", opts: ["Circle", "Rectangle", "Triangle", "Trapezoid"], ans: 1 },
+        { q: "The development of a prism consists of:", opts: ["Triangles only", "Rectangles equal to the number of sides", "A single circle", "An ellipse"], ans: 1 },
+        { q: "The development of a pyramid consists of:", opts: ["A rectangle", "A series of triangles in contact", "A circle", "An irregular shape"], ans: 1 },
+        { q: "In the focus-directrix method, the distance of the focus from the directrix and the __________ must be known.", opts: ["Abscissa", "Eccentricity", "Major axis", "Minor axis"], ans: 1 },
+        { q: "The line passing through the focus and perpendicular to the directrix is called the:", opts: ["Vertex", "Axis", "Latus rectum", "Ordinate"], ans: 1 },
+        { q: "When drawing an ellipse by the concentric circle method, both circles are divided into:", opts: ["6 equal parts", "12 equal parts", "8 equal parts", "4 equal parts"], ans: 1 },
+        { q: "In an ellipse, the distance from any end of the minor axis to any focus is equal to:", opts: ["Half the minor axis", "Half the major axis", "The full major axis", "The eccentricity"], ans: 1 },
+        { q: "A parabola has eccentricity equal to 1. This means that for any point on the parabola, the distance to the focus is __________ the distance to the directrix.", opts: ["Less than", "Equal to", "Greater than", "Double"], ans: 1 },
+        { q: "The profile of a conic section is determined by:", opts: ["The angle of the cutting plane relative to the cone's axis", "The colour of the cone", "The size of the paper", "The drawing instrument"], ans: 0 },
+        { q: "In a hyperbola, the section plane cuts the cone such that the angle is:", opts: ["90°", "Greater than the apex half-angle", "Less than the apex half-angle", "Equal to 0°"], ans: 2 },
+        { q: "If the section plane passes through the apex of the cone, the section is a:", opts: ["Circle", "Ellipse", "Parabola", "Triangle"], ans: 3 },
+        { q: "The ratio of the distance from a point on the conic to its focus, divided by its distance to the directrix, is called:", opts: ["Apex angle", "Eccentricity", "Latus rectum", "Vertex"], ans: 1 },
+        { q: "In the concentric circle method, points on the ellipse are found at intersections of:", opts: ["Radial lines", "Lines parallel to the major and minor axes", "Arcs from foci", "Diagonal lines"], ans: 1 },
+        { q: "For development of a truncated cylinder, the true length of the cut surface is found from the:", opts: ["Plan view", "Front view and development layout", "Isometric view", "Perspective"], ans: 1 },
+        { q: "Which of these is NOT a conic section?", opts: ["Circle", "Ellipse", "Spiral", "Hyperbola"], ans: 2 },
+        { q: "The tangent and normal to a point on a parabola can be drawn if the __________ is known.", opts: ["Focus only", "Axis and vertex", "Ordinate and abscissa", "Directrix only"], ans: 2 },
+        { q: "In the oblong method, the major and minor axes are used to construct a:", opts: ["Square", "Rhombus", "Rectangle", "Circle"], ans: 2 },
+        { q: "The focus-directrix method is also known as the __________ method.", opts: ["Concentric", "Eccentricity", "Rectangle", "Tangent"], ans: 1 },
+        { q: "The development of a surface is the process of:", opts: ["Drawing its isometric view", "Unfolding the surface onto a flat plane", "Creating a 3D model", "Making an orthographic projection"], ans: 1 },
+
+        // Unit 7: Freehand and Guided Sketching (20 questions)
+        { q: "Freehand sketching is done:", opts: ["With drafting instruments only", "Without the aid of drafting equipment", "Using CAD software", "Only with a compass"], ans: 1 },
+        { q: "The main goal of a freehand sketch is to:", opts: ["Produce a perfect mechanical drawing", "Illustrate proportions and general concept", "Replace AutoCAD", "Create a final working drawing"], ans: 1 },
+        { q: "Multiview sketching uses which projection system?", opts: ["Perspective", "Orthographic projection", "Oblique", "Isometric"], ans: 1 },
+        { q: "True shape (TS) in a multiview sketch means:", opts: ["The view is distorted", "The view shows exact angles, circles, and lengths", "The view is foreshortened", "The view shows only edges"], ans: 1 },
+        { q: "Foreshortened shape (FS) occurs when a surface is:", opts: ["Parallel to the projection plane", "Perpendicular to the projection plane", "Sloped or at an angle to the projection plane", "Circular"], ans: 2 },
+        { q: "An edge view (EV) is when a surface appears as:", opts: ["A true shape", "A line", "A foreshortened area", "An ellipse"], ans: 1 },
+        { q: "Visualization in sketching is the ability to:", opts: ["Draw quickly", "Envision an object in three dimensions", "Use a computer", "Read a drawing"], ans: 1 },
+        { q: "Which of the following is NOT a common skill in drawing/sketching?", opts: ["Accuracy", "Speed", "Legibility", "Randomness"], ans: 3 },
+        { q: "In multiview sketching, the front view typically shows the:", opts: ["Width and depth", "Width and height", "Depth and height", "Only the top"], ans: 1 },
+        { q: "The top view in a multiview sketch shows:", opts: ["Width and height", "Height and depth", "Width and depth", "Only the front"], ans: 2 },
+        { q: "The standard side view in a multiview drawing is usually the:", opts: ["Left side", "Right side", "Bottom", "Back"], ans: 1 },
+        { q: "Projection lines in multiview sketching are typically:", opts: ["Thick and dark", "Light and thin", "Dashed", "Coloured"], ans: 1 },
+        { q: "When sketching multiviews, it is important to:", opts: ["Draw each view independently", "Align the views using projection lines", "Only draw one view", "Use only isometric projection"], ans: 1 },
+        { q: "Freehand sketching is used to:", opts: ["Create final production drawings", "Capture ideas quickly before a final drawing", "Replace written documentation", "Only design electronics"], ans: 1 },
+        { q: "Grid paper is useful for multiview sketching because it helps with:", opts: ["Colouring", "Layout, alignment, and proportion", "Erasing", "Rendering"], ans: 1 },
+        { q: "A surface parallel to the projection plane will appear as:", opts: ["Foreshortened", "True shape", "An edge", "A curve"], ans: 1 },
+        { q: "In multiview sketching, the minimum number of views required to fully describe an object is usually:", opts: ["One", "Two", "Three", "Six"], ans: 2 },
+        { q: "The term 'orthographic projection' in sketching refers to:", opts: ["Drawing 3D views", "Using perpendicular projectors to a plane", "Freehand drawing only", "Isometric drawing"], ans: 1 },
+        { q: "Which of the following is a rule for selection of views in a sketch?", opts: ["Show as many hidden lines as possible", "Use the views that show the shape most clearly", "Include all six views", "Avoid alignment"], ans: 1 },
+        { q: "Freedom from drafting equipment in freehand sketching does NOT mean:", opts: ["The drawing should be sloppy", "It is done quickly", "It can be done with pencil only", "It must be to scale"], ans: 0 },
+
+        // Unit 8: Visualization and Solid Modeling (25 questions)
+        { q: "3D solid modeling is the process of constructing:", opts: ["Only surface data", "Complete geometric forms with interior and exterior properties", "2D line drawings", "Hand sketches"], ans: 1 },
+        { q: "Which of the following is a primitive geometry?", opts: ["Freeform surface", "Sphere", "NURBS curve", "Text"], ans: 1 },
+        { q: "A Boolean operation in solid modeling can produce a:", opts: ["Union", "Difference", "Intersection", "All of the above"], ans: 3 },
+        { q: "Extrusion in 3D modeling is the process of:", opts: ["Rotating a 2D shape", "Pushing or pulling a 2D geometry along a third axis", "Subtracting volumes", "Creating a 2D drawing"], ans: 1 },
+        { q: "Which Boolean operation removes overlapping volume from one solid using another?", opts: ["Union", "Difference (subtraction)", "Intersection", "Sweep"], ans: 1 },
+        { q: "Sweeping in 3D modeling is:", opts: ["Extruding along a straight line only", "Running a 2D geometry along a path to create a 3D volume", "Creating a sphere", "A Boolean operation"], ans: 1 },
+        { q: "The advantage of a solid model over a surface model is that solid models:", opts: ["Are easier to render", "Contain internal properties (mass/volume)", "Are always lighter", "Can only be used for simple shapes"], ans: 1 },
+        { q: "Rendering in 3D modeling refers to:", opts: ["Building the wireframe", "Generating a realistic image with lighting and materials", "Adding dimensions", "Doing Boolean operations"], ans: 1 },
+        { q: "A texture map is used to:", opts: ["Scale the model", "Apply visual/surface quality to a model", "Create new geometry", "Measure dimensions"], ans: 1 },
+        { q: "Which of the following is NOT a typical Boolean operation?", opts: ["Union", "Subtract", "Intersect", "Rotate"], ans: 3 },
+        { q: "Direct input entry in 3D modeling means:", opts: ["Using a mouse only", "Applying dimensions through numeric input", "Drawing freehand", "Importing a photograph"], ans: 1 },
+        { q: "2D line drawings used for extrusion are usually imported at:", opts: ["Any random scale", "1:1 scale", "Half scale", "Double scale"], ans: 1 },
+        { q: "Primitive geometries include all EXCEPT:", opts: ["Sphere", "Cylinder", "Cone", "Text label"], ans: 3 },
+        { q: "The main purpose of solid modeling in manufacturing is to:", opts: ["Create artistic images", "Visualize, test, and fabricate designs accurately", "Replace all 2D drawings", "Only for entertainment"], ans: 1 },
+        { q: "Which software capability allows you to rotate a solid model to view from any angle?", opts: ["2D sketching", "3D orbit/rotate", "Sectioning", "Dimensioning"], ans: 1 },
+        { q: "Rapid prototyping directly benefits from:", opts: ["2D paper drawings", "3D solid model data", "Hand sketches", "Written descriptions"], ans: 1 },
+        { q: "In 3D modeling, 'difference' operation is also called:", opts: ["Union", "Subtraction", "Intersection", "Extrusion"], ans: 1 },
+        { q: "Which of the following can be used to generate a 3D model from a sketch?", opts: ["Scan the sketch and extrude/apply dimensions", "Only redraw in CAD", "Ignore the sketch", "Only use verbal description"], ans: 0 },
+        { q: "A digital platform in solid modeling refers to:", opts: ["The computer hardware only", "Electronic media, software, and interface for exchanging digital info", "The paper size", "The drawing board"], ans: 1 },
+        { q: "Which statement about rendering is FALSE?", opts: ["It calculates lighting and shadows", "It generates an image of the model", "It is always instantaneous with no time required", "More realism requires more rendering time"], ans: 2 },
+        { q: "The process of intersecting multiple 3D forms to create a new shape is called:", opts: ["Extrusion", "Sweeping", "Boolean operation", "Rendering"], ans: 2 },
+        { q: "Solid models are necessary for machining because:", opts: ["They look nice", "They contain internal properties and can be used for toolpath calculations", "They are lighter", "They replace the need for materials"], ans: 1 },
+        { q: "Which of the following is an example of primitive geometry?", opts: ["A machine part", "A cylinder", "A text label", "A freeform loft"], ans: 1 },
+        { q: "When a 2D sketch is scanned and imported into 3D software, the next step is often to:", opts: ["Immediately print", "Trace the geometry and extrude", "Delete the scan", "Add colour only"], ans: 1 },
+        { q: "The primary difference between 3D solid modeling and 2D drawing is:", opts: ["3D models can be rotated and contain volume data", "2D drawings are more accurate", "3D models are only for animation", "There is no difference"], ans: 0 }
     ];
 
     // ========== STATE MANAGEMENT ==========
     const STORAGE_KEY = 'get102_quiz_state';
-    const CHALLENGE_KEY = 'get102_challenge_state';
-    let state = {
-        total: 30,
-        indices: [],
-        current: 0,
-        answers: {},
-        skipped: [],
-        submitted: false,
-        mode: 'standard', // 'standard' or 'timed'
-        challengeTimer: 30, // seconds per question
-        challengePoints: 0,
-        challengeStreak: 0,
-        challengeBestStreak: 0,
-        challengeTimeLeft: 30,
-        challengeTimerInterval: null,
-        challengeUsedIndices: [],
-    };
+    let state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false };
 
-    function save() { if(state.mode==='standard') localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    function load() { const r = localStorage.getItem(STORAGE_KEY); if(r){try{state=JSON.parse(r);return true;}catch(e){}} return false; }
-    function clearSaved() { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(CHALLENGE_KEY); }
+    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function load() { const r = localStorage.getItem(STORAGE_KEY); if (r) { try { state = JSON.parse(r); return true; } catch (e) {} } return false; }
+    function clearAll() { state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false }; localStorage.removeItem(STORAGE_KEY); }
 
-    function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]; } return a; }
-    function getQ() { if(!state.indices.length) return null; const bi = state.indices[state.current]; return {...questionBank[bi], bankIndex:bi}; }
+    function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } return a; }
+    function getQ() { if (!state.indices.length) return null; const bi = state.indices[state.current]; return { ...questionBank[bi], bankIndex: bi }; }
 
-    function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); }
-    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2200); }
+    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
-    // Mode selection
-    let selectedMode = 'standard';
-    function selectMode(mode) {
-        selectedMode = mode;
-        document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('selected'));
-        document.querySelector(`.mode-card[data-mode="${mode}"]`).classList.add('selected');
-        document.getElementById('btnStart').textContent = mode==='timed' ? 'Start Timed Challenge' : 'Start Standard Quiz';
-    }
-
-    function startQuiz() {
-        const num = parseInt(document.getElementById('numQuestions').value);
-        if(isNaN(num) || num<10 || num>200) { toast('Enter a number between 10 and 200.'); return; }
-        state.total = num;
-        state.mode = selectedMode;
-        const all = shuffle(Array.from({length:questionBank.length},(_,i)=>i));
-        state.indices = all.slice(0, num);
-        state.current = 0;
-        state.answers = {};
-        state.skipped = [];
-        state.submitted = false;
-        state.challengePoints = 0;
-        state.challengeStreak = 0;
-        state.challengeBestStreak = 0;
-        state.challengeTimeLeft = 30;
-        if(state.mode === 'timed') {
-            state.challengeUsedIndices = [...state.indices];
-        }
-        save();
-        renderQuizScreen();
-        switchScreen('quizScreen');
-        renderQuestion();
-        updateProgress();
-        updateNav();
-        if(state.mode === 'timed') {
-            startTimer();
-            updateTimerDisplay();
-            updatePointsDisplay();
-        }
+    function startQuiz(n) {
+        const all = shuffle(Array.from({ length: questionBank.length }, (_, i) => i));
+        state = { total: n, indices: all.slice(0, n), current: 0, answers: {}, skipped: [], submitted: false };
+        save(); renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav();
     }
 
     function resumeQuiz() {
-        if(!load() || state.submitted) { toast('No saved quiz to resume.'); return; }
-        if(state.mode !== 'standard') { toast('Only standard mode can be resumed.'); return; }
-        renderQuizScreen();
-        switchScreen('quizScreen');
-        renderQuestion();
-        updateProgress();
-        updateNav();
+        if (!load() || !state.indices.length || state.submitted) { toast('No saved quiz. Start a new one.'); return; }
+        renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav(); toast('Quiz resumed.');
     }
 
-    function renderQuizScreen() {
-        document.getElementById('modeIndicator').innerHTML = state.mode==='timed' ? '<span style="color:#e67e22;">⏱️ Timed Challenge</span>' : '<span>📖 Standard Mode</span>';
-        document.getElementById('timerDisplay').style.display = state.mode==='timed' ? 'block' : 'none';
-        document.getElementById('pointsDisplay').style.display = state.mode==='timed' ? 'flex' : 'none';
-        document.getElementById('btnPrev').style.display = state.mode==='timed' ? 'none' : 'inline-flex';
-        document.getElementById('btnSkip').style.display = state.mode==='timed' ? 'none' : 'inline-flex';
-        document.getElementById('btnNext').style.display = state.mode==='timed' ? 'none' : 'inline-flex';
-        document.getElementById('btnSubmit').style.display = state.mode==='timed' ? 'none' : 'inline-flex';
+    function clearStorage() { clearAll(); save(); document.getElementById('resumeSection').style.display = 'none'; toast('Saved data cleared.'); }
+
+    function renderQuiz() {
+        const dots = document.getElementById('questionDots'); dots.innerHTML = '';
+        for (let i = 0; i < state.total; i++) { const d = document.createElement('span'); d.className = 'dot'; d.title = `Q${i + 1}`; d.onclick = () => { state.current = i; save(); renderQuestion(); updateProgress(); updateNav(); }; dots.appendChild(d); }
     }
 
     function renderQuestion() {
-        const q = getQ(); if(!q) return;
-        document.getElementById('questionNumber').textContent = `QUESTION ${state.current+1}`;
+        const q = getQ(); if (!q) return;
+        document.getElementById('questionNumber').textContent = `QUESTION ${state.current + 1}`;
         document.getElementById('questionText').textContent = q.q;
-        document.getElementById('progressLabel').textContent = `Question ${state.current+1} of ${state.total}`;
+        document.getElementById('progressLabel').textContent = `Question ${state.current + 1} of ${state.total}`;
         const opts = document.getElementById('optionsList'); opts.innerHTML = '';
-        const letters = ['A','B','C','D'];
-        const answered = state.answers[state.current];
-        q.opts.forEach((opt,i)=>{
+        const letters = ['A', 'B', 'C', 'D'];
+        q.opts.forEach((opt, i) => {
             const li = document.createElement('li'); li.className = 'option-item';
-            if(answered === i) li.classList.add('selected');
+            if (state.answers[state.current] === i) li.classList.add('selected');
             li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
-            li.onclick = ()=> selectOption(i);
+            li.onclick = () => selectOption(i);
             opts.appendChild(li);
         });
-        if(state.mode === 'timed') {
-            updateTimerDisplay();
-            updatePointsDisplay();
-        }
+        const dots = document.querySelectorAll('#questionDots .dot');
+        dots.forEach((d, i) => { d.classList.remove('current', 'answered', 'skipped'); if (i === state.current) d.classList.add('current'); if (state.answers[i] !== undefined) d.classList.add('answered'); if (state.skipped.includes(i) && state.answers[i] === undefined) d.classList.add('skipped'); });
+        document.getElementById('quizScreen').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function selectOption(i) {
-        if(state.submitted) return;
-        if(state.mode === 'timed') {
-            if(state.answers[state.current] !== undefined) return; // already answered
-            clearInterval(state.challengeTimerInterval);
-            const correct = getQ().ans === i;
-            state.answers[state.current] = i;
-            // Update points & streaks
-            if(correct) {
-                state.challengeStreak++;
-                if(state.challengeStreak > state.challengeBestStreak) state.challengeBestStreak = state.challengeStreak;
-                let multiplier = 1;
-                if(state.challengeStreak >= 3) multiplier = 2;
-                else if(state.challengeStreak === 2) multiplier = 1.5;
-                state.challengePoints += Math.round(10 * multiplier);
-            } else {
-                state.challengeStreak = 0;
-            }
-            // Show visual feedback
-            const opts = document.querySelectorAll('.option-item');
-            opts.forEach((el,idx)=> {
-                if(idx === i) el.classList.add(idx===getQ().ans ? 'correct' : 'wrong');
-                if(idx === getQ().ans) el.classList.add('correct');
-                el.onclick = null;
-            });
-            document.getElementById('btnSubmit').style.display = 'none';
-            // Auto advance after 1.5s
-            setTimeout(()=> { nextTimedQuestion(); }, 1000);
-        } else {
-            state.answers[state.current] = i;
-            state.skipped = state.skipped.filter(s=>s!==state.current);
-            save();
-            renderQuestion();
-            updateProgress();
-            updateNav();
-        }
+    function selectOption(i) { if (state.submitted) return; state.answers[state.current] = i; state.skipped = state.skipped.filter(s => s !== state.current); save(); renderQuestion(); updateProgress(); updateNav(); }
+
+    function skipQuestion() {
+        if (state.submitted) return;
+        if (state.answers[state.current] === undefined && !state.skipped.includes(state.current)) state.skipped.push(state.current);
+        if (state.current < state.total - 1) { state.current++; save(); renderQuestion(); updateProgress(); updateNav(); } else { updateProgress(); updateNav(); renderQuestion(); }
     }
 
-    function nextTimedQuestion() {
-        if(state.current < state.total - 1) {
-            state.current++;
-            state.challengeTimeLeft = 30;
-            renderQuestion();
-            updateProgress();
-            startTimer();
-        } else {
-            state.submitted = true;
-            clearInterval(state.challengeTimerInterval);
-            showResults();
-            switchScreen('resultsScreen');
-        }
-    }
+    function navigate(dir) { if (state.submitted) return; const nxt = state.current + dir; if (nxt >= 0 && nxt < state.total) { state.current = nxt; save(); renderQuestion(); updateProgress(); updateNav(); } }
 
-    function startTimer() {
-        if(state.challengeTimerInterval) clearInterval(state.challengeTimerInterval);
-        state.challengeTimerInterval = setInterval(()=>{
-            state.challengeTimeLeft--;
-            document.getElementById('timerDisplay').textContent = `⏳ ${state.challengeTimeLeft}s`;
-            if(state.challengeTimeLeft <= 0) {
-                clearInterval(state.challengeTimerInterval);
-                if(state.answers[state.current] === undefined) {
-                    state.answers[state.current] = -1; // mark as unanswered
-                    state.challengeStreak = 0;
-                }
-                // highlight correct answer
-                const opts = document.querySelectorAll('.option-item');
-                opts.forEach((el,idx)=> { el.onclick = null; if(idx === getQ().ans) el.classList.add('correct'); });
-                setTimeout(()=> nextTimedQuestion(), 1000);
-            }
-        }, 1000);
-    }
+    function updateProgress() { const a = Object.keys(state.answers).length; document.getElementById('answeredCount').textContent = `${a} answered`; document.getElementById('progressFill').style.width = Math.round((a / state.total) * 100) + '%'; }
 
-    function updateTimerDisplay() {
-        document.getElementById('timerDisplay').textContent = `⏳ ${state.challengeTimeLeft}s`;
-    }
-    function updatePointsDisplay() {
-        document.getElementById('pointsDisplay').innerHTML = `<span>Points: <strong>${state.challengePoints}</strong></span><span>Streak: <strong>${state.challengeStreak}</strong> 🔥</span>`;
-    }
-
-    function skipQuestion() { if(state.mode!=='standard'||state.submitted) return; if(state.answers[state.current]===undefined && !state.skipped.includes(state.current)) state.skipped.push(state.current); if(state.current < state.total-1){ state.current++; save(); renderQuestion(); updateProgress(); updateNav(); } }
-    function navigate(dir) { if(state.mode!=='standard'||state.submitted) return; const nxt = state.current+dir; if(nxt>=0 && nxt<state.total){ state.current=nxt; save(); renderQuestion(); updateProgress(); updateNav(); } }
-    function updateProgress() { const a = Object.keys(state.answers).length; document.getElementById('answeredCount').textContent = state.mode==='timed' ? '' : `${a} answered`; document.getElementById('progressFill').style.width = Math.round((a/state.total)*100)+'%'; }
-    function updateNav() { document.getElementById('btnPrev').disabled = state.current===0; document.getElementById('btnNext').disabled = state.current===state.total-1; }
+    function updateNav() { document.getElementById('btnPrev').disabled = state.current === 0; document.getElementById('btnNext').disabled = state.current === state.total - 1; }
 
     function submitQuiz() {
-        if(state.mode==='timed') return;
         const skipped = state.total - Object.keys(state.answers).length;
-        if(skipped>0 && !confirm(`You have ${skipped} unanswered question(s). Submit anyway?`)) return;
+        if (skipped > 0 && !confirm(`You have ${skipped} unanswered question(s). Submit anyway?`)) return;
         state.submitted = true; save(); showResults(); switchScreen('resultsScreen');
     }
 
     function showResults() {
         let correct = 0; const review = [];
-        state.indices.forEach((bi,i)=>{
-            const q = questionBank[bi]; const ua = state.answers[i];
-            const ok = ua===q.ans; if(ok) correct++;
-            review.push({ q:q.q, opts:q.opts, correctAns:q.ans, userAns:ua, isCorrect:ok, idx:i+1 });
-        });
-        const pct = Math.round((correct/state.total)*100);
-        document.getElementById('scorePercent').textContent = pct+'%';
+        state.indices.forEach((bi, i) => { const q = questionBank[bi]; const ua = state.answers[i]; const ok = ua === q.ans; if (ok) correct++; review.push({ q: q.q, opts: q.opts, correctAns: q.ans, userAns: ua, isCorrect: ok, idx: i + 1 }); });
+        const pct = Math.round((correct / state.total) * 100);
+        document.getElementById('scorePercent').textContent = pct + '%';
         document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
-        document.getElementById('resultMessage').textContent = pct>=90?'🏆 Excellent!' : pct>=70?'👏 Great job!' : pct>=50?'📖 Good effort!' : '💪 Keep studying!';
-        document.getElementById('pointsResult').style.display = state.mode==='timed' ? 'block' : 'none';
-        if(state.mode==='timed') {
-            document.getElementById('totalPoints').textContent = state.challengePoints;
-            document.getElementById('bestStreak').textContent = state.challengeBestStreak;
-        }
+        document.getElementById('resultMessage').textContent = pct >= 90 ? '🏆 Outstanding!' : pct >= 70 ? '👏 Great job!' : pct >= 50 ? '📖 Good effort — keep practising.' : '💪 Keep studying and try again.';
         window._review = review;
-        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+        document.getElementById('reviewSection').style.display = 'none'; document.getElementById('reviewSection').innerHTML = '';
     }
 
     function reviewAnswers() {
         const sec = document.getElementById('reviewSection');
-        if(sec.style.display==='block'){ sec.style.display='none'; sec.innerHTML=''; return; }
-        if(!window._review) return;
+        if (sec.style.display === 'block') { sec.style.display = 'none'; sec.innerHTML = ''; return; }
+        if (!window._review) return;
         sec.innerHTML = '<h3>📋 Detailed Review</h3>';
-        window._review.forEach(r=>{
-            const d = document.createElement('div'); d.className = 'review-item '+(r.isCorrect?'correct-r':'wrong');
-            const uTxt = r.userAns!==undefined && r.userAns!==-1 ? `${'ABCD'[r.userAns]}. ${r.opts[r.userAns]}` : 'Not answered';
+        window._review.forEach(r => {
+            const d = document.createElement('div'); d.className = 'review-item ' + (r.isCorrect ? 'correct-r' : 'wrong');
+            const uTxt = r.userAns !== undefined ? `${'ABCD'[r.userAns]}. ${r.opts[r.userAns]}` : 'Not answered';
             const cTxt = `${'ABCD'[r.correctAns]}. ${r.opts[r.correctAns]}`;
             d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div><div class="rev-ans">Your answer: <span class="your-ans">${uTxt}</span><br>Correct: <span class="correct-ans">${cTxt}</span></div>`;
             sec.appendChild(d);
         });
-        sec.style.display='block'; sec.scrollIntoView({behavior:'smooth'});
+        sec.style.display = 'block'; sec.scrollIntoView({ behavior: 'smooth' });
     }
 
-    function restartQuiz() {
-        clearInterval(state.challengeTimerInterval);
-        clearSaved();
-        window._review = null;
-        switchScreen('startScreen');
-        document.getElementById('resumeSection').style.display = load() && state.mode==='standard' ? 'inline-block' : 'none';
-        updateResumeBtn();
-    }
+    function restartQuiz() { clearAll(); save(); document.getElementById('reviewSection').style.display = 'none'; document.getElementById('reviewSection').innerHTML = ''; window._review = null; switchScreen('startScreen'); document.getElementById('resumeSection').style.display = 'none'; updateResumeBtn(); }
 
-    function updateResumeBtn() {
-        const btn = document.getElementById('btnResume');
-        if(load() && state.mode==='standard' && !state.submitted && state.indices.length) {
-            btn.style.display = 'inline-flex';
-        } else {
-            btn.style.display = 'none';
+    function updateResumeBtn() { const s = document.getElementById('resumeSection'); if (load() && state.indices.length && !state.submitted) { s.style.display = 'block'; } else { s.style.display = 'none'; clearAll(); save(); } }
+
+    document.addEventListener('keydown', (e) => {
+        if (state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
+        switch (e.key.toLowerCase()) {
+            case 'a': selectOption(0); break;
+            case 'b': selectOption(1); break;
+            case 'c': selectOption(2); break;
+            case 'd': selectOption(3); break;
+            case 'arrowleft': e.preventDefault(); navigate(-1); break;
+            case 'arrowright': e.preventDefault(); navigate(1); break;
+            case 's': if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); skipQuestion(); } break;
+            case 'enter': e.preventDefault(); if (Object.keys(state.answers).length === state.total) submitQuiz(); break;
         }
-    }
-
-    // Init
-    selectMode('standard');
-    updateResumeBtn();
-    document.getElementById('numQuestions').addEventListener('change', ()=> {
-        let val = parseInt(document.getElementById('numQuestions').value);
-        if(val>200) document.getElementById('numQuestions').value = 200;
-        if(val<10) document.getElementById('numQuestions').value = 10;
     });
-    if(load() && state.mode==='standard' && !state.submitted) {
-        document.getElementById('btnResume').style.display = 'inline-flex';
-    }
+
+    if (load() && state.indices.length && !state.submitted) { document.getElementById('resumeSection').style.display = 'block'; switchScreen('startScreen'); } else { clearAll(); save(); document.getElementById('resumeSection').style.display = 'none'; switchScreen('startScreen'); }
 </script>
 </body>
 </html>
