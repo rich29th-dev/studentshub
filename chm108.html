@@ -1,0 +1,557 @@
+This is a complete HTML quiz website for your CHM 108 Qualitative Analysis course, containing all **250 medium-to-hard questions** from Dr Akpa's material. It randomly selects 30 or 60 questions each session, supports progress saving and resume, and provides a detailed review after submission.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHM 108 · Qualitative Analysis Quiz</title>
+    <style>
+        :root {
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --primary: #00838f;
+            --primary-dark: #006064;
+            --accent: #1a1a2e;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --border: #dfe6e9;
+            --correct: #00b894;
+            --incorrect: #e17055;
+            --warning: #fdcb6e;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --radius: 16px;
+            --transition: 0.3s ease;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Segoe UI',Inter,system-ui,sans-serif;
+            background:var(--bg);min-height:100vh;
+            display:flex;align-items:center;justify-content:center;
+            padding:20px;line-height:1.6;color:var(--text);
+        }
+        .container{
+            width:100%;max-width:850px;background:var(--card-bg);
+            border-radius:var(--radius);box-shadow:var(--shadow);
+            padding:32px 28px;position:relative;overflow:hidden;transition:var(--transition);
+        }
+        .quiz-header{text-align:center;margin-bottom:20px;}
+        .quiz-header .chem-icon{font-size:2.2rem;display:block;margin-bottom:4px;}
+        .quiz-header h1{font-size:1.5rem;color:var(--primary-dark);font-weight:700;}
+        .subtitle{font-size:0.85rem;color:var(--text-light);margin-top:4px;}
+        .screen{display:none;animation:fadeIn 0.4s;}
+        .screen.active{display:block;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+        .start-options{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:24px 0 18px;}
+        .start-btn{
+            flex:1;min-width:150px;padding:22px 16px;border:2px solid var(--border);
+            border-radius:var(--radius);background:var(--card-bg);cursor:pointer;
+            text-align:center;font-weight:600;transition:var(--transition);color:var(--text);
+        }
+        .start-btn:hover{border-color:var(--primary);box-shadow:0 8px 20px rgba(0,131,143,0.12);transform:translateY(-2px);}
+        .start-btn .icon{font-size:2.2rem;display:block;margin-bottom:4px;}
+        .start-btn .badge{background:var(--primary);color:#fff;font-size:0.75rem;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px;}
+        .start-info{font-size:0.8rem;color:var(--text-light);text-align:center;}
+        .progress-wrap{margin-bottom:16px;}
+        .progress-stats{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-light);margin-bottom:4px;}
+        .progress-bar{height:8px;background:var(--border);border-radius:10px;overflow:hidden;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#26c6da);border-radius:10px;transition:width 0.4s;}
+        .question-dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+        .dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:var(--transition);}
+        .dot.answered{background:var(--primary);opacity:0.6;}
+        .dot.current{background:var(--primary);transform:scale(1.5);box-shadow:0 0 0 4px rgba(0,131,143,0.2);}
+        .dot.skipped{background:var(--warning);}
+        .question-card{background:#fafbfc;border-radius:12px;padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+        .question-number{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);font-weight:700;margin-bottom:6px;}
+        .question-text{font-size:1.05rem;font-weight:600;color:var(--text);}
+        .options-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+        .option-item{
+            padding:14px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;background:#fff;
+            display:flex;align-items:center;gap:10px;transition:var(--transition);font-size:0.95rem;user-select:none;
+        }
+        .option-item:hover{border-color:#b2bec3;background:#f8f9fa;}
+        .option-item.selected{border-color:var(--primary);background:#e0f2f1;font-weight:600;}
+        .option-item .radio-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;
+            display:flex;align-items:center;justify-content:center;transition:var(--transition);}
+        .option-item.selected .radio-dot{border-color:var(--primary);background:var(--primary);}
+        .option-item.selected .radio-dot::after{content:'';width:6px;height:6px;background:#fff;border-radius:50%;}
+        .option-item .opt-letter{font-weight:700;color:var(--primary);width:24px;}
+        .nav-buttons{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:18px;}
+        .btn{padding:11px 20px;border-radius:25px;border:none;cursor:pointer;font-weight:600;font-size:0.9rem;
+            transition:var(--transition);display:inline-flex;align-items:center;gap:6px;}
+        .btn-outline{background:#fff;border:2px solid var(--border);color:var(--text);}
+        .btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+        .btn-primary{background:var(--primary);color:#fff;border:2px solid var(--primary);}
+        .btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark);}
+        .btn-submit{background:var(--accent);color:#fff;border:2px solid var(--accent);font-size:1rem;padding:13px 32px;}
+        .btn-submit:hover{background:#2d2d4e;}
+        .btn:disabled{opacity:0.5;pointer-events:none;}
+        .results-card{text-align:center;}
+        .score-circle{width:130px;height:130px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;
+            justify-content:center;flex-direction:column;border:6px solid var(--primary);font-weight:700;}
+        .score-circle .big-score{font-size:2.8rem;color:var(--primary);}
+        .score-circle .total{font-size:0.9rem;color:var(--text-light);}
+        .result-message{font-size:1.1rem;margin-bottom:20px;font-weight:500;}
+        .review-section{text-align:left;margin-top:24px;max-height:400px;overflow-y:auto;padding-right:8px;}
+        .review-item{background:#fafbfc;border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid var(--border);font-size:0.9rem;}
+        .review-item.wrong{border-left-color:var(--incorrect);background:#fffaf9;}
+        .review-item.correct-r{border-left-color:var(--correct);background:#f9fffb;}
+        .review-item .rev-q{font-weight:600;margin-bottom:4px;}
+        .review-item .rev-ans{font-size:0.82rem;color:var(--text-light);}
+        .correct-ans{color:var(--correct);font-weight:600;}
+        .your-ans{color:var(--incorrect);font-weight:600;text-decoration:line-through;}
+        .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--primary-dark);color:#fff;
+            padding:10px 22px;border-radius:25px;font-size:0.85rem;font-weight:600;z-index:999;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+        .toast.show{opacity:1;}
+        @media(max-width:600px){
+            .container{padding:20px 14px;}
+            .start-btn{min-width:120px;padding:16px 12px;}
+            .question-text{font-size:0.95rem;}
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+    <div class="toast" id="toast"></div>
+
+    <!-- START SCREEN -->
+    <div class="screen active" id="startScreen">
+        <div class="quiz-header">
+            <span class="chem-icon">🔬</span>
+            <h1>CHM 108 · Qualitative Analysis Quiz</h1>
+            <p class="subtitle">250 Medium to Hard Questions — Dr Akpa's Course Material</p>
+        </div>
+        <p style="text-align:center;font-weight:500;">Select quiz length:</p>
+        <div class="start-options">
+            <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📝</span>30 Questions<span class="badge">~30 min</span></button>
+            <button class="start-btn" onclick="startQuiz(60)"><span class="icon">📚</span>60 Questions<span class="badge">~60 min</span></button>
+        </div>
+        <p class="start-info">🎲 Questions randomly selected · No timer · Resume supported</p>
+        <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
+            <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
+            <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#e17055;">🗑 Clear saved</button>
+        </div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div class="screen" id="quizScreen">
+        <div class="quiz-header"><span style="font-size:1.8rem;">🧪</span></div>
+        <div class="progress-wrap">
+            <div class="progress-stats"><span id="progressLabel">Question 1 of 30</span><span id="answeredCount">0 answered</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+            <div class="question-dots" id="questionDots"></div>
+        </div>
+        <div class="question-card">
+            <div class="question-number" id="questionNumber">QUESTION 1</div>
+            <div class="question-text" id="questionText"></div>
+        </div>
+        <ul class="options-list" id="optionsList"></ul>
+        <div class="nav-buttons">
+            <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Prev</button>
+            <div class="nav-center">
+                <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
+                <button class="btn btn-submit" id="btnSubmit" onclick="submitQuiz()">✅ Submit</button>
+            </div>
+            <button class="btn btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
+        </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div class="screen" id="resultsScreen">
+        <div class="results-card">
+            <div class="quiz-header"><h1>📊 Quiz Results</h1></div>
+            <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/30</span></div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
+            <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">🔍 Review</button>
+            <div class="review-section" id="reviewSection" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== 250 QUESTION BANK ==========
+    const questionBank = [
+        { q: "Why is a preliminary physical examination of an unknown salt important before proceeding with chemical tests?", opts: ["It determines the exact concentration.", "It can provide immediate clues about the presence of certain ions based on color or smell.", "It is the only way to confirm ammonium ions.", "It is a quantitative analysis technique."], ans: 1 },
+        { q: "A student observes that an unknown salt has a distinct yellow color. Which cation is LEAST likely to be present?", opts: ["Fe³⁺ (Ferric)", "PbI₂ as a compound", "Cu²⁺", "BaS"], ans: 2 },
+        { q: "The 'dry heating test' primarily provides information about:", opts: ["Exact pH of the salt solution.", "Water of crystallization or gases like CO₂, SO₂, or NH₃.", "Color of the cation in solution.", "Solubility product."], ans: 1 },
+        { q: "An 'amorphous' salt indicates that its structure:", opts: ["Has a well-defined crystal lattice.", "Has no long-range order.", "Is always white.", "Is highly soluble."], ans: 1 },
+        { q: "If a salt floats on water, what can you infer?", opts: ["It is highly soluble.", "It is less dense than water.", "It is an organic compound.", "It contains heavy metals."], ans: 1 },
+        { q: "A 'rotten egg' smell suggests which anion?", opts: ["Cl⁻", "NO₃⁻", "S²⁻", "I⁻"], ans: 2 },
+        { q: "Why is the ammonium test done before other anion tests?", opts: ["Ammonium salts are colorless.", "Evolved NH₃ can interfere with other tests.", "It is the only test with NaOH.", "Ammonium is a cation, so it comes first."], ans: 1 },
+        { q: "In the test for NH₄⁺, what observation confirms its presence?", opts: ["White precipitate.", "Colorless, pungent gas turns damp red litmus blue.", "Brown gas evolved.", "Solution turns yellow."], ans: 1 },
+        { q: "Which is NOT a typical observation during dry heating?", opts: ["Steam/condensation.", "Sublimation of a colored solid.", "Formation of a metallic mirror.", "Precise mass change measurement."], ans: 3 },
+        { q: "A black-colored salt could contain:", opts: ["Hg₂I₂", "FeCl₃", "MnO₂", "CdS (yellow)"], ans: 2 },
+        { q: "The density test involving putting salt in a test tube is used to:", opts: ["Measure exact density.", "Differentiate between 'light' and 'dense' salts.", "Test water solubility.", "Check for organic matter."], ans: 1 },
+        { q: "If a salt is hydrated, what might you see on dry heating?", opts: ["Brown gas.", "Water vapor (condensation).", "Violent explosion.", "No change."], ans: 1 },
+        { q: "Two white powders, NaCl and Na₂CO₃, can be quickly differentiated by:", opts: ["Color observation.", "Smell.", "Adding dilute acid and observing effervescence.", "Microscopic crystal shape."], ans: 2 },
+        { q: "Observation of 'smoke' or 'clear water' during dry heating could indicate:", opts: ["Carbon or water of crystallization.", "Noble gases.", "Sulfide.", "Nitrate."], ans: 0 },
+        { q: "Which cation is NOT typically associated with a colored salt?", opts: ["Copper(II)", "Sodium", "Ferric", "Nickel(II)"], ans: 1 },
+        { q: "The reaction for the ammonia test is best represented by:", opts: ["NH₄⁺ + OH⁻ → NH₃·H₂O → NH₃(g) + H₂O", "NH₄⁺ + H⁺ → NH₃(g) + H₂", "NH₄⁺ + Cl⁻ → NH₄Cl(g)", "NH₄⁺ + heat → N₂(g) + H₂(g)"], ans: 0 },
+        { q: "A salt sample is dark green. Which two cations are known for green compounds?", opts: ["Cu²⁺ and Fe³⁺", "Ni²⁺ and Cr³⁺", "Co²⁺ and Mn²⁺", "Pb²⁺ and Hg₂²⁺"], ans: 1 },
+        { q: "A limitation of preliminary physical examination is:", opts: ["Requires expensive equipment.", "Can give false positives (similar colors).", "Is destructive.", "Only works for organic compounds."], ans: 1 },
+        { q: "A white sublimate on the cooler part of the test tube during dry heating is characteristic of:", opts: ["Carbonate", "Nitrate", "Ammonium salt (e.g., NH₄Cl)", "Sulfate"], ans: 2 },
+        { q: "Why use a dry test tube for the dry heating test?", opts: ["Prevent violent reaction with water.", "Avoid observing water vapor from the tube itself.", "Make the tube heavier.", "Increase solubility."], ans: 1 },
+        { q: "A salt produces a colorless gas that relights a glowing splint. What can be concluded?", opts: ["CO₂ is evolved.", "O₂ is evolved, possibly from nitrate/chlorate.", "NH₃ is evolved.", "H₂S is evolved."], ans: 1 },
+        { q: "To observe the 'solution' color, you must first:", opts: ["Heat to melting point.", "Dissolve in water or dilute acid.", "React with concentrated H₂SO₄.", "Filter the salt."], ans: 1 },
+        { q: "A blue solution is obtained. Which ion is definitely NOT present?", opts: ["Cu²⁺", "Ni²⁺ (some complexes)", "Fe²⁺", "Na⁺"], ans: 2 },
+        { q: "The process of a solid turning directly into a gas is called:", opts: ["Evaporation", "Condensation", "Sublimation", "Fusion"], ans: 2 },
+        { q: "A student notes a bleach-like smell. This is most likely due to:", opts: ["Chloride", "Hypochlorite", "Sulfate", "Carbonate"], ans: 1 },
+        { q: "Hg₂I₂ and CrCl₃ are listed together. What color are they likely?", opts: ["Green", "Yellow", "Black", "Red"], ans: 1 },
+        { q: "If an unknown salt is completely white and crystalline, you can conclude:", opts: ["It is pure NaCl.", "It contains no transition metals with characteristic colors.", "It is organic.", "It is highly reactive."], ans: 1 },
+        { q: "Why is smell tested cautiously?", opts: ["Smell provides no useful info.", "Some vapors are toxic/corrosive.", "It is unreliable.", "It requires a fume hood for all."], ans: 1 },
+        { q: "A salt dissolved in dilute acid produces a colorless, odorless gas that turns limewater milky. The anion is:", opts: ["CO₃²⁻", "SO₄²⁻", "Cl⁻", "NO₃⁻"], ans: 0 },
+        { q: "The physical examination in qualitative analysis is best described as:", opts: ["Quantitative measurement.", "Non-destructive observations guiding further analysis.", "Final identification step.", "Replacement for confirmatory tests."], ans: 1 },
+        { q: "How to physically differentiate PbI₂ (yellow) and AgBr (pale yellow/cream) without chemicals?", opts: ["By smell.", "By checking density (PbI₂ is very dense).", "By water solubility.", "Impossible as both are yellow powders."], ans: 1 },
+        { q: "A gas with a suffocating smell of burning sulfur during dry heating suggests:", opts: ["Chloride", "Sulfite or bisulfite", "Nitrate", "Acetate"], ans: 1 },
+        { q: "Difference between crystalline and amorphous solids under a magnifying glass:", opts: ["Crystalline have defined shapes; amorphous are irregular.", "Crystalline are always colored.", "Amorphous are always soft.", "Crystalline melt lower."], ans: 0 },
+        { q: "The density test (sink/float) is most useful for:", opts: ["Soluble salts.", "Insoluble salts with very high or low specific gravity.", "Organic salts.", "All salts equally."], ans: 1 },
+        { q: "A hygroscopic salt during physical examination would appear:", opts: ["Wet or deliquesced surface.", "Invisible.", "Emit a gas.", "A different color."], ans: 0 },
+        { q: "The purpose of a cobalt glass is to:", opts: ["See precipitate color clearly.", "Filter out yellow light from sodium flame to see other metals.", "Measure liquid density.", "Heat sample higher."], ans: 1 },
+        { q: "Which is NOT a typical preliminary test category?", opts: ["Physical examination (color, smell)", "Dry heating test", "Flame test (implied)", "Electrical conductivity measurement"], ans: 3 },
+        { q: "A 'characteristic smell of bottleneck' is a clue for which anion?", opts: ["Chloride", "Nitrate", "Sulfide", "Acetate"], ans: 2 },
+        { q: "If a salt melts then decomposes during dry heating, this indicates:", opts: ["Pure and stable.", "Low melting point and possibly organic or NH₄NO₃.", "Incorrect test.", "It is a metal."], ans: 1 },
+        { q: "Which physical property best differentiates NaCl from sugar without tasting?", opts: ["Color", "Crystal shape (cubic vs. monoclinic)", "Odor", "Density"], ans: 1 },
+        { q: "No change during dry heating implies:", opts: ["Pure SiO₂ or very stable anhydrous salt.", "Not heated enough.", "Definitely NaCl.", "Test failed."], ans: 0 },
+        { q: "Ferric chloride and nitrate often have what common color (hydrated)?", opts: ["Yellow", "Blue", "Green", "White"], ans: 0 },
+        { q: "Why is relying solely on color to identify a cation unwise?", opts: ["Colors can be masked.", "Different compounds of same cation can have different colors.", "Impurities change apparent color.", "All of the above."], ans: 3 },
+        { q: "When testing for NH₄⁺ with NaOH, what precaution is needed?", opts: ["Cool tube immediately.", "Do not point tube mouth at anyone (pungent NH₃).", "Add excess concentrated H₂SO₄.", "Perform in sealed container."], ans: 1 },
+        { q: "What does 'water of crystallization' refer to?", opts: ["Water trapped in crystal lattice of hydrated salt.", "Water used to dissolve salt.", "Water from chemical reaction.", "Water in beaker for heating."], ans: 0 },
+        { q: "A black residue after dry heating is likely:", opts: ["Carbon from organic or carbonate decomposition.", "Pure metal.", "Chloride salt.", "Water vapor."], ans: 0 },
+        { q: "The brown gas evolved from nitrates with conc. H₂SO₄ is:", opts: ["NO₂, turns damp blue litmus red", "NH₃, turns blue", "SO₂, turns red", "Cl₂, bleaches it"], ans: 0 },
+        { q: "Main drawback of preliminary tests compared to quantitative analysis:", opts: ["Less reliable, presence/absence only, not amounts.", "Take very long.", "Require expensive instruments.", "Always destructive."], ans: 0 },
+        { q: "A pale pink solid salt is characteristic of which hydrated cation?", opts: ["Co²⁺", "Mn²⁺", "Cu²⁺", "Cr³⁺"], ans: 1 },
+        { q: "A 'brick red' compound listed might be:", opts: ["HgS", "PbI₂", "CuSO₄", "FeCl₃"], ans: 0 },
+        { q: "In the silver nitrate test for chloride, the precipitate formed is:", opts: ["AgCl₂", "Ag₂Cl", "AgCl", "AgClO₃"], ans: 2 },
+        { q: "A white precipitate with AgNO₃ insoluble in water. How to confirm it is AgCl and not Ag₂SO₄?", opts: ["Ag₂SO₄ dissolves completely in NH₃, AgCl partially.", "Add conc. H₂SO₄.", "Precipitate turns grey in sunlight.", "Both A and C are valid."], ans: 3 },
+        { q: "Why does AgCl precipitate turn grey in sunlight?", opts: ["Absorbs water vapor.", "Decomposes to form metallic silver (Ag).", "Reacts with CO₂.", "Oxidizes to AgClO₃."], ans: 1 },
+        { q: "The complex ion formed when AgCl dissolves in excess aqueous NH₃ is:", opts: ["[Ag(NH₃)₄]⁺", "[Ag(NH₃)₂]⁺", "[Ag(NH₃)₂]²⁺", "[Ag(NH₃)₄]²⁺"], ans: 1 },
+        { q: "A pale yellow precipitate with AgNO₃ indicates which halide?", opts: ["Cl⁻", "Br⁻", "I⁻", "F⁻"], ans: 1 },
+        { q: "AgBr solubility in excess NH₃ compared to AgCl:", opts: ["More soluble.", "Similarly soluble.", "Less soluble, only slightly or not at all.", "Both equally insoluble."], ans: 2 },
+        { q: "The text states AgBr precipitate 'turns grey slowly when exposed to sunlight'. This reaction is:", opts: ["Faster than AgCl.", "Slower than AgCl.", "Not a decomposition.", "Irreversible."], ans: 1 },
+        { q: "When conc. H₂SO₄ is added to a bromide salt, the reddish-brown gas evolved is:", opts: ["SO₂", "Br₂", "HBr", "O₂"], ans: 1 },
+        { q: "The role of conc. H₂SO₄ in the test for bromides is:", opts: ["Reducing agent.", "Oxidizing agent, converting HBr to Br₂.", "Dehydrating agent only.", "Base."], ans: 1 },
+        { q: "For iodides, conc. H₂SO₄ produces violet vapors. The confirmatory test for these vapors is:", opts: ["Turn limewater milky.", "Turn starch paper blue-black.", "Rotten egg smell.", "Relight a glowing splint."], ans: 1 },
+        { q: "In the iodide reaction: KI + H₂SO₄ → KHSO₄ + HI, then 2HI + H₂SO₄ → SO₂ + I₂ + 2H₂O. The role of H₂SO₄ in the second step is:", opts: ["Reducing agent", "Acid", "Oxidizing agent", "Catalyst"], ans: 2 },
+        { q: "Silver iodide (AgI) precipitate is:", opts: ["White", "Pale yellow", "Bright yellow", "Brick red"], ans: 2 },
+        { q: "A yellow precipitate with AgNO₃ insoluble in dilute NH₃ confirms:", opts: ["Cl⁻", "Br⁻", "I⁻", "CO₃²⁻"], ans: 2 },
+        { q: "In the nitrate test, why is copper turning or paper added?", opts: ["To catalyze the reaction.", "Carbon reduces HNO₃ to NO₂ (brown gas) for visibility.", "To absorb brown gas.", "To prevent SO₂ evolution."], ans: 1 },
+        { q: "The brown gas evolved in the nitrate test is:", opts: ["Nitrogen dioxide (NO₂)", "Nitrous oxide (N₂O)", "Nitric oxide (NO)", "Ammonia (NH₃)"], ans: 0 },
+        { q: "Which anion does NOT produce a precipitate with AgNO₃ under normal conditions?", opts: ["Cl⁻", "Br⁻", "I⁻", "NO₃⁻"], ans: 3 },
+        { q: "A gas that turns damp blue litmus paper red is:", opts: ["Basic", "Acidic", "Neutral", "Oxidizing"], ans: 1 },
+        { q: "PbCl₂(s) + 2KI(aq) → PbI₂(s) + 2KCl(aq). Color change observed:", opts: ["White precipitate to yellow precipitate.", "Yellow to white.", "Colorless to blue.", "No change."], ans: 0 },
+        { q: "The reaction in Q68 is a confirmatory test for:", opts: ["Pb²⁺ or I⁻", "Cl⁻", "KCl preparation", "Lead salt solubility demonstration"], ans: 0 },
+        { q: "A valid confirmatory test for bromide without silver nitrate:", opts: ["Add BaCl₂.", "Liberation of reddish-brown Br₂ vapor with conc. H₂SO₄ and MnO₂.", "Add NaOH and heat.", "Add dilute HCl."], ans: 1 },
+        { q: "How to test for Cl⁻ in presence of I⁻ without interference?", opts: ["Add AgNO₃ directly.", "Acidify with HNO₃, add AgNO₃, then excess NH₃. AgCl dissolves, AgI remains.", "Add conc. H₂SO₄.", "Impossible."], ans: 1 },
+        { q: "Why acidify with dilute HNO₃ before adding AgNO₃?", opts: ["Prevent precipitation of carbonates, phosphates, or oxides.", "Increase AgCl solubility.", "Speed up reaction.", "Neutralize solution."], ans: 0 },
+        { q: "A gas colorless, suffocating, turns K₂Cr₂O₇ paper green. Anion present:", opts: ["Cl⁻", "SO₃²⁻ or S₂O₃²⁻", "NO₃⁻", "CO₃²⁻"], ans: 1 },
+        { q: "A pale yellow precipitate with AgNO₃ partially soluble in excess NH₃ indicates:", opts: ["Cl⁻", "Br⁻", "I⁻", "A mixture of Cl⁻ and Br⁻"], ans: 3 },
+        { q: "The complex ion when AgBr dissolves slightly in excess NH₃ is:", opts: ["[Ag(NH₃)₂]Br", "[Ag(NH₃)₂]⁺", "[Ag(NH₃)₂]²⁺", "[Ag(NH₃)₄]²⁺"], ans: 1 },
+        { q: "Why use damp litmus paper to test evolved gases?", opts: ["Dry paper doesn't change color; gas needs to dissolve in water to form acid/base.", "Damp paper is easier to handle.", "Damp paper changes color faster for all gases.", "Lab safety rule."], ans: 0 },
+        { q: "Which is NOT a product of iodide + conc. H₂SO₄?", opts: ["I₂", "SO₂", "H₂O", "H₂S"], ans: 3 },
+        { q: "Correct order of silver halide precipitate colors:", opts: ["White (AgCl) > Cream (AgBr) > Yellow (AgI)", "Yellow > Cream > White", "White > Yellow > Cream", "Cream > White > Yellow"], ans: 0 },
+        { q: "Which other anion besides nitrate can produce a brown gas with conc. H₂SO₄?", opts: ["Chloride (Cl₂ greenish-yellow)", "Bromide (Br₂ reddish-brown)", "Iodide (I₂ violet)", "Sulfide (H₂S)"], ans: 1 },
+        { q: "Distinguish bromide from iodide using only conc. H₂SO₄:", opts: ["Bromide reddish-brown, iodide violet. Both A and B.", "Iodide gas turns starch blue, bromide does not.", "Both A and B.", "Cannot distinguish."], ans: 2 },
+        { q: "A salt with conc. H₂SO₄ gives no gas cold, but on heating colorless pungent gas that turns limewater milky. Anion:", opts: ["CO₃²⁻", "SO₄²⁻", "SO₃²⁻", "Cl⁻"], ans: 2 },
+        { q: "Which anion produces a gas that bleaches damp litmus paper (turns white)?", opts: ["CO₃²⁻", "Cl⁻ (with oxidizer like MnO₂)", "NO₃⁻", "SO₄²⁻"], ans: 1 },
+        { q: "The complex [Ag(NH₃)₂]⁺ is named:", opts: ["Silver ammine complex", "Diammine silver(I) ion", "Silver diammine cation", "All of the above"], ans: 3 },
+        { q: "Bright yellow precipitate with AgNO₃, insoluble in dilute NH₃, confirms:", opts: ["Br⁻", "I⁻", "PO₄³⁻", "CO₃²⁻"], ans: 1 },
+        { q: "Key difference in reaction of conc. H₂SO₄ with chloride vs. iodide:", opts: ["Only iodide produces colored gas (I₂), chloride gives colorless HCl.", "Only chloride produces acidic gas.", "Only iodide requires heating.", "Only iodide produces water."], ans: 0 },
+        { q: "In the nitrate test with filter paper, the carbon's purpose is:", opts: ["Catalyst", "Reduce nitrate to nitrogen dioxide", "Oxidize nitrate", "Absorb brown gas"], ans: 1 },
+        { q: "Adding BaCl₂ and dilute HCl to a solution gives a white precipitate. Anion indicated:", opts: ["Cl⁻", "SO₄²⁻", "CO₃²⁻", "NO₃⁻"], ans: 1 },
+        { q: "Why add dilute HCl along with BaCl₂ for SO₄²⁻ test?", opts: ["To dissolve carbonates or sulfites that also precipitate with Ba²⁺.", "Provide Cl⁻ ions.", "Increase pH.", "Catalyze precipitation."], ans: 0 },
+        { q: "Characteristic observation for sulfide test:", opts: ["Evolution of H₂S (colorless, pungent) turns lead acetate paper black.", "Reddish-brown gas.", "White precipitate.", "Blue solution."], ans: 0 },
+        { q: "Acetate salt with conc. H₂SO₄ produces gas with vinegar-like smell. This is:", opts: ["CO₂", "SO₂", "CH₃COOH (acetic acid vapor)", "H₂S"], ans: 2 },
+        { q: "Order of stability of silver halides towards light:", opts: ["AgCl > AgBr > AgI", "AgI > AgBr > AgCl", "AgCl > AgI > AgBr", "All equal"], ans: 1 },
+        { q: "A yellow color in solution or precipitate when testing for Cl⁻ could be due to:", opts: ["Pb²⁺", "Fe³⁺", "Both A and B", "Na⁺"], ans: 2 },
+        { q: "A salt with dilute H₂SO₄ produces a gas that smells like rotten eggs (H₂S). Anion present:", opts: ["S²⁻", "SO₄²⁻", "SO₃²⁻", "S₂O₃²⁻"], ans: 0 },
+        { q: "Confirmatory test for I₂ vapor evolved from iodide:", opts: ["Violet color.", "Reaction with starch to form blue-black complex.", "Choking odor.", "Turns limewater milky."], ans: 1 },
+        { q: "A cream precipitate instead of pale yellow for AgBr could be due to:", opts: ["Small amount of AgCl impurity.", "Particle size.", "Different chemical compound.", "Mixture of Br⁻ and SO₄²⁻."], ans: 0 },
+        { q: "The text section 'NaOH + HBr' and 'NaOH + H2SO4' is likely part of:", opts: ["Neutralization reactions.", "Testing for acids.", "Incomplete discussion on distinguishing gases.", "Production of SO₂."], ans: 2 },
+        { q: "Which anion does NOT react with conc. H₂SO₄ to produce a gas turning blue litmus red?", opts: ["Cl⁻", "NO₃⁻", "SO₄²⁻", "CO₃²⁻"], ans: 2 },
+        { q: "A salt solution gives a white precipitate with AgNO₃ insoluble in dilute HNO₃ but soluble in excess NH₃. Anion:", opts: ["SO₄²⁻", "Cl⁻", "Br⁻", "I⁻"], ans: 1 },
+        { q: "Why is the test for I⁻ with AgNO₃ a good confirmatory test?", opts: ["Bright yellow color is very distinctive.", "Only halide forming yellow precipitate.", "Precipitate is heavy.", "Dissolves in concentrated acids."], ans: 0 },
+        { q: "Key safety precaution when testing for nitrates with conc. H₂SO₄:", opts: ["Perform in fume hood due to toxic NO₂.", "Use large test tube.", "Add acid slowly.", "Heat strongly."], ans: 0 },
+        { q: "The reaction HBr + conc. H₂SO₄ → SO₂ + Br₂(g) + H₂O is a:", opts: ["Redox reaction where H₂SO₄ is reduced and HBr oxidized.", "Acid-base reaction.", "Precipitation reaction.", "Hydrolysis reaction."], ans: 0 },
+        { q: "A preliminary test for sulfate ion:", opts: ["Solubility in water.", "Reaction with BaCl₂ in acidic medium.", "Silver nitrate test.", "Smell of salt."], ans: 1 },
+        { q: "How to differentiate CO₃²⁻ and SO₃²⁻?", opts: ["Both produce gas with acid. SO₂ has choking smell and decolorizes KMnO₄; CO₂ does not.", "Add BaCl₂, both precipitate, sulfite precipitate dissolves in HCl.", "No way to differentiate.", "Use flame test."], ans: 0 },
+        { q: "The primary test for NH₄⁺ involves heating with NaOH. This reaction type is:", opts: ["Displacement.", "Decomposition.", "Neutralization.", "Double displacement."], ans: 3 },
+        { q: "In 4HNO₃ + C → 4HNO₂ + CO₂ + 2H₂O, the oxidation state of nitrogen in HNO₂ is:", opts: ["+5", "+3", "+2", "+1"], ans: 1 },
+        { q: "A white precipitate with AgNO₃ completely insoluble in dilute HNO₃ but completely soluble in NH₃. Anion:", opts: ["Cl⁻", "Br⁻", "I⁻", "PO₄³⁻ (Ag₃PO₄ yellow)"], ans: 0 },
+        { q: "A student gets a pale yellow precipitate with AgNO₃, adds excess NH₃, and the precipitate partially dissolves. Conclusion:", opts: ["Only Br⁻ present.", "Mixture of Cl⁻ and Br⁻ present.", "Only Cl⁻ present.", "I⁻ definitely present."], ans: 1 },
+        { q: "Purpose of heating with NaOH in NH₄⁺ test:", opts: ["Decompose the salt.", "Increase NH₃ solubility.", "Drive off NH₃ gas by increasing vapor pressure.", "Dry the salt."], ans: 2 },
+        { q: "Which anion would give a positive test with both AgNO₃ and BaCl₂?", opts: ["Cl⁻", "SO₄²⁻", "CO₃²⁻", "NO₃⁻"], ans: 2 },
+        { q: "Evolution of violet vapor turning starch paper blue-black confirms:", opts: ["Bromide", "Iodide", "Chloride", "Nitrate"], ans: 1 },
+        { q: "Main oxidizing agent in conc. H₂SO₄ reaction with I⁻:", opts: ["H⁺", "SO₄²⁻", "H₂SO₄ (S in +6 state)", "H₂O"], ans: 2 },
+        { q: "A salt gives a distinct yellow flame (cobalt glass test mentioned). This suggests:", opts: ["Copper", "Barium", "Sodium (Na)", "Potassium (lilac through cobalt)"], ans: 2 },
+        { q: "How to test for sulfate if solution is colored?", opts: ["Use BaCl₂ test; white precipitate visible against most colors if enough formed.", "Dilute until colorless.", "Add charcoal decolorizer.", "Impossible."], ans: 0 },
+        { q: "Which is NOT a characteristic of HCl gas evolved from chloride with conc. H₂SO₄?", opts: ["Colorless.", "Gives dense white fumes with NH₃.", "Turns blue litmus red.", "Strong reducing agent."], ans: 3 },
+        { q: "Role of MnO₂ in the chloride test:", opts: ["Reducing agent.", "Oxidizing agent, helping produce Cl₂ from HCl.", "Catalyst.", "Absorbs gas."], ans: 1 },
+        { q: "A solution is acidic and produces a colorless gas with effervescence that turns limewater milky but does not affect KMnO₄. Anion:", opts: ["CO₃²⁻", "HCO₃⁻", "SO₃²⁻", "S²⁻"], ans: 0 },
+        { q: "Why use a clean test tube for each test?", opts: ["Save money.", "Avoid cross-contamination and false positives.", "Speed up tests.", "Not important."], ans: 1 },
+        { q: "Adding AgNO₃ to a solution yields no precipitate. Conclusion about halides:", opts: ["Cl⁻, Br⁻, I⁻ are all absent.", "Solution is saturated.", "Organic compound.", "Test done incorrectly."], ans: 0 },
+        { q: "Molecular geometry of NH₃:", opts: ["Linear", "Trigonal planar", "Trigonal pyramidal", "Tetrahedral"], ans: 2 },
+        { q: "Formula of complex when AgCl is dissolved in excess NH₃:", opts: ["[Ag(NH₃)₂]Cl", "[Ag(NH₃)₄]Cl", "Ag(NH₃)₂Cl", "AgCl(NH₃)₂"], ans: 0 },
+        { q: "Which gas is lighter than air and turns red litmus blue?", opts: ["CO₂", "SO₂", "NH₃", "NO₂"], ans: 2 },
+        { q: "A salt with dilute H₂SO₄ gives a gas that turns limewater milky and also decolorizes KMnO₄. Anion:", opts: ["CO₃²⁻", "SO₃²⁻", "SO₄²⁻", "Cl⁻"], ans: 1 },
+        { q: "Color of lead(II) iodide (PbI₂):", opts: ["White", "Black", "Bright yellow", "Red"], ans: 2 },
+        { q: "White precipitate with AgNO₃ but solution turns deep blue. Which cation likely causing color?", opts: ["Cu²⁺", "Fe²⁺", "Ni²⁺", "Co²⁺"], ans: 0 },
+        { q: "True statement about reaction of halides with AgNO₃:", opts: ["Precipitate solubility in NH₃ increases from Cl⁻ to I⁻.", "Precipitate color darkens from Cl⁻ to I⁻.", "Precipitate stability towards light increases from Cl⁻ to I⁻.", "Both B and C are correct."], ans: 3 },
+        { q: "Characteristic color of hydrated copper(II) salt solution:", opts: ["Green", "Blue", "Yellow", "Colorless"], ans: 1 },
+        { q: "Brilliant crimson red flame test indicates:", opts: ["Na", "K", "Sr", "Cu"], ans: 2 },
+        { q: "Purpose of viewing flame through cobalt glass:", opts: ["Make flame brighter.", "Filter out yellow of sodium to see violet of potassium.", "See flame clearly in daylight.", "Cool the flame."], ans: 1 },
+        { q: "Which cation produces a pale green solution in water?", opts: ["Cu²⁺", "Fe²⁺", "Fe³⁺", "Mn²⁺"], ans: 1 },
+        { q: "Ferric-3 and Ferrous-2 differ fundamentally in:", opts: ["One is anion, one cation.", "Oxidation state (+3 vs +2).", "Same color.", "One soluble, other not."], ans: 1 },
+        { q: "Which compound is listed as 'Red'?", opts: ["Hg₂I₂", "CdS", "HgI₂", "FeS"], ans: 2 },
+        { q: "A pink solution is characteristic of which hydrated cation?", opts: ["Co²⁺", "Mn²⁺", "Ni²⁺", "Fe²⁺"], ans: 1 },
+        { q: "'Hydrated' in the context of colored compounds means:", opts: ["The compound is wet.", "Contains water molecules within crystal structure.", "Dissolved in water.", "It is a gas."], ans: 1 },
+        { q: "Typical color of Ni²⁺ solution:", opts: ["Blue", "Green", "Pink", "Colorless"], ans: 1 },
+        { q: "Which is NOT a common color for a transition metal ion in solution?", opts: ["Blue", "Green", "Red", "White (colorless)"], ans: 3 },
+        { q: "PbS, CuS, HgS, FeS, NiS, Hg₂S, MnO₂, C are grouped together likely because:", opts: ["All yellow.", "All soluble in water.", "All black or very dark.", "All sulfates."], ans: 2 },
+        { q: "Persistent yellow flame test indicates:", opts: ["K⁺", "Na⁺", "Ca²⁺", "Ba²⁺"], ans: 1 },
+        { q: "Why is flame test considered a preliminary test?", opts: ["Highly specific and confirmatory.", "Quick, easy, gives immediate clues based on color.", "Quantitative.", "Works for all metals."], ans: 1 },
+        { q: "Potassium salt imparts what color to flame without cobalt glass?", opts: ["Yellow", "Crimson", "Violet (Lilac)", "Brick red"], ans: 2 },
+        { q: "A blue solution suspected to be Cu²⁺ can be confirmed by:", opts: ["Add NaOH, blue Cu(OH)₂ precipitates.", "Add AgNO₃.", "Flame test (green-blue flame).", "Both A and C."], ans: 3 },
+        { q: "Which is a black-colored solid according to the text's list?", opts: ["PbI₂", "FeCl₃", "NiS", "CdS"], ans: 2 },
+        { q: "A colorless solution implies:", opts: ["Only group 1 and 2 cations present.", "No deeply colored transition metals like Cu²⁺, Fe²⁺, Fe³⁺, Ni²⁺, Co²⁺ in significant concentration.", "Pure water.", "Organic compound."], ans: 1 },
+        { q: "Characteristic flame color for Calcium:", opts: ["Yellow", "Brick red", "Lilac", "Blue-green"], ans: 1 },
+        { q: "Solid color can differ from solution color because:", opts: ["Solid may be anhydrous, solution hydrated.", "Particle size affects light scattering.", "Solid is impure.", "Solution always colorless."], ans: 0 },
+        { q: "Which cation is known for a green flame?", opts: ["Ba (pale green)", "Cu (blue-green)", "Tl (bright green)", "All of the above"], ans: 3 },
+        { q: "Hydrated manganate and cobalt salt typical solution colors:", opts: ["Mn²⁺ pale pink, Co²⁺ red/pink.", "Both blue.", "Both green.", "Both colorless."], ans: 0 },
+        { q: "Why clean the flame test wire by dipping in conc. HCl and heating?", opts: ["Sterilize wire.", "Remove contaminant metal ions from previous tests.", "Oxidize wire.", "Create colored flame."], ans: 1 },
+        { q: "Which is a yellow compound?", opts: ["FeCl₃·6H₂O (yellow/brown)", "PbI₂", "CdS", "All of the above"], ans: 3 },
+        { q: "Oxidation state of iron in Ferric chloride:", opts: ["+2", "+3", "+1", "0"], ans: 1 },
+        { q: "A solution containing Fe³⁺ ions is typically:", opts: ["Pale green", "Blue", "Yellow to brown", "Colorless"], ans: 2 },
+        { q: "If flame test yields strong yellow, how to test for potassium?", opts: ["Dilute sample heavily.", "View through cobalt glass.", "Impossible.", "Use different wire."], ans: 1 },
+        { q: "CdS, AsS, SnS, PbS common characteristic:", opts: ["Chlorides", "Yellow (CdS, AsS)", "Soluble in water", "Nitrates"], ans: 1 },
+        { q: "Which cation(s) can cause a salt to be green?", opts: ["Cu²⁺ (basic carbonates/anhydrous)", "Fe²⁺ (pale green)", "Ni²⁺ (green)", "All of the above under certain conditions"], ans: 3 },
+        { q: "Why is a flame test not definitive for all elements?", opts: ["Some elements do not produce visible flame color.", "Some produce similar colors.", "Impurities can mask color.", "All of the above."], ans: 3 },
+        { q: "Purpose of cobalt glass in provided text:", opts: ["View precipitate color.", "Perform specific cation test.", "Filter yellow light from sodium to see other colors.", "Measure flame temperature."], ans: 2 },
+        { q: "A dark green salt could be a hydrated salt of:", opts: ["CuCl₂ (green at high conc)", "CrCl₃·6H₂O (green/violet)", "NiCl₂·6H₂O (green)", "All of the above"], ans: 3 },
+        { q: "Typical color of Cobalt(II) salt solution:", opts: ["Blue (anhydrous) or pink/red (hydrated)", "Green", "Yellow", "Violet"], ans: 0 },
+        { q: "Confirming Fe³⁺ with K₄[Fe(CN)₆] produces deep blue (Prussian blue). This is an example of:", opts: ["Flame test", "Specific confirmatory test", "Preliminary dry test", "Physical examination"], ans: 1 },
+        { q: "Characteristic of Ferrous (Fe²⁺) salt solution:", opts: ["Turns red litmus blue.", "Gives green precipitate with NaOH that turns brown on standing.", "Always yellow.", "Gives red precipitate with K₄[Fe(CN)₆]."], ans: 1 },
+        { q: "How to distinguish Ba²⁺ flame (pale apple green) from Cu²⁺ (blue-green)?", opts: ["By intensity of color.", "View through cobalt glass (Copper's blue-green may be affected differently).", "Solubility test.", "Both are the same."], ans: 1 },
+        { q: "A white amorphous salt likely contains:", opts: ["Cu²⁺", "Na⁺", "Ni²⁺", "Co²⁺"], ans: 1 },
+        { q: "Primary use of dry heating test for cations:", opts: ["Produce gas indicating specific cation (e.g., NH₄⁺).", "Observe color of residue (e.g., ZnO yellow hot, white cold).", "See if salt sublimes.", "All of the above."], ans: 3 },
+        { q: "Hg₂I₂, CrCl₃, Ferrous salts, hydrated Cubic salts are likely grouped under which color?", opts: ["Red", "Yellow", "Green", "Black"], ans: 2 },
+        { q: "Why is observing solution color important, not just solid?", opts: ["Solutions easier to handle.", "Solution color directly reflects hydrated metal ion; solid may be influenced by lattice/impurities.", "Solid color always wrong.", "Solutions always colored."], ans: 1 },
+        { q: "Which cation's flame color is absorbed by burner glass?", opts: ["Sodium", "Lithium", "Potassium", "No such cation"], ans: 2 },
+        { q: "Which is a black compound?", opts: ["PbCrO₄", "CuO", "Hg₂Cl₂", "Na₂SO₄"], ans: 1 },
+        { q: "Pale green solution gives dirty green precipitate with NaOH that turns brown. Cation likely:", opts: ["Al³⁺", "Fe²⁺", "Fe³⁺", "Zn²⁺"], ans: 1 },
+        { q: "Reason for wide variety of colors in transition metal compounds:", opts: ["Highly reactive.", "Partially filled d-orbitals allow d-d transitions absorbing visible light.", "Paramagnetic.", "Heavy metals."], ans: 1 },
+        { q: "Which cation produces a brick red flame?", opts: ["Sr", "Ca", "Li", "Rb"], ans: 1 },
+        { q: "Flame test on sample containing both Na⁺ and K⁺ shows:", opts: ["Only yellow.", "Only violet.", "Yellow, violet hidden; through cobalt glass violet visible.", "Green."], ans: 2 },
+        { q: "Chromate compounds are known for brilliant yellow. Which ions form such compounds?", opts: ["Cl⁻", "Ba²⁺ (BaCrO₄)", "Pb²⁺ (PbCrO₄)", "Both B and C"], ans: 3 },
+        { q: "Color of Mn²⁺ salt solution:", opts: ["Very pale pink, almost colorless at low concentration.", "Deep purple.", "Bright green.", "Blue."], ans: 0 },
+        { q: "A black highly insoluble salt is likely a:", opts: ["Sulfate", "Sulfide (e.g., CuS, PbS)", "Chloride", "Nitrate"], ans: 1 },
+        { q: "Why is crystalline appearance noted in preliminary tests?", opts: ["Helps identify specific compound (e.g., NaCl cubes).", "Determines solubility.", "Determines color.", "Determines smell."], ans: 0 },
+        { q: "Correct statement about flame test for Copper:", opts: ["Persistent yellow flame.", "Brilliant crimson.", "Blue-green flame.", "Pale green flame."], ans: 2 },
+        { q: "Unknown solution: AgNO₃ gives pale yellow precipitate; BaCl₂ gives white precipitate. Likely anions:", opts: ["Br⁻ and SO₄²⁻", "Cl⁻ and SO₄²⁻", "I⁻ and CO₃²⁻", "Br⁻ and NO₃⁻"], ans: 0 },
+        { q: "Which pair cannot be distinguished using only dilute H₂SO₄?", opts: ["CO₃²⁻ and SO₃²⁻", "CO₃²⁻ and HCO₃⁻", "SO₃²⁻ and S²⁻", "Cl⁻ and SO₄²⁻"], ans: 3 },
+        { q: "White solid soluble in water; solution gives white precipitate with AgNO₃ soluble in NH₃, and white precipitate with BaCl₂ insoluble in dilute HCl. Solid could be:", opts: ["NaCl", "Na₂SO₄", "Mixture of NaCl and Na₂SO₄", "MgCl₂"], ans: 2 },
+        { q: "Key difference in conc. H₂SO₄ reaction with bromide vs. iodide:", opts: ["Iodide produces SO₂, bromide doesn't.", "Iodide oxidized to I₂ (violet vapor); bromide to Br₂ (reddish-brown).", "Bromide reacts at room temperature, iodide requires heating.", "No difference."], ans: 1 },
+        { q: "Dry heating test produces colorless gas that relights glowing splint. Salt most likely:", opts: ["Chloride", "Nitrate", "Carbonate", "Sulfate"], ans: 1 },
+        { q: "Why is qualitative analysis less reliable than quantitative?", opts: ["Slower.", "Only identifies presence, not amount; subject to interpretation errors.", "More expensive.", "Requires sophisticated equipment."], ans: 1 },
+        { q: "Solution contains Cl⁻ and SO₄²⁻. Which reagent to add first to test SO₄²⁻ without interference?", opts: ["AgNO₃", "BaCl₂", "Pb(NO₃)₂", "Dilute HCl followed by BaCl₂"], ans: 3 },
+        { q: "Why use NaOH specifically for NH₄⁺ test?", opts: ["Only NaOH reacts with NH₄⁺.", "Strong, cheap, soluble, provides high [OH⁻] to displace NH₃.", "Other bases produce colored gases.", "Safe to heat."], ans: 1 },
+        { q: "Cream precipitate mistaken for pale yellow could confuse which two anions?", opts: ["Cl⁻ and Br⁻", "Br⁻ and I⁻", "Cl⁻ and I⁻", "CO₃²⁻ and SO₄²⁻"], ans: 1 },
+        { q: "Purpose of paper test in nitrate section:", opts: ["Filter solution.", "Provide carbon as reducing agent to form visible NO₂.", "Absorb acid.", "Prevent bumping."], ans: 1 },
+        { q: "Greenish-yellow gas with conc. H₂SO₄ and MnO₂ is:", opts: ["Cl₂", "Br₂", "I₂", "O₂"], ans: 0 },
+        { q: "Valid reason for dry heating test:", opts: ["Determine solubility.", "Observe sublimation, color change, decomposition gases.", "Measure melting point precisely.", "Conduct flame test."], ans: 1 },
+        { q: "Blue solution, blue-green flame, blue precipitate with NaOH. Cation is:", opts: ["Ni²⁺", "Cu²⁺", "Co²⁺", "Fe²⁺"], ans: 1 },
+        { q: "White precipitate with AgNO₃; what must be added next to confirm Cl⁻?", opts: ["Dilute H₂SO₄", "Excess NH₃ solution", "BaCl₂ solution", "NaOH solution"], ans: 1 },
+        { q: "Cream-colored precipitate with AgNO₃ indicates:", opts: ["Chloride", "Bromide", "Iodide", "Carbonate"], ans: 1 },
+        { q: "Which is a redox reaction?", opts: ["Ag⁺ + Cl⁻ → AgCl", "2HI + H₂SO₄ → I₂ + SO₂ + 2H₂O", "NH₄⁺ + OH⁻ → NH₃ + H₂O", "Ba²⁺ + SO₄²⁻ → BaSO₄"], ans: 1 },
+        { q: "Precipitate color can be influenced by:", opts: ["Particle size", "Impurities", "Specific counter ion", "All of the above"], ans: 3 },
+        { q: "Why use dilute HNO₃ when preparing solution for AgNO₃ testing?", opts: ["Decompose carbonates or sulfites.", "Prevent hydrolysis of Ag⁺.", "Common ion effect.", "Make solution basic."], ans: 0 },
+        { q: "Which set of observations supports NH₄Cl?", opts: ["White solid, pungent smell with NaOH, white precipitate with AgNO₃ soluble in NH₃.", "Colorless, no smell, brown gas with conc. H₂SO₄.", "Blue solid, green flame.", "Yellow solid, violet vapor with conc. H₂SO₄."], ans: 0 },
+        { q: "Main product of KI + PbCl₂:", opts: ["PbI (yellow)", "PbI₂ (yellow)", "KCl (white)", "PbCl₂ (white)"], ans: 1 },
+        { q: "Which is NOT a typical preliminary test?", opts: ["Flame test", "Dry heating test", "Color observation", "Titration with NaOH"], ans: 3 },
+        { q: "A gas turns lead acetate paper black. This confirms:", opts: ["CO₂", "SO₂", "H₂S", "NH₃"], ans: 2 },
+        { q: "Difference between a test and a confirmatory test:", opts: ["Test is quick; confirmatory is slow.", "Test gives a clue; confirmatory uniquely identifies the ion.", "They are the same.", "Test is for anions; confirmatory for cations."], ans: 1 },
+        { q: "Yellow unknown, bright yellow precipitate with AgNO₃ insoluble in NH₃, violet vapors with conc. H₂SO₄. Salt likely:", opts: ["AgI", "KI or NaI", "PbI₂", "FeCl₃"], ans: 1 },
+        { q: "Ultimate goal of systematic qualitative analysis:", opts: ["Determine exact mass percent.", "Identify cations and anions present in unknown based on logical sequence.", "Produce new compound.", "Measure pH of solution."], ans: 1 },
+        { q: "Solution contains Fe³⁺ (yellow/brown) and colorless cation; gives white precipitate with BaCl₂/HCl. Anion confirmed:", opts: ["SO₄²⁻", "Cl⁻", "NO₃⁻", "CO₃²⁻"], ans: 0 },
+        { q: "How could Fe³⁺ interfere with AgNO₃ test for Cl⁻?", opts: ["Does not interfere.", "Brown color from hydrolysis makes white AgCl hard to see.", "Forms red complex with Cl⁻.", "Precipitates as Fe(OH)₃."], ans: 1 },
+        { q: "Adding NH₃ to a solution gives a deep blue complex. Cation present:", opts: ["Fe²⁺", "Cu²⁺", "Ni²⁺", "Co²⁺"], ans: 1 },
+        { q: "Why is it incorrect to assume pale yellow precipitate with AgNO₃ is automatically Br⁻?", opts: ["Could be I⁻ if very pale.", "Fine white precipitate can appear pale yellow.", "Other colored ions can tint precipitate.", "All of the above."], ans: 3 },
+        { q: "Brown gas with conc. H₂SO₄; most likely two anions causing:", opts: ["Cl⁻ and Br⁻", "Br⁻ and NO₃⁻", "I⁻ and SO₄²⁻", "CO₃²⁻ and NO₃⁻"], ans: 1 },
+        { q: "Why is smell not a confirmatory test for NH₃?", opts: ["Subjective, not specific chemical test.", "NH₃ has no smell.", "Other gases smell similar.", "It is a confirmatory test."], ans: 0 },
+        { q: "Unknown soluble in water, colorless solution, no precipitate with AgNO₃ or BaCl₂. Possible identity:", opts: ["NaCl", "NaNO₃", "Na₂SO₄", "MgCl₂"], ans: 1 },
+        { q: "Primary function of adding dilute acid before BaCl₂:", opts: ["Ensure precipitate is BaSO₄, not BaCO₃ or BaSO₃.", "Dissolve sample.", "React with SO₄²⁻.", "Neutralize solution."], ans: 0 },
+        { q: "False statement about AgI:", opts: ["Insoluble in dilute HNO₃.", "Insoluble in excess NH₃.", "Cream-colored precipitate.", "Formed by AgNO₃ + I⁻."], ans: 2 },
+        { q: "A salt smells like bleach. Likely anion:", opts: ["I⁻", "Cl⁻ (as hypochlorite or chlorine)", "SO₄²⁻", "NO₃⁻"], ans: 1 },
+        { q: "Why use fresh sample for each test?", opts: ["Avoid using too much sample.", "Original sample is consumed or chemically changed.", "Waste of time.", "Old samples dangerous."], ans: 1 },
+        { q: "Gas from dilute H₂SO₄ turns KMnO₄ from purple to colorless. Anion present:", opts: ["CO₃²⁻", "SO₄²⁻", "SO₃²⁻", "Cl⁻"], ans: 2 },
+        { q: "In nitrate test, change in oxidation state of nitrogen:", opts: ["+5 to +4 (NO₂)", "+5 to +2", "+5 to 0", "+5 to +5"], ans: 0 },
+        { q: "Which is a redox reaction producing colored gas to identify a halide?", opts: ["Ag⁺ + Cl⁻ → AgCl", "2HBr + H₂SO₄ → Br₂ + SO₂ + 2H₂O", "NH₄⁺ + OH⁻ → NH₃ + H₂O", "Ba²⁺ + SO₄²⁻ → BaSO₄"], ans: 1 },
+        { q: "Crimson red flame: how to ensure not false positive from Lithium?", opts: ["No precaution; same color.", "Check water solubility.", "Perform flame test on pure Sr and Li for comparison.", "View through cobalt glass."], ans: 2 },
+        { q: "Main disadvantage of qualitative analysis on a mixture:", opts: ["Too slow.", "One ion can mask or interfere with another.", "Requires too much sample.", "Only for pure compounds."], ans: 1 },
+        { q: "Yellow flame confirms sodium. True or false?", opts: ["True; persistent intense yellow is unique to sodium (though contamination common).", "False; many elements produce yellow."], ans: 0 },
+        { q: "Why cool test tube before smelling gas?", opts: ["Condense gas to liquid.", "Avoid inhaling hot, potentially harmful vapors.", "Slow reaction.", "Not necessary."], ans: 1 },
+        { q: "White precipitate with AgNO₃ insoluble in HNO₃ but partially soluble in NH₃. Best conclusion:", opts: ["Cl⁻ present.", "Mixture of Cl⁻ and Br⁻ present.", "SO₄²⁻ present.", "Br⁻ present."], ans: 1 },
+        { q: "Role of cobalt glass in detecting potassium:", opts: ["Enhances violet color.", "Blocks yellow of sodium (common impurity).", "Converts potassium flame to green.", "Protects eyes from UV."], ans: 1 },
+        { q: "Which anion produces gas that forms white dense fumes with NH₃?", opts: ["CO₃²⁻", "Cl⁻ (as HCl gas)", "NO₃⁻", "SO₄²⁻"], ans: 1 },
+        { q: "A hygroscopic salt requires:", opts: ["Drying in oven before proceeding.", "Working quickly to prevent moisture absorption.", "Adding extra water.", "No special handling."], ans: 1 },
+        { q: "The test for sulfate using BaCl₂ is performed in acidic medium. Typical acid used:", opts: ["Dilute H₂SO₄", "Dilute HNO₃", "Dilute HCl", "Concentrated HCl"], ans: 2 },
+        { q: "Expected observation when Pb²⁺ salt treated with KI:", opts: ["White precipitate of PbI₂.", "Yellow precipitate of PbI₂.", "Colorless gas.", "No reaction."], ans: 1 },
+        { q: "Why run tests on a known sample alongside an unknown?", opts: ["Ensure reagents are working.", "Reference for expected observations.", "Validate test procedure.", "All of the above."], ans: 3 },
+        { q: "Unknown 'X' white, yellow flame, white precipitate with BaCl₂/HCl and white precipitate with AgNO₃/HNO₃. Most likely:", opts: ["NaCl", "Na₂SO₄", "Mixture of NaCl and Na₂SO₄", "KCl"], ans: 2 },
+        { q: "Salt 'Y' white powder, with conc. H₂SO₄ gives gas that turns acidified KMnO₄ colorless; AgNO₃ gives white precipitate soluble in NH₃. What is Y?", opts: ["NaCl", "Na₂CO₃", "Na₂SO₃", "NaBr"], ans: 2 },
+        { q: "Salt 'Z' blue-green solution, blue-green flame, blue precipitate with NaOH that does not dissolve, deep blue complex with NH₃. Cation:", opts: ["Ni²⁺", "Co²⁺", "Cu²⁺", "Fe²⁺"], ans: 2 },
+        { q: "Unknown solid sublimes on heating, sublimate white. Solution gives white precipitate with AgNO₃ insoluble in HNO₃ but soluble in NH₃. Solid likely:", opts: ["NH₄Cl", "I₂", "NaCl", "NH₄NO₃"], ans: 0 },
+        { q: "Yellow precipitate with AgNO₃; separate test with conc. H₂SO₄ gives violet vapor turning starch paper blue. Anion:", opts: ["Br⁻", "I⁻", "Cl⁻", "NO₃⁻"], ans: 1 },
+        { q: "Solution gives white precipitate with BaCl₂ insoluble in HCl; pale yellow precipitate with AgNO₃ partially soluble in NH₃. Two anions:", opts: ["SO₄²⁻ and Br⁻", "SO₄²⁻ and Cl⁻", "CO₃²⁻ and Br⁻", "SO₄²⁻ and I⁻"], ans: 0 },
+        { q: "Flame test for copper not always definitive because:", opts: ["Blue-green flame may be confused with barium's pale green.", "Copper salts often not volatile enough.", "Copper not a metal.", "Gives yellow flame."], ans: 0 },
+        { q: "Salt 'W' from Group 1, solution no precipitate with AgNO₃ or BaCl₂, brown gas with conc. H₂SO₄ and glowing splint relights. What is W?", opts: ["NaNO₃", "K₂SO₄", "KCl", "Na₂CO₃"], ans: 0 },
+        { q: "Key principle allowing AgCl to dissolve in NH₃ but not AgI:", opts: ["Ksp of AgI much smaller.", "Formation constant of [Ag(NH₃)₂]⁺ not large enough to compete with AgI.", "I⁻ forms more stable complex with Ag⁺ than NH₃.", "All of the above."], ans: 3 },
+        { q: "Pale green solution, dirty green precipitate with NaOH turning brown, dark blue precipitate with K₃[Fe(CN)₆] (Turnbull's blue). Cation:", opts: ["Fe³⁺", "Cu²⁺", "Fe²⁺", "Ni²⁺"], ans: 2 },
+        { q: "Unknown salt no reaction with dilute or conc. H₂SO₄ cold; heated with MnO₂ and conc. H₂SO₄ gives greenish-yellow gas. Anion:", opts: ["Cl⁻", "Br⁻", "I⁻", "NO₃⁻"], ans: 0 },
+        { q: "Blue solution, white precipitate with AgNO₃; add excess NH₃, precipitate dissolves and solution turns deep blue. Indicates:", opts: ["Cu²⁺ and Cl⁻", "Cu²⁺ and Br⁻", "Only Cl⁻", "Only Cu²⁺"], ans: 0 },
+        { q: "How to distinguish Pb²⁺ and Ba²⁺ (both form white sulfate precipitates) using halide test?", opts: ["Pb²⁺ forms yellow PbI₂ with I⁻; Ba²⁺ does not.", "Ba²⁺ forms yellow precipitate with I⁻.", "Add AgNO₃.", "Cannot distinguish."], ans: 0 },
+        { q: "Correct statement about conc. H₂SO₄ with nitrate:", opts: ["NO gas always evolved.", "Brown gas (NO₂) evolved if reducing agent (like paper) present.", "No reaction.", "O₂ gas evolved."], ans: 1 },
+        { q: "Colorless salt 'V' gives lilac flame, white precipitate with BaCl₂ insoluble in HCl, no precipitate with AgNO₃. V is:", opts: ["K₂SO₄", "KCl", "Na₂SO₄", "KNO₃"], ans: 0 },
+        { q: "Salt produces colorless gas with dilute HCl that turns limewater milky; with conc. H₂SO₄ same gas without heating. Anion:", opts: ["CO₃²⁻", "HCO₃⁻", "SO₃²⁻", "S²⁻"], ans: 0 },
+        { q: "Why is AgNO₃ + NH₃ test more reliable for chloride than conc. H₂SO₄ test?", opts: ["Conc. H₂SO₄ gives colorless HCl not easily confirmed; AgCl precipitate very characteristic.", "AgNO₃ is cheaper.", "Conc. H₂SO₄ dangerous.", "AgCl test quantitative."], ans: 0 },
+        { q: "Mixture of BaSO₄ and PbCl₂. Which solvent dissolves one component but not the other?", opts: ["Cold water", "Concentrated H₂SO₄", "Dilute HCl", "Hot water (PbCl₂ solubility increases significantly, BaSO₄ remains insoluble)"], ans: 3 },
+        { q: "White precipitate with BaCl₂ soluble in dilute HCl with effervescence. Anion:", opts: ["SO₄²⁻", "SO₃²⁻", "CO₃²⁻", "Both B or C"], ans: 3 },
+        { q: "Salt highly soluble in water, yellow solution; with AgNO₃ white precipitate that turns purple/brown on standing. Likely Fe³⁺ and anion:", opts: ["NO₃⁻", "Cl⁻", "SO₄²⁻", "I⁻"], ans: 1 },
+        { q: "Salt melts and decomposes on heating, producing colorless gas that relights splint and a brown gas. Salt likely:", opts: ["NH₄NO₃", "KNO₃", "Pb(NO₃)₂", "NaNO₃"], ans: 2 },
+        { q: "Major source of error in flame test:", opts: ["Contamination of wire with sodium, giving persistent yellow.", "Flame temperature too low.", "Sample too pure.", "Using platinum wire."], ans: 0 },
+        { q: "Interpreting slight solubility of a precipitate in NH₃ as positive for Br⁻. Flaw:", opts: ["AgCl very soluble; AgBr slightly; AgI insoluble. 'Slight' solubility ambiguous; could be mixture or fine AgCl. Confirmatory test for Br⁻ is liberation of Br₂ with conc. H₂SO₄.", "No flaw.", "All silver halides soluble in NH₃.", "Precipitate should be heated."], ans: 0 },
+        { q: "Unknown solution, no reaction with dilute H₂SO₄; white precipitate with AgNO₃ partially soluble in NH₃. Anion:", opts: ["Cl⁻", "Br⁻", "Mixture of Cl⁻ and Br⁻", "SO₄²⁻"], ans: 2 },
+        { q: "Why is the systematic approach (physical -> preliminary -> anion -> cation) considered logical?", opts: ["Starts with easiest, non-destructive tests and moves to specific confirmatory tests, building a case.", "Follows alphabetical order.", "It is the fastest.", "It is the only possible sequence."], ans: 0 }
+    ];
+
+    // ========== STATE MANAGEMENT ==========
+    const STATE_KEY = 'chm108_quiz_state';
+    let state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false };
+
+    function saveState() { localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
+    function loadState() { const r = localStorage.getItem(STATE_KEY); if(r){try{state=JSON.parse(r);return true;}catch(e){}} return false; }
+    function clearState() { state = { total:30,indices:[],current:0,answers:{},skipped:[],submitted:false}; localStorage.removeItem(STATE_KEY); }
+
+    function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+    function getQ() { if(!state.indices.length) return null; const bi = state.indices[state.current]; return {...questionBank[bi], bankIndex:bi}; }
+
+    function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); }
+    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+    function startQuiz(n) {
+        clearState();
+        const allIndices = shuffle(Array.from({length: questionBank.length}, (_,i)=>i));
+        const selected = allIndices.slice(0, n);
+        state = { total: n, indices: selected, current: 0, answers: {}, skipped: [], submitted: false };
+        saveState(); renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav();
+    }
+
+    function resumeQuiz() {
+        if(!loadState() || !state.indices.length || state.submitted){ toast('No saved quiz. Start a new one.'); return; }
+        renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav(); toast('Quiz resumed.');
+    }
+
+    function clearStorage() { clearState(); saveState(); document.getElementById('resumeSection').style.display='none'; toast('Saved progress cleared.'); }
+
+    function renderQuiz() {
+        const dots = document.getElementById('questionDots'); dots.innerHTML = '';
+        for(let i=0;i<state.total;i++){ const d=document.createElement('span'); d.className='dot'; d.title=`Q${i+1}`; d.onclick=()=>{state.current=i;saveState();renderQuestion();updateProgress();updateNav();}; dots.appendChild(d); }
+    }
+
+    function renderQuestion() {
+        const q = getQ(); if(!q) return;
+        document.getElementById('questionNumber').textContent = `QUESTION ${state.current+1}`;
+        document.getElementById('questionText').textContent = q.q;
+        document.getElementById('progressLabel').textContent = `Question ${state.current+1} of ${state.total}`;
+        const opts = document.getElementById('optionsList'); opts.innerHTML = '';
+        const letters = ['A','B','C','D'];
+        q.opts.forEach((opt,i)=>{
+            const li = document.createElement('li'); li.className='option-item';
+            if(state.answers[state.current]===i) li.classList.add('selected');
+            li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
+            li.onclick = ()=> selectOption(i);
+            opts.appendChild(li);
+        });
+        const dots = document.querySelectorAll('#questionDots .dot');
+        dots.forEach((d,i)=>{ d.classList.remove('current','answered','skipped'); if(i===state.current) d.classList.add('current'); if(state.answers[i]!==undefined) d.classList.add('answered'); if(state.skipped.includes(i) && state.answers[i]===undefined) d.classList.add('skipped'); });
+        document.getElementById('quizScreen').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function selectOption(i) { if(state.submitted) return; state.answers[state.current]=i; state.skipped = state.skipped.filter(s=>s!==state.current); saveState(); renderQuestion(); updateProgress(); updateNav(); }
+    function skipQuestion() {
+        if(state.submitted) return;
+        if(state.answers[state.current]===undefined && !state.skipped.includes(state.current)) state.skipped.push(state.current);
+        if(state.current < state.total-1){ state.current++; saveState(); renderQuestion(); updateProgress(); updateNav(); }
+        else { updateProgress(); updateNav(); renderQuestion(); }
+    }
+    function navigate(dir) { if(state.submitted) return; const nxt = state.current+dir; if(nxt>=0 && nxt<state.total){ state.current=nxt; saveState(); renderQuestion(); updateProgress(); updateNav(); } }
+    function updateProgress() { const a = Object.keys(state.answers).length; document.getElementById('answeredCount').textContent = `${a} answered`; document.getElementById('progressFill').style.width = Math.round((a/state.total)*100)+'%'; }
+    function updateNav() { document.getElementById('btnPrev').disabled = state.current===0; document.getElementById('btnNext').disabled = state.current===state.total-1; }
+
+    function submitQuiz() {
+        const skipped = state.total - Object.keys(state.answers).length;
+        if(skipped>0 && !confirm(`You have ${skipped} unanswered. Submit anyway?`)) return;
+        state.submitted = true; saveState(); showResults(); switchScreen('resultsScreen');
+    }
+
+    function showResults() {
+        let correct = 0; const review = [];
+        state.indices.forEach((bi,i)=>{ const q = questionBank[bi]; const ua = state.answers[i]; const ok = ua===q.ans; if(ok) correct++; review.push({ q:q.q, opts:q.opts, correctAns:q.ans, userAns:ua, isCorrect:ok, idx:i+1 }); });
+        const pct = Math.round((correct/state.total)*100);
+        document.getElementById('scorePercent').textContent = pct+'%';
+        document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
+        document.getElementById('resultMessage').textContent = pct>=90?'🏆 Outstanding!':pct>=70?'👏 Great job!':pct>=50?'📖 Good effort.':'💪 Keep studying.';
+        window._review = review;
+        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+    }
+
+    function reviewAnswers() {
+        const sec = document.getElementById('reviewSection');
+        if(sec.style.display==='block'){ sec.style.display='none'; sec.innerHTML=''; return; }
+        if(!window._review) return;
+        sec.innerHTML = '<h3>📋 Detailed Review</h3>';
+        const letters = ['A','B','C','D'];
+        window._review.forEach(r=>{
+            const d = document.createElement('div'); d.className = 'review-item '+(r.isCorrect?'correct-r':'wrong');
+            const uTxt = r.userAns!==undefined?`${letters[r.userAns]}. ${r.opts[r.userAns]}`:'Not answered';
+            const cTxt = `${letters[r.correctAns]}. ${r.opts[r.correctAns]}`;
+            d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div><div class="rev-ans">Your answer: <span class="your-ans">${uTxt}</span><br>Correct: <span class="correct-ans">${cTxt}</span></div>`;
+            sec.appendChild(d);
+        });
+        sec.style.display='block'; sec.scrollIntoView({behavior:'smooth'});
+    }
+
+    function restartQuiz() {
+        clearState(); saveState();
+        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+        window._review = null; switchScreen('startScreen');
+        document.getElementById('resumeSection').style.display='none'; updateResumeBtn();
+    }
+
+    function updateResumeBtn() {
+        const s = document.getElementById('resumeSection');
+        if(loadState() && state.indices.length && !state.submitted){ s.style.display='block'; }
+        else { s.style.display='none'; clearState(); saveState(); }
+    }
+
+    document.addEventListener('keydown',(e)=>{
+        if(state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
+        switch(e.key.toLowerCase()){
+            case 'a': selectOption(0); break;
+            case 'b': selectOption(1); break;
+            case 'c': selectOption(2); break;
+            case 'd': selectOption(3); break;
+            case 'arrowleft': e.preventDefault(); navigate(-1); break;
+            case 'arrowright': e.preventDefault(); navigate(1); break;
+            case 's': if(!e.ctrlKey&&!e.metaKey){ e.preventDefault(); skipQuestion(); } break;
+            case 'enter': e.preventDefault(); if(Object.keys(state.answers).length===state.total) submitQuiz(); break;
+        }
+    });
+
+    updateResumeBtn();
+    switchScreen('startScreen');
+</script>
+</body>
+</html>
+```
