@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHM102 · General Chemistry II Quiz</title>
+    <style>
+        /* === DESIGN STYLES === */
+        :root {
+            --bg: #f0f4f8; --card-bg: #ffffff;
+            --primary: #1e466e; --primary-dark: #0e2c48;
+            --accent: #2c3e66; --text: #1e2a3a; --text-light: #4a627a;
+            --border: #cbd5e1; --correct: #2b7a4b; --incorrect: #c4452c;
+            --warning: #e6a017; --shadow: 0 12px 30px rgba(0,0,0,0.08);
+            --radius: 20px; --transition: 0.2s ease;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Inter',system-ui,'Segoe UI',sans-serif;
+            background:var(--bg); min-height:100vh;
+            display:flex; align-items:center; justify-content:center;
+            padding:24px; line-height:1.5;
+        }
+        .container{
+            width:100%; max-width:920px; background:var(--card-bg);
+            border-radius:var(--radius); box-shadow:var(--shadow);
+            padding:30px 28px; transition:var(--transition);
+        }
+        .quiz-header{text-align:center; margin-bottom:24px;}
+        .quiz-header h1{font-size:1.8rem; color:var(--primary-dark); letter-spacing:-0.3px;}
+        .subtitle{font-size:0.9rem; color:var(--text-light); margin-top:6px;}
+        .screen{display:none; animation:fade 0.3s;}
+        .screen.active{display:block;}
+        @keyframes fade{from{opacity:0; transform:translateY(12px);}to{opacity:1; transform:translateY(0);}}
+        .start-options{display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin:28px 0 20px;}
+        .start-btn{
+            flex:1; min-width:160px; padding:24px 16px; border:2px solid var(--border);
+            border-radius:28px; background:var(--card-bg); cursor:pointer;
+            text-align:center; font-weight:600; transition:var(--transition);
+            color:var(--text); box-shadow:0 2px 6px rgba(0,0,0,0.03);
+        }
+        .start-btn:hover{border-color:var(--primary); background:#f8fafc; transform:translateY(-3px);}
+        .start-btn .icon{font-size:2.2rem; display:block; margin-bottom:6px;}
+        .start-btn .badge{background:var(--primary); color:#fff; font-size:0.7rem; padding:3px 12px; border-radius:30px; display:inline-block; margin-top:8px;}
+        .start-info{font-size:0.8rem; color:var(--text-light); text-align:center; margin-top:12px;}
+        .progress-wrap{margin-bottom:20px;}
+        .progress-stats{display:flex; justify-content:space-between; font-size:0.8rem; font-weight:500; margin-bottom:6px;}
+        .progress-bar{height:8px; background:var(--border); border-radius:12px; overflow:hidden;}
+        .progress-fill{height:100%; background:linear-gradient(90deg,var(--primary),#3b6e9e); border-radius:12px;}
+        .question-dots{display:flex; gap:5px; flex-wrap:wrap; justify-content:center; margin-top:14px;}
+        .dot{width:10px; height:10px; border-radius:50%; background:var(--border); cursor:pointer; transition:all 0.2s;}
+        .dot.answered{background:var(--primary); opacity:0.7;}
+        .dot.current{background:var(--primary); transform:scale(1.4); box-shadow:0 0 0 3px rgba(30,70,110,0.2);}
+        .dot.skipped{background:var(--warning);}
+        .question-card{background:#fafcff; border-radius:24px; padding:22px 20px; margin-bottom:16px; border:1px solid var(--border); box-shadow:0 2px 6px rgba(0,0,0,0.02);}
+        .question-number{font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--primary); font-weight:700; margin-bottom:8px;}
+        .question-text{font-size:1.1rem; font-weight:600; color:var(--text); line-height:1.4;}
+        .options-list{list-style:none; display:flex; flex-direction:column; gap:12px; margin-top:18px;}
+        .option-item{
+            padding:14px 18px; border:2px solid var(--border); border-radius:18px; cursor:pointer; background:#fff;
+            display:flex; align-items:center; gap:14px; transition:0.2s; font-size:0.95rem;
+        }
+        .option-item:hover{border-color:#9aaebf; background:#fefefe;}
+        .option-item.selected{border-color:var(--primary); background:#eef3fc; font-weight:500;}
+        .option-item .radio-dot{width:22px; height:22px; border-radius:50%; border:2px solid var(--border); flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;}
+        .option-item.selected .radio-dot{border-color:var(--primary); background:var(--primary);}
+        .option-item.selected .radio-dot::after{content:''; width:8px; height:8px; background:#fff; border-radius:50%;}
+        .option-item .opt-letter{font-weight:700; color:var(--primary); width:26px;}
+        .nav-buttons{display:flex; gap:12px; flex-wrap:wrap; justify-content:space-between; align-items:center; margin-top:24px;}
+        .btn{padding:10px 22px; border-radius:40px; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; transition:0.2s; background:transparent;}
+        .btn-outline{background:#fff; border:2px solid var(--border); color:var(--text);}
+        .btn-outline:hover{border-color:var(--primary); color:var(--primary); background:#f1f5f9;}
+        .btn-primary{background:var(--primary); color:#fff; border:2px solid var(--primary);}
+        .btn-primary:hover{background:var(--primary-dark);}
+        .btn-submit{background:var(--accent); color:#fff; border:none; padding:12px 34px; font-size:0.9rem;}
+        .btn-submit:hover{background:#1f2a4a; transform:scale(0.97);}
+        .results-card{text-align:center;}
+        .score-circle{width:140px; height:140px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; flex-direction:column; border:6px solid var(--primary); background:#f9fbfd;}
+        .score-circle .big-score{font-size:3rem; font-weight:800; color:var(--primary);}
+        .score-circle .total{font-size:0.9rem; color:var(--text-light);}
+        .result-message{font-size:1.2rem; margin:20px 0; font-weight:500;}
+        .review-section{text-align:left; margin-top:30px; max-height:450px; overflow-y:auto; padding-right:6px;}
+        .review-item{background:#fafcff; border-radius:18px; padding:16px; margin-bottom:12px; border-left:5px solid var(--border); font-size:0.9rem;}
+        .review-item.wrong{border-left-color:var(--incorrect); background:#fff8f6;}
+        .review-item.correct-r{border-left-color:var(--correct); background:#f2faf5;}
+        .rev-q{font-weight:700; margin-bottom:8px;}
+        .rev-ans{font-size:0.85rem; color:var(--text-light);}
+        .correct-ans{color:var(--correct); font-weight:600;}
+        .your-ans{color:var(--incorrect); font-weight:600; text-decoration:line-through;}
+        .toast{position:fixed; top:24px; left:50%; transform:translateX(-50%); background:var(--primary-dark); color:#fff; padding:10px 26px; border-radius:40px; font-size:0.85rem; font-weight:500; z-index:1000; opacity:0; transition:0.2s; pointer-events:none;}
+        .toast.show{opacity:1;}
+        @media(max-width:620px){
+            .container{padding:20px 16px;}
+            .option-item{padding:12px 14px;}
+            .question-text{font-size:0.98rem;}
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+    <div class="toast" id="toast"></div>
+
+    <!-- START SCREEN -->
+    <div class="screen active" id="startScreen">
+        <div class="quiz-header">
+            <h1>🧪 CHM102 · General Chemistry II</h1>
+            <p class="subtitle">Complete exam bank · 40 unique questions · mock + past questions</p>
+        </div>
+        <p style="text-align:center; font-weight:500;">Select quiz length:</p>
+        <div class="start-options">
+            <button class="start-btn" onclick="startQuiz(20)"><span class="icon">📘</span>20 Questions<span class="badge">~20 min</span></button>
+            <button class="start-btn" onclick="startQuiz(40)"><span class="icon">📚</span>Full exam (40)<span class="badge">all topics</span></button>
+        </div>
+        <p class="start-info">🎲 Randomised order · keyboard shortcuts (A,B,C,D, ←→, S to skip) · auto-save</p>
+        <div id="resumeSection" style="text-align:center; margin-top:18px; display:none;">
+            <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous session</button>
+            <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px; color:#c4452c;">🗑 Clear saved</button>
+        </div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div class="screen" id="quizScreen">
+        <div class="quiz-header"><span style="font-size:1.6rem;">📖</span></div>
+        <div class="progress-wrap">
+            <div class="progress-stats"><span id="progressLabel">Question 1 of 20</span><span id="answeredCount">0 answered</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+            <div class="question-dots" id="questionDots"></div>
+        </div>
+        <div class="question-card">
+            <div class="question-number" id="questionNumber">QUESTION 1</div>
+            <div class="question-text" id="questionText"></div>
+        </div>
+        <ul class="options-list" id="optionsList"></ul>
+        <div class="nav-buttons">
+            <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Previous</button>
+            <div class="nav-center">
+                <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
+                <button class="btn btn-submit" id="btnSubmit" onclick="submitQuiz()">✅ Submit exam</button>
+            </div>
+            <button class="btn btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
+        </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div class="screen" id="resultsScreen">
+        <div class="results-card">
+            <div class="quiz-header"><h1>📊 Your Score</h1></div>
+            <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/0</span></div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
+            <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:10px;">🔍 Review answers</button>
+            <div class="review-section" id="reviewSection" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== FULL QUESTION BANK (40 verified questions) ====================
+    // Based on CHM102 exam + mock test, all options and correct answers (0-indexed)
+    const questionBank = [
+        { q: "The IUPAC name of CH₃CH₂CH=CHCOCH₃ is", opts: ["2-Hexen-3-one", "3-Hexenone", "3-Hexen-2-one", "4-Hexenone"], ans: 0 },
+        { q: "The decreasing order of solubility of the following carboxylic acids:", opts: ["C₆H₁₃COOH > C₃H₇COOH > CH₃COOH", "CH₃COOH > C₃H₇COOH > C₆H₁₃COOH", "C₃H₇COOH > CH₃COOH > C₆H₁₃COOH", "CH₃COOH > C₆H₁₃COOH > C₃H₇COOH"], ans: 1 },
+        { q: "The compound CHOOCCNHH₂CH₂CH₂CH₂COOH is", opts: ["Acidic amino acid", "Basic amino acid", "Neutral amino acid", "All of the above"], ans: 0 },
+        { q: "Which of the following is a secondary amino group in Proline?", opts: ["NH", "NH₂", "NH₃", "NH⁺"], ans: 0 },
+        { q: "Which of the following is NOT an unsaturated fatty acid?", opts: ["Linoleic acid", "Oleic acid", "Arachidic acid", "Lauric acid"], ans: 3 },
+        { q: "Which of the following is NOT an animal fat?", opts: ["Butter fat", "Cocoa butter", "Lard", "Tallow"], ans: 1 },
+        { q: "The most widely used method of extraction is", opts: ["Distillation method", "Pressing method", "Solvent method", "Sublimation method"], ans: 2 },
+        { q: "The machine used to view the spots on the TLC plate is called", opts: ["Chromatography", "Viewing machine", "Microscope", "UV Lamp"], ans: 3 },
+        { q: "Which of the following tests is used to detect alcoholic group in an organic compound?", opts: ["Bromine test", "Baeyer's test", "Acetyl chloride test", "Nitrous acid test"], ans: 2 },
+        { q: "The ability of a chiral substance to rotate the plane of polarized light is called", opts: ["Optical activity", "Optical density", "Optical purity", "All of the above"], ans: 0 },
+        { q: "The rotation of the plane of polarized light in the clockwise direction is called", opts: ["Racemic", "Dextrorotatory", "Levorotatory", "Enantiomer"], ans: 1 },
+        { q: "The major product of but-1-yne with hydrogen bromide is", opts: ["1,1-dibromobutane", "1,1-dibromobutene", "2,2-dibromobutane", "2,2-dibromobutene"], ans: 2 },
+        { q: "Which of the following tests is common to both aldehydes and ketones?", opts: ["Nitrous acid test", "Cathylamines test", "Sodium nitroprusside test", "Sodium bisulphite test"], ans: 3 },
+        { q: "Which of the following reactions obeys Markovnikov's rule?", opts: ["Hydrohalogenation of alkanes", "Halogenation of alkanes", "Hydrohalogenation of alkynes", "Halogenation of alkynes"], ans: 2 },
+        { q: "Which of these is NOT a structural isomer of C₄H₈?", opts: ["1-butene", "2-butene", "2-Methyl-1-propene", "2-Methyl-1-propane"], ans: 3 },
+        { q: "The intermediate product of chlorination of ethyne is", opts: ["1,1-dichloroethane", "1,1-dichloroethene", "1,2-dichloroethane", "1,2-dichloroethene"], ans: 3 },
+        { q: "Which reaction involves the coupling of haloalkanes with sodium metal?", opts: ["Oxidation", "Reduction", "Wurtz", "Corey-House"], ans: 2 },
+        { q: "The structural formula of octane is", opts: ["CH₃(CH₂)₅CH₃", "CH₃(CH₂)₆CH₃", "CH₃(CH₂)₇CH₃", "CH₃(CH₂)₈CH₃"], ans: 1 },
+        { q: "In the reaction, CH₃CHO + X → Acetal. The compound X is", opts: ["Anhydride", "Amine", "Ammonia", "Alcohol"], ans: 3 },
+        { q: "The IUPAC name of resorcinol is", opts: ["1,2-Benzenediol", "1,3-Benzenediol", "1,4-Benzenediol", "1,4-Dimethylphenol"], ans: 1 },
+        { q: "How many units of fatty acids are present in a triglyceride?", opts: ["Two", "Three", "Four", "Five"], ans: 1 },
+        { q: "The formula of stearic acid is", opts: ["C₁₃H₃₃COOH", "C₁₅H₃₃COOH", "C₁₇H₃₃COOH", "C₁₇H₃₅COOH"], ans: 3 },
+        { q: "Which of these statements is NOT correct of α-amino acids?", opts: ["Soluble in polar solvents", "Insoluble in non-polar solvents", "They have low melting points", "Characteristic of ionic compounds"], ans: 2 },
+        { q: "The principal constituent of petroleum motor spirit (PMS) is", opts: ["Alkanes", "Alkenes", "Alkynes", "Alcohols"], ans: 0 },
+        { q: "Which action involves the coupling of alkylhalides with organometallic compounds?", opts: ["Corey-House", "Wurtz", "Oxidation", "Reduction"], ans: 0 },
+        { q: "______ can be used as anti‑freezing for motor car radiators.", opts: ["Alkanes", "Alkenes", "Alkynes", "Alcohols"], ans: 3 },
+        { q: "The hydration of alkynes gives", opts: ["Alcohols and Aldehydes", "Alcohols and Esters", "Aldehydes and Esters", "Aldehydes and Ketones"], ans: 3 },
+        { q: "A molecule having a carbon attached to two similar groups is known as ______ molecule.", opts: ["Acrylic", "Chiral", "Cyclic", "Achiral"], ans: 3 },
+        { q: "Which of these is necessary in the selection of solvents for extraction?", opts: ["Cost", "Polarity", "Solubility", "All of the above"], ans: 3 },
+        { q: "The reaction of methyl ethanoate with Grignard reagents readily forms", opts: ["1-Pentanol", "1,3-Dimethylpropanol", "2-Methylpentanol", "3-Methylpentanol"], ans: 3 },
+        { q: "The IUPAC name of CH₃CHOHCH₂COCH₃ is", opts: ["2-Hydroxyl-4-pentanone", "3-Hydroxyl-1-pentanone", "4-Hydroxyl-3-pentanone", "4-Hydroxyl-2-pentanone"], ans: 3 },
+        { q: "The product of the reaction of aldehyde with hydrogen cyanide in an acidic medium is", opts: ["Cyanohydrin", "Amine", "Alcohol", "Ester"], ans: 0 },
+        { q: "Which of the following compounds is less soluble in water?", opts: ["Butanol", "Ethanol", "Pentanol", "Propanol"], ans: 2 },
+        { q: "The bromination of phenol in non‑polar solvent gives", opts: ["2,4-Dibromophenol", "2,4,6-Tribromophenol", "4-Bromophenol", "2-Bromophenol"], ans: 2 },
+        { q: "What does NMR stand for?", opts: ["Numerous Magnetic Resistance", "Numerous Momentum Resistance", "Nuclear Magnetic Resonance", "Nuclear Momentum Resonance"], ans: 2 },
+        { q: "Which of these is NOT a chiral molecule?", opts: ["CH₃CHFCH₂CH₃", "CH₃CH(Br)CH₃", "CH₃CF(Br)CH₂CH₃", "CH₃CH(Br)(CH₂)₂CH₃"], ans: 1 },
+        // === from first file (CHM102 EXAM) ===
+        { q: "The most electronegative element in the periodic table is – ?", opts: ["Fluorine", "Chlorine", "Iodine", "Bromine"], ans: 0 },
+        { q: "The cycloaddition reaction in which the diene reacts with dienophile to produce cyclohexene is called", opts: ["Diels-Alder reaction", "Hydrohalogenation", "Halogenation", "Hydrogenation"], ans: 0 },
+        { q: "The decreasing order of acidity of nitrophenol is", opts: ["2,4,6-Trinitrophenol > 2,4-Dinitrophenol > 2-Nitrophenol", "2-Nitrophenol < 2,4-Dinitrophenol < 2,4,6-Trinitrophenol", "2,4,6-Trinitrophenol < 2,4-Dinitrophenol < 2-Nitrophenol", "2-Nitrophenol > 2,4-Dinitrophenol > 2,4,6-Trinitrophenol"], ans: 0 },
+        { q: "Solvent-to-solid ratio does not relevant during extraction process, True or False?", opts: ["FALSE", "TRUE"], ans: 0 }
+    ];
+
+    // total unique: 40
+    console.assert(questionBank.length === 40, "Question bank should have 40 items");
+
+    // ========== QUIZ ENGINE (persistent, random selection) ==========
+    const STATE_KEY = 'chm102_quiz_state';
+    let state = { total: 20, indices: [], current: 0, answers: {}, skipped: [], submitted: false };
+
+    function saveState() { localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
+    function loadState() { const r = localStorage.getItem(STATE_KEY); if(r){ try{ const parsed = JSON.parse(r); state = parsed; return true; }catch(e){} } return false; }
+    function clearState() { state = { total:20, indices:[], current:0, answers:{}, skipped:[], submitted:false }; localStorage.removeItem(STATE_KEY); }
+
+    function shuffleArray(arr) { const a = [...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+    function getCurrentQuestion() { if(!state.indices.length) return null; const idx = state.indices[state.current]; return {...questionBank[idx], bankIndex: idx}; }
+
+    function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._toast); t._toast=setTimeout(()=>t.classList.remove('show'), 2200); }
+    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+    function startQuiz(questionCount) {
+        clearState();
+        const totalAvailable = questionBank.length;
+        let allIndices = Array.from({length: totalAvailable}, (_,i)=>i);
+        allIndices = shuffleArray(allIndices);
+        const selected = allIndices.slice(0, Math.min(questionCount, totalAvailable));
+        state = {
+            total: selected.length,
+            indices: selected,
+            current: 0,
+            answers: {},
+            skipped: [],
+            submitted: false
+        };
+        saveState();
+        renderQuizUI();
+        switchScreen('quizScreen');
+        renderQuestion();
+        updateProgressAndDots();
+        updateNavButtons();
+        toast(`Quiz started: ${state.total} questions`);
+    }
+
+    function resumeQuiz() {
+        if(!loadState() || !state.indices.length || state.submitted){
+            toast('No saved quiz. Start a new one.');
+            return;
+        }
+        renderQuizUI();
+        switchScreen('quizScreen');
+        renderQuestion();
+        updateProgressAndDots();
+        updateNavButtons();
+        toast('Resumed from saved progress');
+    }
+
+    function clearStorage() { clearState(); saveState(); document.getElementById('resumeSection').style.display='none'; toast('Saved data erased.'); }
+
+    function renderQuizUI() {
+        const dotsContainer = document.getElementById('questionDots');
+        dotsContainer.innerHTML = '';
+        for(let i=0; i<state.total; i++){
+            const dot = document.createElement('span');
+            dot.className = 'dot';
+            dot.title = `Question ${i+1}`;
+            dot.onclick = (()=>{ state.current = i; saveState(); renderQuestion(); updateProgressAndDots(); updateNavButtons(); });
+            dotsContainer.appendChild(dot);
+        }
+    }
+
+    function renderQuestion() {
+        const q = getCurrentQuestion();
+        if(!q) return;
+        document.getElementById('questionNumber').textContent = `QUESTION ${state.current+1}`;
+        document.getElementById('questionText').innerHTML = q.q;
+        document.getElementById('progressLabel').textContent = `Question ${state.current+1} of ${state.total}`;
+        
+        const optsList = document.getElementById('optionsList');
+        optsList.innerHTML = '';
+        const letters = ['A','B','C','D'];
+        q.opts.forEach((opt, idx) => {
+            const li = document.createElement('li');
+            li.className = 'option-item';
+            if(state.answers[state.current] === idx) li.classList.add('selected');
+            li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[idx]}.</span><span>${opt}</span>`;
+            li.onclick = () => selectOption(idx);
+            optsList.appendChild(li);
+        });
+
+        // update dots styles
+        const dots = document.querySelectorAll('#questionDots .dot');
+        dots.forEach((dot, i) => {
+            dot.classList.remove('current','answered','skipped');
+            if(i === state.current) dot.classList.add('current');
+            if(state.answers[i] !== undefined) dot.classList.add('answered');
+            else if(state.skipped.includes(i)) dot.classList.add('skipped');
+        });
+        document.getElementById('quizScreen').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    function selectOption(optIndex) {
+        if(state.submitted) return;
+        state.answers[state.current] = optIndex;
+        state.skipped = state.skipped.filter(s => s !== state.current);
+        saveState();
+        renderQuestion();
+        updateProgressAndDots();
+        updateNavButtons();
+    }
+
+    function skipQuestion() {
+        if(state.submitted) return;
+        if(state.answers[state.current] === undefined && !state.skipped.includes(state.current))
+            state.skipped.push(state.current);
+        if(state.current < state.total - 1){
+            state.current++;
+            saveState();
+            renderQuestion();
+            updateProgressAndDots();
+            updateNavButtons();
+        } else {
+            updateProgressAndDots();
+            updateNavButtons();
+            renderQuestion();
+        }
+    }
+
+    function navigate(delta) {
+        if(state.submitted) return;
+        const newIdx = state.current + delta;
+        if(newIdx >=0 && newIdx < state.total){
+            state.current = newIdx;
+            saveState();
+            renderQuestion();
+            updateProgressAndDots();
+            updateNavButtons();
+        }
+    }
+
+    function updateProgressAndDots() {
+        const answeredCount = Object.keys(state.answers).length;
+        document.getElementById('answeredCount').textContent = `${answeredCount} answered`;
+        const percent = (answeredCount / state.total) * 100;
+        document.getElementById('progressFill').style.width = `${percent}%`;
+        const dots = document.querySelectorAll('#questionDots .dot');
+        dots.forEach((dot,i)=>{
+            if(state.answers[i] !== undefined) dot.classList.add('answered');
+            else if(state.skipped.includes(i)) dot.classList.add('skipped');
+            else dot.classList.remove('answered','skipped');
+            if(i===state.current) dot.classList.add('current');
+            else dot.classList.remove('current');
+        });
+    }
+
+    function updateNavButtons() {
+        const prevBtn = document.getElementById('btnPrev');
+        const nextBtn = document.getElementById('btnNext');
+        if(prevBtn) prevBtn.disabled = state.current === 0;
+        if(nextBtn) nextBtn.disabled = state.current === state.total-1;
+    }
+
+    function submitQuiz() {
+        const skipped = state.total - Object.keys(state.answers).length;
+        if(skipped>0 && !confirm(`⚠️ You have ${skipped} unanswered question(s). Submit final results anyway?`)) return;
+        state.submitted = true;
+        saveState();
+        showDetailedResults();
+        switchScreen('resultsScreen');
+    }
+
+    function showDetailedResults() {
+        let correct = 0;
+        const reviewData = [];
+        state.indices.forEach((bankIdx, i) => {
+            const q = questionBank[bankIdx];
+            const userChoice = state.answers[i];
+            const isCorrect = (userChoice === q.ans);
+            if(isCorrect) correct++;
+            reviewData.push({
+                qText: q.q,
+                opts: q.opts,
+                correctIdx: q.ans,
+                userIdx: userChoice,
+                isCorrect: isCorrect,
+                num: i+1
+            });
+        });
+        const percent = Math.round((correct / state.total)*100);
+        document.getElementById('scorePercent').textContent = `${percent}%`;
+        document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
+        let msg = '';
+        if(percent>=90) msg = '🏅 Excellent! Mastery of CHM102.';
+        else if(percent>=70) msg = '👍 Great! Review a few topics to polish.';
+        else if(percent>=50) msg = '📘 Good effort. Revisit nitrophenol acidity, extraction, and reactions.';
+        else msg = '📚 Keep practicing! Use the review to strengthen your knowledge.';
+        document.getElementById('resultMessage').textContent = msg;
+        window._reviewCache = reviewData;
+        document.getElementById('reviewSection').style.display = 'none';
+        document.getElementById('reviewSection').innerHTML = '';
+    }
+
+    function reviewAnswers() {
+        const section = document.getElementById('reviewSection');
+        if(section.style.display === 'block'){
+            section.style.display = 'none';
+            section.innerHTML = '';
+            return;
+        }
+        if(!window._reviewCache) return;
+        section.innerHTML = '<h3 style="margin-bottom:12px;">📋 Detailed answer review</h3>';
+        const letters = ['A','B','C','D'];
+        window._reviewCache.forEach(r => {
+            const div = document.createElement('div');
+            div.className = `review-item ${r.isCorrect ? 'correct-r' : 'wrong'}`;
+            const userTxt = (r.userIdx !== undefined) ? `${letters[r.userIdx]}. ${r.opts[r.userIdx]}` : 'Not answered';
+            const correctTxt = `${letters[r.correctIdx]}. ${r.opts[r.correctIdx]}`;
+            div.innerHTML = `<div class="rev-q">Q${r.num}: ${r.qText}</div>
+                            <div class="rev-ans">Your answer: <span class="your-ans">${userTxt}</span><br>
+                            Correct: <span class="correct-ans">${correctTxt}</span></div>`;
+            section.appendChild(div);
+        });
+        section.style.display = 'block';
+        section.scrollIntoView({behavior:'smooth'});
+    }
+
+    function restartQuiz() {
+        clearState();
+        saveState();
+        window._reviewCache = null;
+        document.getElementById('reviewSection').style.display = 'none';
+        document.getElementById('reviewSection').innerHTML = '';
+        switchScreen('startScreen');
+        updateResumeButtonVisibility();
+    }
+
+    function updateResumeButtonVisibility() {
+        const resumeDiv = document.getElementById('resumeSection');
+        if(loadState() && state.indices.length && !state.submitted){
+            resumeDiv.style.display = 'block';
+        } else {
+            resumeDiv.style.display = 'none';
+        }
+    }
+
+    // keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if(!document.getElementById('quizScreen').classList.contains('active')) return;
+        if(state.submitted) return;
+        const key = e.key.toLowerCase();
+        if(['a','b','c','d'].includes(key)){
+            e.preventDefault();
+            const idx = key.charCodeAt(0)-97;
+            if(idx < (getCurrentQuestion()?.opts.length || 0)) selectOption(idx);
+        }
+        if(key === 'arrowleft') { e.preventDefault(); navigate(-1); }
+        if(key === 'arrowright') { e.preventDefault(); navigate(1); }
+        if(key === 's' && !e.ctrlKey && !e.metaKey){ e.preventDefault(); skipQuestion(); }
+        if(key === 'enter'){ e.preventDefault(); if(Object.keys(state.answers).length === state.total) submitQuiz(); }
+    });
+
+    updateResumeButtonVisibility();
+    switchScreen('startScreen');
+</script>
+</body>
+</html>
