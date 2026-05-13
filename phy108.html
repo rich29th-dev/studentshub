@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics 108 · Lab Exam (30 Questions)</title>
+    <style>
+        :root {
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --primary: #0b5e7e;
+            --primary-dark: #084c66;
+            --accent: #1e2a3a;
+            --text: #1e293b;
+            --text-light: #475569;
+            --border: #cbd5e1;
+            --correct: #2e7d32;
+            --incorrect: #c62828;
+            --warning: #f9a825;
+            --shadow: 0 8px 24px rgba(0,0,0,0.08);
+            --radius: 20px;
+            --transition: 0.2s ease;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Segoe UI',Inter,system-ui,sans-serif;
+            background:var(--bg);
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
+            line-height:1.5;
+            color:var(--text);
+        }
+        .container{
+            width:100%;
+            max-width:880px;
+            background:var(--card-bg);
+            border-radius:var(--radius);
+            box-shadow:var(--shadow);
+            padding:32px 28px;
+            transition:var(--transition);
+        }
+        .quiz-header{text-align:center;margin-bottom:20px;}
+        .quiz-header .icon{font-size:2.5rem;display:block;margin-bottom:6px;}
+        .quiz-header h1{font-size:1.6rem;color:var(--primary-dark);font-weight:700;}
+        .subtitle{font-size:0.85rem;color:var(--text-light);margin-top:6px;}
+        .screen{display:none;animation:fadeIn 0.35s ease;}
+        .screen.active{display:block;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+        .start-options{display:flex;gap:20px;justify-content:center;margin:28px 0 20px;}
+        .start-btn{
+            flex:1;min-width:200px;padding:22px 16px;border:2px solid var(--border);
+            border-radius:var(--radius);background:var(--card-bg);cursor:pointer;
+            text-align:center;font-weight:600;transition:var(--transition);color:var(--text);
+        }
+        .start-btn:hover{border-color:var(--primary);box-shadow:0 8px 20px rgba(11,94,126,0.15);transform:translateY(-3px);}
+        .start-btn .icon{font-size:2rem;display:block;margin-bottom:8px;}
+        .start-btn .badge{background:var(--primary);color:#fff;font-size:0.7rem;padding:4px 12px;border-radius:30px;display:inline-block;margin-top:8px;}
+        .start-info{font-size:0.8rem;color:var(--text-light);text-align:center;}
+        .progress-wrap{margin-bottom:18px;}
+        .progress-stats{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-light);margin-bottom:6px;}
+        .progress-bar{height:8px;background:var(--border);border-radius:12px;overflow:hidden;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#2c9cb0);border-radius:12px;transition:width 0.3s;}
+        .question-dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-top:12px;}
+        .dot{width:12px;height:12px;border-radius:50%;background:var(--border);cursor:pointer;transition:var(--transition);}
+        .dot.answered{background:var(--primary);opacity:0.7;}
+        .dot.current{background:var(--primary);transform:scale(1.4);box-shadow:0 0 0 3px rgba(11,94,126,0.25);}
+        .dot.skipped{background:var(--warning);}
+        .question-card{background:#fafcff;border-radius:18px;padding:22px 20px;margin-bottom:16px;border:1px solid var(--border);}
+        .question-number{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);font-weight:700;margin-bottom:8px;}
+        .question-text{font-size:1.15rem;font-weight:600;color:var(--text);line-height:1.4;}
+        .options-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:18px;}
+        .option-item{
+            padding:14px 18px;border:2px solid var(--border);border-radius:60px;cursor:pointer;background:#fff;
+            display:flex;align-items:center;gap:12px;transition:var(--transition);font-size:0.95rem;
+        }
+        .option-item:hover{border-color:#9aaebf;background:#f7fafd;}
+        .option-item.selected{border-color:var(--primary);background:#e7f0f5;font-weight:500;}
+        .option-item .radio-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;
+            display:flex;align-items:center;justify-content:center;}
+        .option-item.selected .radio-dot{border-color:var(--primary);background:var(--primary);}
+        .option-item.selected .radio-dot::after{content:'';width:8px;height:8px;background:#fff;border-radius:50%;}
+        .option-item .opt-letter{font-weight:800;color:var(--primary);width:28px;}
+        .nav-buttons{display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:20px;}
+        .btn{padding:10px 22px;border-radius:40px;border:none;cursor:pointer;font-weight:600;font-size:0.85rem;
+            transition:var(--transition);display:inline-flex;align-items:center;gap:8px;}
+        .btn-outline{background:#fff;border:2px solid var(--border);color:var(--text);}
+        .btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+        .btn-primary{background:var(--primary);color:#fff;border:2px solid var(--primary);}
+        .btn-primary:hover{background:var(--primary-dark);}
+        .btn-submit{background:var(--accent);color:#fff;border:2px solid var(--accent);font-size:0.9rem;padding:11px 28px;}
+        .btn-submit:hover{background:#2c3e4e;}
+        .btn:disabled{opacity:0.5;pointer-events:none;}
+        .results-card{text-align:center;}
+        .score-circle{width:140px;height:140px;border-radius:50%;margin:0 auto 22px;display:flex;align-items:center;
+            justify-content:center;flex-direction:column;border:7px solid var(--primary);background:#fff;}
+        .score-circle .big-score{font-size:2.8rem;font-weight:800;color:var(--primary);}
+        .score-circle .total{font-size:0.9rem;color:var(--text-light);}
+        .result-message{font-size:1.1rem;margin-bottom:18px;font-weight:500;}
+        .review-section{text-align:left;margin-top:26px;max-height:420px;overflow-y:auto;padding-right:8px;}
+        .review-item{background:#fafcff;border-radius:16px;padding:14px;margin-bottom:12px;border-left:5px solid var(--border);font-size:0.9rem;}
+        .review-item.wrong{border-left-color:var(--incorrect);background:#fff6f5;}
+        .review-item.correct-r{border-left-color:var(--correct);background:#f0f9f0;}
+        .review-item .rev-q{font-weight:700;margin-bottom:6px;}
+        .review-item .rev-ans{font-size:0.82rem;color:var(--text-light);}
+        .correct-ans{color:var(--correct);font-weight:600;}
+        .your-ans{color:var(--incorrect);font-weight:600;text-decoration:line-through;}
+        .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--primary-dark);color:#fff;
+            padding:10px 24px;border-radius:40px;font-size:0.85rem;font-weight:600;z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.25s;white-space:nowrap;}
+        .toast.show{opacity:1;}
+        @media(max-width:620px){
+            .container{padding:20px 14px;}
+            .start-btn{min-width:140px;padding:16px 10px;}
+            .question-text{font-size:0.98rem;}
+            .option-item{padding:10px 14px;}
+            .btn{padding:7px 14px;}
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+    <div class="toast" id="toast"></div>
+
+    <!-- START SCREEN -->
+    <div class="screen active" id="startScreen">
+        <div class="quiz-header">
+            <span class="icon">⚛️📐</span>
+            <h1>Physics 108 · Lab Exam</h1>
+            <p class="subtitle">Wheatstone bridge, optics, electricity, mechanics — 64‑question bank, random 30 per quiz</p>
+        </div>
+        <p style="text-align:center;font-weight:500;">Select quiz length:</p>
+        <div class="start-options">
+            <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📝</span>30 Questions<span class="badge">~25 min</span></button>
+        </div>
+        <p class="start-info">🎲 Randomly selected from 64 questions · Resume supported · No timer</p>
+        <div id="resumeSection" style="text-align:center;margin-top:16px;display:none;">
+            <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
+            <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#c62828;">🗑 Clear saved</button>
+        </div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div class="screen" id="quizScreen">
+        <div class="quiz-header"><span style="font-size:1.7rem;">🔬</span></div>
+        <div class="progress-wrap">
+            <div class="progress-stats"><span id="progressLabel">Question 1 of 30</span><span id="answeredCount">0 answered</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+            <div class="question-dots" id="questionDots"></div>
+        </div>
+        <div class="question-card">
+            <div class="question-number" id="questionNumber">QUESTION 1</div>
+            <div class="question-text" id="questionText"></div>
+        </div>
+        <ul class="options-list" id="optionsList"></ul>
+        <div class="nav-buttons">
+            <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Prev</button>
+            <div class="nav-center">
+                <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
+                <button class="btn btn-submit" id="btnSubmit" onclick="submitQuiz()">✅ Submit</button>
+            </div>
+            <button class="btn btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
+        </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div class="screen" id="resultsScreen">
+        <div class="results-card">
+            <div class="quiz-header"><h1>📊 Exam Results</h1></div>
+            <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/30</span></div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
+            <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">🔍 Review</button>
+            <div class="review-section" id="reviewSection" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================= PHYSICS 108 FULL QUESTION BANK (64 items) =======================
+    const physicsBank = [
+        { q: "Which instrument measures diameter of a resistance wire for resistivity experiment?", opts: ["Vernier Caliper","Micrometer Screw Gauge","Spherometer","Pair of Dividers"], ans: 1 },
+        { q: "A small spherical bob on an extensible string oscillates through small angle. The motion is", opts: ["Rotatory","Harmonic","Periodic","Circular"], ans: 1 },
+        { q: "An object increases length when force applied, returns to original after removal. The object is", opts: ["Plastic","Elastic","Ductile","Brittle"], ans: 1 },
+        { q: "In convex lens experiment, relation m = v/f -1. Graph of m vs V. Which is correct?", opts: ["OB = 1/f and f = PQ/QR","f; 1/f i.e. OB = f / 1/f","Both are f PQ/QR = 1/f","None of the above"], ans: 1 },
+        { q: "Where to place object in front of convex lens to obtain virtual, erect, magnified image?", opts: ["On the focus (u = f)","Beyond the focus (u > f)","On centre of curvature (u = R)","None of the above"], ans: 3 },
+        { q: "Accuracy and precision in an experiment could have ____ but not ____ errors.", opts: ["Random; systematic","Systematic; random","Personal; random","Random; personal"], ans: 1 },
+        { q: "If you double the diameter of a conducting wire, the resistance becomes:", opts: ["Halved","Quartered","Doubled","Unchanged"], ans: 1 },
+        { q: "Sources of errors in experiments depend on all BUT one:", opts: ["Ruggedness of experiment","Sensitivity of materials","Calibration of measure","None of the above"], ans: 0 },
+        { q: "Monochromatic ray incident at 30° to normal on plane glass. Reflection angle is:", opts: ["60°","30°","90°","0°"], ans: 1 },
+        { q: "Vrms = √(3RT/M). If M is halved but velocity constant, temperature T:", opts: ["Increases","Remains unchanged","Is doubled","None of the above"], ans: 3 },
+        { q: "R = ρL/A. Graph R vs L, slope gives. Resistivity ρ = ?", opts: ["Slope × Area","Reciprocal of (Slope × area)","Area / Slope","Slope / Area"], ans: 0 },
+        { q: "Wave velocity on stretched string: V = √(F/μ). F represents:", opts: ["frequency of wave","tension in the string","stiffness of string","Force of friction"], ans: 1 },
+        { q: "Graph y = mx + C passes through origin when:", opts: ["Δy/Δx","Δx/Δy","0","None"], ans: 2 },
+        { q: "A galvanometer becomes a good ammeter if its resistance is:", opts: ["Very high","Tends to zero","Zero or very negligible","None"], ans: 2 },
+        { q: "Increasing tension in a string affects speed of wave. Speed:", opts: ["Decreases","Increases","Remains unchanged","Tends to zero"], ans: 1 },
+        { q: "Radius of curvature R obtained is negative. Reflecting surface is:", opts: ["Plane","Concave","Convex","Plane Convex"], ans: 2 },
+        { q: "Focal length convex lens = 22.2cm, object at 30cm. Image distance v?", opts: ["83.33cm","11.11cm","12.15cm","None of the above"], ans: 0 },
+        { q: "In convex mirror experiment with illuminated object, ensure:", opts: ["Sharp bright image on screen","Avoid moving lens","Adjust only screen","Image on same side as object"], ans: 0 },
+        { q: "Object placed between focus (F) and optical centre of convex lens. Image at:", opts: ["Centre of curvature","Beyond centre of curvature","Between F and centre","None"], ans: 1 },
+        { q: "Current through 10Ω resistor. To double the current, connect second 10Ω:", opts: ["In parallel","In series","Does not matter","None"], ans: 0 },
+        { q: "Image obtained on screen in optical experiment is:", opts: ["Virtual","Real","Illuminated","None"], ans: 1 },
+        { q: "Type of lens used to obtain real, inverted images:", opts: ["Concave","Achromatic","Convex","None"], ans: 2 },
+        { q: "Rectangular glass block, angle of incidence 45°. Refractive index ~1.5, angle of refraction ≈ ?", opts: ["30°","44.21°","29.93°","None"], ans: 2 },
+        { q: "Graph F vs x for Hooke's law F = -kx. Slope represents:", opts: ["Force applied","Force constant k","Average extension","None"], ans: 1 },
+        { q: "Why take several readings and average?", opts: ["Ensure accuracy","Reduce systematic errors","Reduce random errors","None"], ans: 2 },
+        { q: "Cells A (r=1Ω) and B (r=1.5Ω) same emf, connected to 5Ω. Which develops more terminal p.d?", opts: ["No difference","A","B","None"], ans: 1 },
+        { q: "Slope of V vs I graph represents:", opts: ["Voltage","Resistance","Conductance","Power"], ans: 1 },
+        { q: "S.I. unit of Resistance:", opts: ["Watt","Volt","Ampere","Ohm"], ans: 3 },
+        { q: "Unit of electrical energy:", opts: ["Volt","Joule","Watt","Ampere"], ans: 1 },
+        { q: "R vs T straight line increasing with temperature. Material is:", opts: ["Ohmic","Non-Ohmic","Plastic","None"], ans: 0 },
+        { q: "Cylinder volume V = πr²l. Which parameter contributes greater error?", opts: ["length l","radius r","both equal","None"], ans: 1 },
+        { q: "E = IVt. Graph E vs t, slope equals:", opts: ["Charge","Voltage","Power","Potential gradient"], ans: 2 },
+        { q: "Hooke's law graph (force vs extension) is:", opts: ["Parabolic","Sinusoidal","Straight line","None"], ans: 2 },
+        { q: "Pendulum bob distance p vs T². Height of classroom from graph =", opts: ["Slope","Intercept on T² axis","Intercept on p-axis","None"], ans: 2 },
+        { q: "Effect of parallel resistances on total current:", opts: ["Decreases current","Increases current","Stabilizes","No effect"], ans: 1 },
+        { q: "Determine resistivity ρ of wire:", opts: ["Reciprocal of resistance","Resistance of unit length × area","Conductivity","None"], ans: 1 },
+        { q: "Electrical power from known V and I:", opts: ["V/I","V × I","I/V","None"], ans: 1 },
+        { q: "Resistances 2Ω,4Ω,6Ω. Which combination gives ~1.09Ω?", opts: ["All series","All parallel","2&4 series, then parallel with 6","None"], ans: 1 },
+        { q: "Detect electric charge in laboratory:", opts: ["Galvanometer","Gold leaf electroscope","Voltmeter","Compass needle"], ans: 1 },
+        { q: "Determine velocity of light in glass using rectangular block:", opts: ["V_glass × n = C","V_glass / n = C","V_glass = C/n","None"], ans: 0 },
+        { q: "Light travels from air to glass. Velocity in air V₀ vs glass V_g:", opts: ["V₀ = V_g","V₀ < V_g","V₀ > V_g","None"], ans: 2 },
+        { q: "Simple harmonic oscillator period = 3.5s. Frequency =", opts: ["0.3Hz","0.285Hz","1.87Hz","None"], ans: 1 },
+        { q: "Pendulum f=0.725Hz, g=9.87 m/s². Period ≈", opts: ["0.23s","0.25s","1.38s","None"], ans: 2 },
+        { q: "To halve current in circuit, add to resistor:", opts: ["Equal resistance in series","Equal resistor in parallel","Two equal resistances","None"], ans: 0 },
+        { q: "NOT a use of graphs:", opts: ["Deduce mathematical relation","Deduce average ratios","Show trends","Quantify magnitudes"], ans: 3 },
+        { q: "Four types of experimental errors:", opts: ["Systematic,Standard,Random,Personal","Personal,Systematic,Equipment,Standard","Personal,Systematic,Random,Parallax","Equipment,Systematic,Random,Standard"], ans: 0 },
+        { q: "Velocity-time graph, area under curve =", opts: ["Displacement","Speed","Acceleration","Force"], ans: 0 },
+        { q: "Instrument relevant to measure force:", opts: ["Spring balance","Chemical balance","Newtonmeter","Wattmeter"], ans: 0 },
+        { q: "Spherical mirror that gives virtual erect diminished image:", opts: ["Concave","Parabolic","Convex","None"], ans: 2 },
+        { q: "Split white light into component colours:", opts: ["Rectangular glass block","Convex lens","Triangular prism","Concave lens"], ans: 2 },
+        { q: "Random error is:", opts: ["Caused by faulty instruments","Predictable and consistent","Easily eliminated","Unknown & unpredictable variations"], ans: 3 },
+        { q: "Does NOT affect accuracy of measurement:", opts: ["Instrumental error","Human error","Calibration error","Unit used"], ans: 3 },
+        { q: "NOT a common error in simple pendulum experiment:", opts: ["Mass of bob","Not measuring from centre of bob","Air resistance","Large angle of swing"], ans: 0 },
+        { q: "Multiple readings reduce mainly:", opts: ["Human errors","Random errors","Observational errors","None"], ans: 1 },
+        { q: "Percentage error formula (x = measured, x_av = average):", opts: ["(x - x_av)/x_av ×100%","(x - x_av)/x ×100%","(x+x_av)/x ×100%","None"], ans: 0 },
+        { q: "In DC circuit, increase R while V constant → current:", opts: ["Increase","Decrease","Remain unchanged","Infinite"], ans: 1 },
+        { q: "Combination giving least equivalent resistance:", opts: ["All series","All parallel","Mixture series/parallel","None"], ans: 1 },
+        { q: "Experimental errors include:", opts: ["Inability to read instrument","Wrong calibration","Systematic errors","All of these"], ans: 3 },
+        { q: "Source of error in simple pendulum:", opts: ["Perfectly elastic string","Not measuring from centre of bob","Viewing perpendicularly","Small angle"], ans: 1 },
+        { q: "Voltmeter connected in DC circuit:", opts: ["In series","In parallel","Between cell and switch","Anywhere"], ans: 1 },
+        { q: "Resistance of wire 10Ω, if diameter doubled, new R:", opts: ["2.5Ω","5Ω","20Ω","40Ω"], ans: 0 },
+        { q: "For a convex lens, real image is always:", opts: ["Inverted","Erect","Virtual","Diminished"], ans: 0 },
+        { q: "Refractive index of glass 1.5, speed of light in glass (c=3e8 m/s):", opts: ["2e8 m/s","1.5e8 m/s","3e8 m/s","4.5e8 m/s"], ans: 0 },
+        { q: "Which graph verifies Ohm's law?", opts: ["V-I straight line","Parabolic","Hyperbolic","Exponential"], ans: 0 }
+    ];
+
+    // ========== STATE MANAGEMENT ==========
+    const STATE_KEY = 'physics108_30_state';
+    let state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false };
+
+    function saveState() { localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
+    function loadState() { const raw = localStorage.getItem(STATE_KEY); if(raw){ try{ const parsed = JSON.parse(raw); if(parsed.indices && parsed.total===30) { state = parsed; return true; } }catch(e){} } return false; }
+    function clearState() { state = { total:30, indices:[], current:0, answers:{}, skipped:[], submitted:false }; localStorage.removeItem(STATE_KEY); }
+
+    function shuffleArray(arr) { const a = [...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+    function getCurrentQuestion() { if(!state.indices.length) return null; const idx = state.indices[state.current]; return { ...physicsBank[idx], bankIndex: idx }; }
+
+    function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._timer); t._timer = setTimeout(()=>t.classList.remove('show'), 2300); }
+
+    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+    function startQuiz(length) {
+        if(length !== 30) return;
+        clearState();
+        const allIndices = shuffleArray(Array.from({length: physicsBank.length}, (_,i)=>i));
+        const selected = allIndices.slice(0, 30);
+        state = { total: 30, indices: selected, current: 0, answers: {}, skipped: [], submitted: false };
+        saveState();
+        renderQuizLayout();
+        renderQuestion();
+        updateProgressStats();
+        updateNavButtons();
+        switchScreen('quizScreen');
+        toast(`New 30‑question physics quiz started!`);
+    }
+
+    function resumeQuiz() {
+        if(!loadState() || !state.indices.length || state.submitted){ toast('No saved quiz. Start a new one.'); return; }
+        renderQuizLayout();
+        renderQuestion();
+        updateProgressStats();
+        updateNavButtons();
+        switchScreen('quizScreen');
+        toast('Resumed previous quiz.');
+    }
+
+    function clearStorage() { clearState(); saveState(); document.getElementById('resumeSection').style.display='none'; toast('Saved progress cleared.'); }
+
+    function renderQuizLayout() {
+        const dotsContainer = document.getElementById('questionDots');
+        dotsContainer.innerHTML = '';
+        for(let i=0; i<state.total; i++){
+            const dot = document.createElement('span');
+            dot.className = 'dot';
+            dot.title = `Question ${i+1}`;
+            dot.onclick = () => { state.current = i; saveState(); renderQuestion(); updateProgressStats(); updateNavButtons(); };
+            dotsContainer.appendChild(dot);
+        }
+        updateDotsHighlight();
+    }
+
+    function renderQuestion() {
+        const qObj = getCurrentQuestion();
+        if(!qObj) return;
+        document.getElementById('questionNumber').textContent = `QUESTION ${state.current+1}`;
+        document.getElementById('questionText').textContent = qObj.q;
+        document.getElementById('progressLabel').textContent = `Question ${state.current+1} of ${state.total}`;
+        const optsContainer = document.getElementById('optionsList');
+        optsContainer.innerHTML = '';
+        const letters = ['A','B','C','D'];
+        qObj.opts.forEach((opt, idx) => {
+            const li = document.createElement('li');
+            li.className = 'option-item';
+            if(state.answers[state.current] === idx) li.classList.add('selected');
+            li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[idx]}.</span><span>${escapeHtml(opt)}</span>`;
+            li.onclick = () => selectOption(idx);
+            optsContainer.appendChild(li);
+        });
+        updateDotsHighlight();
+    }
+
+    function selectOption(optIndex) {
+        if(state.submitted) return;
+        state.answers[state.current] = optIndex;
+        state.skipped = state.skipped.filter(s=> s !== state.current);
+        saveState();
+        renderQuestion();
+        updateProgressStats();
+        updateNavButtons();
+    }
+
+    function skipQuestion() {
+        if(state.submitted) return;
+        if(state.answers[state.current] === undefined && !state.skipped.includes(state.current)) {
+            state.skipped.push(state.current);
+        }
+        if(state.current < state.total-1){
+            state.current++;
+            saveState();
+            renderQuestion();
+            updateProgressStats();
+            updateNavButtons();
+        } else {
+            updateProgressStats();
+            renderQuestion();
+        }
+        toast('Skipped question');
+    }
+
+    function navigate(delta) {
+        if(state.submitted) return;
+        const newIdx = state.current + delta;
+        if(newIdx >=0 && newIdx < state.total){
+            state.current = newIdx;
+            saveState();
+            renderQuestion();
+            updateProgressStats();
+            updateNavButtons();
+        }
+    }
+
+    function updateProgressStats() {
+        const answeredCount = Object.keys(state.answers).length;
+        document.getElementById('answeredCount').textContent = `${answeredCount} answered`;
+        const percent = Math.round((answeredCount / state.total) * 100);
+        document.getElementById('progressFill').style.width = `${percent}%`;
+    }
+
+    function updateNavButtons() {
+        const prevBtn = document.getElementById('btnPrev');
+        const nextBtn = document.getElementById('btnNext');
+        if(prevBtn) prevBtn.disabled = (state.current === 0);
+        if(nextBtn) nextBtn.disabled = (state.current === state.total-1);
+    }
+
+    function updateDotsHighlight() {
+        const dots = document.querySelectorAll('#questionDots .dot');
+        for(let i=0; i<dots.length; i++){
+            dots[i].classList.remove('current','answered','skipped');
+            if(i === state.current) dots[i].classList.add('current');
+            if(state.answers[i] !== undefined) dots[i].classList.add('answered');
+            else if(state.skipped.includes(i)) dots[i].classList.add('skipped');
+        }
+    }
+
+    function submitQuiz() {
+        const unanswered = state.total - Object.keys(state.answers).length;
+        if(unanswered > 0 && !confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) return;
+        state.submitted = true;
+        saveState();
+        showResultsScreen();
+        switchScreen('resultsScreen');
+    }
+
+    function showResultsScreen() {
+        let correct = 0;
+        const reviewArray = [];
+        for(let i=0; i<state.indices.length; i++){
+            const q = physicsBank[state.indices[i]];
+            const userAns = state.answers[i];
+            const isCorrect = (userAns === q.ans);
+            if(isCorrect) correct++;
+            const userLetter = userAns !== undefined ? String.fromCharCode(65+userAns) : '—';
+            const userText = userAns !== undefined ? q.opts[userAns] : 'Not answered';
+            const correctLetter = String.fromCharCode(65+q.ans);
+            const correctText = q.opts[q.ans];
+            reviewArray.push({
+                qText: q.q,
+                userDisplay: `${userLetter}. ${userText}`,
+                correctDisplay: `${correctLetter}. ${correctText}`,
+                isCorrect: isCorrect,
+                idx: i+1
+            });
+        }
+        const percent = Math.round((correct/state.total)*100);
+        document.getElementById('scorePercent').textContent = `${percent}%`;
+        document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
+        let msg = '';
+        if(percent >= 90) msg = '🏆 Outstanding! Physics master.';
+        else if(percent >= 70) msg = '👏 Great job! Solid understanding.';
+        else if(percent >= 50) msg = '📖 Good effort. Review a bit more.';
+        else msg = '💪 Keep studying — review the lab concepts.';
+        document.getElementById('resultMessage').textContent = msg;
+        window._reviewData = reviewArray;
+        const reviewDiv = document.getElementById('reviewSection');
+        reviewDiv.style.display = 'none';
+        reviewDiv.innerHTML = '';
+    }
+
+    function reviewAnswers() {
+        const sec = document.getElementById('reviewSection');
+        if(sec.style.display === 'block'){
+            sec.style.display = 'none';
+            sec.innerHTML = '';
+            return;
+        }
+        if(!window._reviewData) return;
+        sec.innerHTML = '<h3 style="margin-bottom:12px;">🔍 Detailed Answer Review</h3>';
+        window._reviewData.forEach(r => {
+            const div = document.createElement('div');
+            div.className = `review-item ${r.isCorrect ? 'correct-r' : 'wrong'}`;
+            div.innerHTML = `
+                <div class="rev-q">Q${r.idx}: ${escapeHtml(r.qText)}</div>
+                <div class="rev-ans">Your answer: <span class="${r.isCorrect ? '' : 'your-ans'}">${escapeHtml(r.userDisplay)}</span><br>
+                Correct: <span class="correct-ans">${escapeHtml(r.correctDisplay)}</span></div>
+            `;
+            sec.appendChild(div);
+        });
+        sec.style.display = 'block';
+        sec.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function restartQuiz() {
+        clearState();
+        saveState();
+        document.getElementById('reviewSection').style.display = 'none';
+        document.getElementById('reviewSection').innerHTML = '';
+        window._reviewData = null;
+        switchScreen('startScreen');
+        updateResumeButtonVisibility();
+        toast('Back to start. Choose 30-question quiz.');
+    }
+
+    function updateResumeButtonVisibility() {
+        const resumeDiv = document.getElementById('resumeSection');
+        if(loadState() && state.indices.length && !state.submitted){
+            resumeDiv.style.display = 'block';
+        } else {
+            resumeDiv.style.display = 'none';
+            if(loadState() && state.submitted) clearState();
+        }
+    }
+
+    function escapeHtml(str) { return String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
+
+    // keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if(state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
+        const key = e.key.toLowerCase();
+        if(key === 'a') { e.preventDefault(); selectOption(0); }
+        else if(key === 'b') { e.preventDefault(); selectOption(1); }
+        else if(key === 'c') { e.preventDefault(); selectOption(2); }
+        else if(key === 'd') { e.preventDefault(); selectOption(3); }
+        else if(key === 'arrowleft') { e.preventDefault(); navigate(-1); }
+        else if(key === 'arrowright') { e.preventDefault(); navigate(1); }
+        else if(key === 's') { e.preventDefault(); skipQuestion(); }
+        else if(key === 'enter') { e.preventDefault(); if(Object.keys(state.answers).length === state.total || confirm('Submit quiz?')) submitQuiz(); }
+    });
+
+    updateResumeButtonVisibility();
+    switchScreen('startScreen');
+</script>
+</body>
+</html>
