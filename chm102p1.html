@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHM 102 / CHM 112 · Organic Chemistry Quiz</title>
+    <style>
+        :root {
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --primary: #0d47a1;
+            --primary-dark: #002171;
+            --accent: #1a1a2e;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --border: #dfe6e9;
+            --correct: #00b894;
+            --incorrect: #e17055;
+            --warning: #fdcb6e;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --radius: 16px;
+            --transition: 0.3s ease;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Segoe UI',Inter,system-ui,sans-serif;
+            background:var(--bg);min-height:100vh;
+            display:flex;align-items:center;justify-content:center;
+            padding:20px;line-height:1.6;color:var(--text);
+        }
+        .container{
+            width:100%;max-width:850px;background:var(--card-bg);
+            border-radius:var(--radius);box-shadow:var(--shadow);
+            padding:32px 28px;position:relative;overflow:hidden;transition:var(--transition);
+        }
+        .quiz-header{text-align:center;margin-bottom:20px;}
+        .quiz-header .chem-icon{font-size:2.2rem;display:block;margin-bottom:4px;}
+        .quiz-header h1{font-size:1.5rem;color:var(--primary-dark);font-weight:700;}
+        .subtitle{font-size:0.85rem;color:var(--text-light);margin-top:4px;}
+        .screen{display:none;animation:fadeIn 0.4s;}
+        .screen.active{display:block;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+        .start-options{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:24px 0 18px;}
+        .start-btn{
+            flex:1;min-width:150px;padding:22px 16px;border:2px solid var(--border);
+            border-radius:var(--radius);background:var(--card-bg);cursor:pointer;
+            text-align:center;font-weight:600;transition:var(--transition);color:var(--text);
+        }
+        .start-btn:hover{border-color:var(--primary);box-shadow:0 8px 20px rgba(13,71,161,0.12);transform:translateY(-2px);}
+        .start-btn .icon{font-size:2.2rem;display:block;margin-bottom:4px;}
+        .start-btn .badge{background:var(--primary);color:#fff;font-size:0.75rem;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px;}
+        .start-info{font-size:0.8rem;color:var(--text-light);text-align:center;}
+        .progress-wrap{margin-bottom:16px;}
+        .progress-stats{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-light);margin-bottom:4px;}
+        .progress-bar{height:8px;background:var(--border);border-radius:10px;overflow:hidden;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#2962ff);border-radius:10px;transition:width 0.4s;}
+        .question-dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+        .dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:var(--transition);}
+        .dot.answered{background:var(--primary);opacity:0.6;}
+        .dot.current{background:var(--primary);transform:scale(1.5);box-shadow:0 0 0 4px rgba(13,71,161,0.2);}
+        .dot.skipped{background:var(--warning);}
+        .question-card{background:#fafbfc;border-radius:12px;padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+        .question-number{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);font-weight:700;margin-bottom:6px;}
+        .question-text{font-size:1.05rem;font-weight:600;color:var(--text);}
+        .options-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+        .option-item{
+            padding:14px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;background:#fff;
+            display:flex;align-items:center;gap:10px;transition:var(--transition);font-size:0.95rem;user-select:none;
+        }
+        .option-item:hover{border-color:#b2bec3;background:#f8f9fa;}
+        .option-item.selected{border-color:var(--primary);background:#e8eaf6;font-weight:600;}
+        .option-item .radio-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;
+            display:flex;align-items:center;justify-content:center;transition:var(--transition);}
+        .option-item.selected .radio-dot{border-color:var(--primary);background:var(--primary);}
+        .option-item.selected .radio-dot::after{content:'';width:6px;height:6px;background:#fff;border-radius:50%;}
+        .option-item .opt-letter{font-weight:700;color:var(--primary);width:24px;}
+        .nav-buttons{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:18px;}
+        .btn{padding:11px 20px;border-radius:25px;border:none;cursor:pointer;font-weight:600;font-size:0.9rem;
+            transition:var(--transition);display:inline-flex;align-items:center;gap:6px;}
+        .btn-outline{background:#fff;border:2px solid var(--border);color:var(--text);}
+        .btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+        .btn-primary{background:var(--primary);color:#fff;border:2px solid var(--primary);}
+        .btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark);}
+        .btn-submit{background:var(--accent);color:#fff;border:2px solid var(--accent);font-size:1rem;padding:13px 32px;}
+        .btn-submit:hover{background:#2d2d4e;}
+        .btn:disabled{opacity:0.5;pointer-events:none;}
+        .results-card{text-align:center;}
+        .score-circle{width:130px;height:130px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;
+            justify-content:center;flex-direction:column;border:6px solid var(--primary);font-weight:700;}
+        .score-circle .big-score{font-size:2.8rem;color:var(--primary);}
+        .score-circle .total{font-size:0.9rem;color:var(--text-light);}
+        .result-message{font-size:1.1rem;margin-bottom:20px;font-weight:500;}
+        .review-section{text-align:left;margin-top:24px;max-height:400px;overflow-y:auto;padding-right:8px;}
+        .review-item{background:#fafbfc;border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid var(--border);font-size:0.9rem;}
+        .review-item.wrong{border-left-color:var(--incorrect);background:#fffaf9;}
+        .review-item.correct-r{border-left-color:var(--correct);background:#f9fffb;}
+        .review-item .rev-q{font-weight:600;margin-bottom:4px;}
+        .review-item .rev-ans{font-size:0.82rem;color:var(--text-light);}
+        .correct-ans{color:var(--correct);font-weight:600;}
+        .your-ans{color:var(--incorrect);font-weight:600;text-decoration:line-through;}
+        .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--primary-dark);color:#fff;
+            padding:10px 22px;border-radius:25px;font-size:0.85rem;font-weight:600;z-index:999;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+        .toast.show{opacity:1;}
+        @media(max-width:600px){
+            .container{padding:20px 14px;}
+            .start-btn{min-width:120px;padding:16px 12px;}
+            .question-text{font-size:0.95rem;}
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+    <div class="toast" id="toast"></div>
+
+    <!-- START SCREEN -->
+    <div class="screen active" id="startScreen">
+        <div class="quiz-header">
+            <span class="chem-icon">⚗️</span>
+            <h1>CHM 102 / CHM 112 · Organic Chemistry Quiz</h1>
+            <p class="subtitle">340 Medium to Hard Questions — Hydrocarbons, Stereochemistry, Functional Groups & More</p>
+        </div>
+        <p style="text-align:center;font-weight:500;">Select quiz length:</p>
+        <div class="start-options">
+            <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📝</span>30 Questions<span class="badge">~30 min</span></button>
+            <button class="start-btn" onclick="startQuiz(60)"><span class="icon">📚</span>60 Questions<span class="badge">~60 min</span></button>
+        </div>
+        <p class="start-info">🎲 340 questions randomly selected · No timer · Resume supported</p>
+        <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
+            <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
+            <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#e17055;">🗑 Clear saved</button>
+        </div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div class="screen" id="quizScreen">
+        <div class="quiz-header"><span style="font-size:1.8rem;">🧪</span></div>
+        <div class="progress-wrap">
+            <div class="progress-stats"><span id="progressLabel">Question 1 of 30</span><span id="answeredCount">0 answered</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+            <div class="question-dots" id="questionDots"></div>
+        </div>
+        <div class="question-card">
+            <div class="question-number" id="questionNumber">QUESTION 1</div>
+            <div class="question-text" id="questionText"></div>
+        </div>
+        <ul class="options-list" id="optionsList"></ul>
+        <div class="nav-buttons">
+            <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Prev</button>
+            <div class="nav-center">
+                <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
+                <button class="btn btn-submit" id="btnSubmit" onclick="submitQuiz()">✅ Submit</button>
+            </div>
+            <button class="btn btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
+        </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div class="screen" id="resultsScreen">
+        <div class="results-card">
+            <div class="quiz-header"><h1>📊 Quiz Results</h1></div>
+            <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/30</span></div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
+            <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">🔍 Review</button>
+            <div class="review-section" id="reviewSection" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== 340 QUESTION BANK ==========
+    const questionBank = [
+        // Section A: General Organic Chemistry & Hydrocarbons (1-60)
+        { q: "The common feature of organic chemicals is that they contain-", opts: ["Fluorine", "Carbon", "Lithium", "Vinyl group"], ans: 1 },
+        { q: "The ability of atoms to join together is termed-", opts: ["Catenation", "Cracking", "Hydrogenation", "Catalysis"], ans: 0 },
+        { q: "Which of the following is known as 'marsh gas'?", opts: ["Ethane", "Ethene", "Methanol", "Methane"], ans: 3 },
+        { q: "Organic compounds with the same molecular formula and functional group but different arrangement of atoms in space are called-", opts: ["Geometric isomers", "Functional group isomers", "Metamers", "Chain isomers"], ans: 0 },
+        { q: "Isomerism which occurs owing to the lack of free rotation about double bonds is-", opts: ["Functional", "Chain", "Stereo", "Geometric"], ans: 3 },
+        { q: "Alkanes have the general formula-", opts: ["CₙH₂ₙ", "CₙH₂ₙ₊₂", "CₙH₂ₙ₋₂", "CₙH₂ₙ₋₄"], ans: 1 },
+        { q: "Alkenes have the general formula-", opts: ["CₙH₂ₙ", "CₙH₂ₙ₊₂", "CₙH₂ₙ₋₂", "CₙH₂ₙ₋₄"], ans: 0 },
+        { q: "Alkynes have the general formula-", opts: ["CₙH₂ₙ", "CₙH₂ₙ₊₂", "CₙH₂ₙ₋₂", "CₙH₂ₙ₋₄"], ans: 2 },
+        { q: "Cycloalkanes have the general formula-", opts: ["CₙH₂ₙ", "CₙH₂ₙ₊₂", "CₙH₂ₙ₋₂", "CₙH₂ₙ₋₄"], ans: 0 },
+        { q: "Cycloalkenes have the general formula-", opts: ["CₙH₂ₙ", "CₙH₂ₙ₊₂", "CₙH₂ₙ₋₂", "CₙH₂ₙ₋₄"], ans: 2 },
+        { q: "The correct combustion equation for pentane is-", opts: ["C₅H₁₀ + 8O₂ → 5CO₂ + 7H₂O", "C₆H₁₀ + 8O₂ → 2CO₂ + 4H₂O", "C₅H₁₂ + 8O₂ → 5CO₂ + 6H₂O", "C₅H₁₂ + 5O₂ → 5CO₂ + 6H₂O"], ans: 2 },
+        { q: "What is the melting point of butane?", opts: ["-138°C", "138°C", "-182°C", "182°C"], ans: 0 },
+        { q: "What is the boiling point of but-1-ene?", opts: ["-18°C", "-10°C", "-6°C", "-8°C"], ans: 2 },
+        { q: "In the substitution reaction of methane, at the propagation stage, the equation is-", opts: ["Cl₂ → 2Cl•", "CH₄ + Cl• → CH₃• + HCl", "CH₃• + Cl• → CH₃Cl", "CH₃Cl + Cl• → CH₂Cl₂ + HCl"], ans: 1 },
+        { q: "Decarboxylation of a salt of an organic acid by heating with soda lime yields-", opts: ["Alkane", "Alkene", "Alkyne", "Alkanoic acid"], ans: 0 },
+        { q: "RMgX is the general formula for a Grignard reagent. What do R and X represent?", opts: ["Metal and halogen", "Alkoxy and metal", "Alkoxy and halogen", "Alkyl and halogen"], ans: 3 },
+        { q: "Which of the following is an example of a free radical reaction?", opts: ["Substitution reaction", "Elimination reaction", "Esterification", "Polymerisation"], ans: 0 },
+        { q: "If you heat alcohol with concentrated sulphuric acid you get-", opts: ["Alkane", "Alkene", "Alkyne", "Alkanol"], ans: 1 },
+        { q: "Bromine is ______ colour and changes to ______ when added to an alkene-", opts: ["Red-brown, colourless", "Orange, yellow", "Colourless, orange", "Purple, colourless"], ans: 0 },
+        { q: "Alkenes undergo-", opts: ["Condensation polymerisation", "Addition polymerisation", "Ionic polymerisation", "Atactic polymerisation"], ans: 1 },
+        { q: "What is the monomer unit of Teflon?", opts: ["Vinyl chloride", "Styrene", "Ethene", "Tetrafluoroethene"], ans: 3 },
+        { q: "Teflon is the polymer obtained from-", opts: ["Vinyl chloride", "Tetrafluoroethene", "Acrylonitrile", "Ethene"], ans: 1 },
+        { q: "Ethyne will polymerize at ______ to give ______-", opts: ["38°C, polyethylene", "400°C, styrene", "400°C, benzene", "48°C, polyethylene"], ans: 2 },
+        { q: "Which of the following is an activating group in electrophilic substitution?", opts: ["NO₂", "COOH", "CHO", "SO₃H", "None of the above"], ans: 4 },
+        { q: "Which of the following is a deactivating group?", opts: ["NH₂", "COOH", "CH₃", "OCH₃", "None of the above"], ans: 1 },
+        { q: "The methyl group directs where in electrophilic aromatic substitution?", opts: ["Ortho", "Meta", "Ortho and meta", "Ortho and para"], ans: 3 },
+        { q: "Wurtz's synthesis is used to produce-", opts: ["Alkenes", "Alkynes", "Alkanoic acids", "Alkanes", "Alkanols"], ans: 3 },
+        { q: "Benzene + Cl₂ → ? + HCl. What is missing?", opts: ["Cl₂", "Ni", "Chlorobenzene", "Benzoyl chloride"], ans: 2 },
+        { q: "Epoxides are a type of cyclic ethers also known as-", opts: ["Alkanes", "Oxiranes", "Ethers", "Amines"], ans: 1 },
+        { q: "Benzene + 3H₂ + Ni → ?", opts: ["Benzane", "Hexane", "Cyclohexane", "Heptane"], ans: 2 },
+        { q: "Glycol is an old name for-", opts: ["Ethene-1,2-diol", "Ethane-1,2-diol", "Ethane-1,2-ol", "Hexanol"], ans: 1 },
+        { q: "Glycerol is an old name for-", opts: ["Ethane-1,2-diol", "Hexanol", "Hex-2-ol", "Propan-1,2,3-triol", "None of the above"], ans: 3 },
+        { q: "The traditional way of making alcohol is-", opts: ["Grignard reagent", "Hydration of alkenes", "Fermentation", "None of the above"], ans: 2 },
+        { q: "Vodka, brandy and whisky are ______ drinks-", opts: ["Carbonated", "Alcoholic", "Sweetened", "Catenated"], ans: 1 },
+        { q: "______ are reduced to secondary alcohols-", opts: ["Aldehydes", "Alkanoic acids", "Alkanols", "Ketones"], ans: 3 },
+        { q: "Ethanal → propan-2-ol. What is the Grignard reagent and element necessary for conversion?", opts: ["CH₃MgBr, H₂O", "CH₂MgBr, H₂O", "CH₃CH₂MgBr, H₂O", "CHMgBr, H₂"], ans: 0 },
+        { q: "2-methylpropan-2-ol is an example of-", opts: ["Primary alcohol", "Secondary alcohol", "Tertiary alcohol", "All of the above"], ans: 2 },
+        { q: "Tertiary alcohols are oxidised to-", opts: ["Aldehydes", "Ketones", "Alkanoic acids", "None of the above"], ans: 3 },
+        { q: "Polymerisation of ethanol yields-", opts: ["Polyethanol", "Teflon", "Bakelite", "Polyacrylonitrile"], ans: 0 },
+        { q: "______ has a characteristic smell which may be detected near rotting fruit-", opts: ["Ethene", "Ethyne", "Ethanal", "Ethanol"], ans: 2 },
+        { q: "The Wacker process is used to produce-", opts: ["Ethanal", "Ethanol", "Ethanone", "Ethanoic acid"], ans: 0 },
+        { q: "The structural formula for benzaldehyde is-", opts: ["C₆H₆Cl", "C₆H₅OH", "C₆H₅Ph", "C₆H₅CHO"], ans: 3 },
+        { q: "______ is mainly manufactured from cumene-", opts: ["Ethanal", "Propanal", "Propanone", "Propene", "None of the above"], ans: 2 },
+        { q: "What is the structural formula for cumene?", opts: ["C₆H₅CH(CH₃)₂", "C₂H₅OH", "C₆H₅ClCH(OH)₂", "C₆H₅CHO"], ans: 0 },
+        { q: "______ is a reagent used in identifying aldehydes and ketones-", opts: ["KMnO₄", "Bromine water", "K₂Cr₂O₇", "2,4-dinitrophenylhydrazine"], ans: 3 },
+        { q: "The aldol condensation is a reaction that ______ undergo-", opts: ["Alkanones", "Aldehydes", "Alkanols", "Alkanoates"], ans: 1 },
+        { q: "What will be made if butanone is reduced using LiAlH₄?", opts: ["Butanal", "But-2-ene", "Butan-2-ol", "Butan-2-oic acid"], ans: 2 },
+        { q: "Which of the following is a test for alkanals?", opts: ["Silver mirror test", "Iodoform test", "Orange precipitate with Fehling's solution", "All of the above"], ans: 3 },
+        { q: "______ is responsible for the acidity of carboxylic acids-", opts: ["Presence of double bond", "Presence of COOH group", "Number of hydrogen atoms", "None of the above"], ans: 1 },
+        { q: "C₆H₅CH₂COOH is named-", opts: ["Phenylethanoic acid", "Benzoic amine", "Benzenamide", "Phenylpropanoic acid"], ans: 0 },
+        { q: "In ______, a German chemist took ammonium cyanate and heated it. The product was ______-", opts: ["1826, ammonia", "1829, urea", "1828, ammonia", "1828, urea", "1827, cyanide"], ans: 3 },
+        { q: "Nitrile synthesis is used to produce-", opts: ["Alkanals", "Alkanones", "Carboxylic acids", "Esters"], ans: 2 },
+        { q: "LiAlH₄ is called-", opts: ["Lithium aluminium tetrahydro", "Aluminium lithium tetrahydroaluminate(III)", "Lithium tetrahydrogenoaluminate(III)", "Lithium tetrahydroaluminate(III)"], ans: 3 },
+        { q: "Which of the following is a carboxylic acid derivative?", opts: ["Ethanol", "Acid chlorides", "Alkanes", "Benzaldehyde"], ans: 1 },
+        { q: "CH₃CONH₂ + OBr⁻ + 2OH⁻ → CH₃NH₂ + CO₂ + H₂O + Br⁻. This reaction is called-", opts: ["Hofmann degradation", "Hoffmann degradation", "Hoffmann oxidation", "All of the above"], ans: 0 },
+        { q: "Urea is a/an-", opts: ["Amine", "Nitrile", "Amide", "Carboxyl"], ans: 2 },
+        { q: "______ are responsible for the odour of foodstuffs-", opts: ["Esters", "Amides", "Amines", "Others"], ans: 0 },
+        { q: "Aspirin, one of the most remarkable successes of the pharmaceutical industry, is-", opts: ["An ether", "An ester", "An epoxide", "An amine"], ans: 1 },
+        { q: "Williamson's synthesis is used to produce-", opts: ["Amines", "Alkanols", "Ethers", "Esters"], ans: 2 },
+        { q: "Naphthalene is-", opts: ["An alkene", "An alkenol", "An arene", "None of the above"], ans: 2 },
+
+        // Section B: Alkane Nomenclature and Properties (61-100)
+        { q: "What is the IUPAC name for CH₃CH₂CH(CH₃)CH₂CH₃?", opts: ["2-methylpentane", "3-methylpentane", "2-ethylbutane", "Hexane"], ans: 0 },
+        { q: "The correct IUPAC name for (CH₃)₂CHCH₂CH₃ is-", opts: ["2-methylbutane", "Isopentane", "3-methylbutane", "Pentane"], ans: 0 },
+        { q: "Which of the following is a branched alkane?", opts: ["n-hexane", "2-methylpentane", "Octane", "Decane"], ans: 1 },
+        { q: "The smallest cycloalkane is-", opts: ["Cycloethane", "Cyclopropane", "Cyclobutane", "Cyclopentane"], ans: 1 },
+        { q: "Cyclohexane exists as a-", opts: ["Flat ring", "Puckered ring (chair conformation)", "Linear chain", "Branched chain"], ans: 1 },
+        { q: "Which of the following statements about alkanes is FALSE?", opts: ["They are saturated hydrocarbons", "They contain only sigma bonds", "They are highly reactive", "They are principal constituents of gasoline"], ans: 2 },
+        { q: "The type of bond in alkanes that is difficult to break is the-", opts: ["Pi bond", "Sigma bond", "Hydrogen bond", "Ionic bond"], ans: 1 },
+        { q: "Which catalyst is used in the catalytic hydrogenation of alkenes?", opts: ["H₂SO₄", "NaOH", "Palladium (Pd-C)", "KMnO₄"], ans: 2 },
+        { q: "Wurtz reaction involves coupling of haloalkanes with-", opts: ["Magnesium metal", "Sodium metal", "Lithium metal", "Potassium metal"], ans: 1 },
+        { q: "The Corey-House reaction is a ______ method than Wurtz reaction-", opts: ["Worse", "Better", "Slower", "More expensive"], ans: 1 },
+        { q: "In Corey-House reaction, an alkyl halide reacts with ______ to give a higher hydrocarbon-", opts: ["Sodium metal", "Lithium dialkyl copper", "Grignard reagent", "Magnesium metal"], ans: 1 },
+        { q: "The boiling point of branched alkanes compared to straight-chain alkanes with the same number of carbons is-", opts: ["Higher", "Lower", "The same", "Unpredictable"], ans: 1 },
+        { q: "Which alkane has the lowest boiling point?", opts: ["Methane", "Ethane", "Propane", "Butane"], ans: 0 },
+        { q: "At room temperature, which of the following alkanes is a liquid?", opts: ["Methane", "Ethane", "Propane", "Hexane"], ans: 3 },
+        { q: "The general formula for an alkyl group is-", opts: ["CₙH₂ₙ", "CₙH₂ₙ₊₂", "CₙH₂ₙ₊₁", "CₙH₂ₙ₋₂"], ans: 2 },
+        { q: "What is the name of the alkyl group -CH₂CH₃?", opts: ["Methyl", "Ethyl", "Propyl", "Butyl"], ans: 1 },
+        { q: "The prefix 'n-' in n-hexane stands for-", opts: ["Normal", "Nitro", "Non-branched", "Neutral"], ans: 0 },
+        { q: "Which of the following is NOT a physical property of alkanes?", opts: ["Colorless", "Odorless", "Highly soluble in water", "Less dense than water"], ans: 2 },
+        { q: "The combustion of alkanes is an example of-", opts: ["Substitution reaction", "Addition reaction", "Exothermic reaction", "Endothermic reaction"], ans: 2 },
+        { q: "Halogenation of alkanes is an example of-", opts: ["Addition reaction", "Elimination reaction", "Substitution reaction", "Polymerization reaction"], ans: 2 },
+        { q: "The formula for the smallest straight-chain alkane is-", opts: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"], ans: 0 },
+        { q: "How many structural isomers does pentane (C₅H₁₂) have?", opts: ["2", "3", "4", "5"], ans: 1 },
+        { q: "How many structural isomers does hexane (C₆H₁₄) have?", opts: ["3", "4", "5", "6"], ans: 2 },
+        { q: "The correct IUPAC name for (CH₃)₃CCH₂CH₃ is-", opts: ["2,2-dimethylbutane", "2-methylpentane", "3,3-dimethylbutane", "2-ethylbutane"], ans: 0 },
+        { q: "Which of the following is a property of cycloalkanes compared to alkanes?", opts: ["Lower boiling points", "Lower melting points", "Lower densities", "Higher boiling points, melting points and densities"], ans: 3 },
+        { q: "Baeyer's strain theory applies to-", opts: ["Alkanes", "Alkenes", "Cycloalkanes", "Alkynes"], ans: 2 },
+        { q: "According to Baeyer, which cycloalkane has the greatest ring strain?", opts: ["Cyclopropane", "Cyclobutane", "Cyclopentane", "Cyclohexane"], ans: 0 },
+        { q: "Which compound is an exception to Baeyer's strain theory?", opts: ["Methane", "Ethane", "Benzene", "Ethanol"], ans: 2 },
+        { q: "Who proposed the statement: 'Rings that have bond angles different to the tetrahedral angle will suffer from strain'?", opts: ["Friedrich Wöhler", "A. Baeyer", "A. Kekulé", "Heisenberg"], ans: 1 },
+        { q: "The tetrahedral bond angle is approximately-", opts: ["90°", "109.5°", "120°", "180°"], ans: 1 },
+        { q: "Which cycloalkane is most stable?", opts: ["Cyclopropane", "Cyclobutane", "Cyclopentane", "Cyclohexane"], ans: 3 },
+        { q: "The 'puckered' conformation of cyclohexane is called-", opts: ["Boat conformation", "Chair conformation", "Twist conformation", "Envelope conformation"], ans: 1 },
+        { q: "Which of the following is a use of alkanes?", opts: ["Principal constituent of gasoline", "Solvent for cleaning and extraction", "Lubricating oils", "All of the above"], ans: 3 },
+        { q: "Hexane is commonly used in the laboratory for-", opts: ["Drinking", "Cleaning and extraction", "As a catalyst", "As an oxidizing agent"], ans: 1 },
+        { q: "The sigma bond in alkanes is formed by-", opts: ["End-on overlap of atomic orbitals", "Sideways overlap of atomic orbitals", "Hybridization of p-orbitals only", "Ionic bonding"], ans: 0 },
+        { q: "Which of the following statements about alkane reactivity is TRUE?", opts: ["Alkanes are highly reactive due to pi bonds", "Alkanes are the least reactive hydrocarbon species", "Alkanes readily undergo addition reactions", "Alkanes react vigorously with water"], ans: 1 },
+        { q: "The successive difference between one alkane and the next in the homologous series is-", opts: ["C", "CH", "CH₂", "CH₃"], ans: 2 },
+        { q: "Which of the following is NOT an alkane?", opts: ["Propane", "Butane", "Propene", "Pentane"], ans: 2 },
+        { q: "The formula C₄H₁₀ represents-", opts: ["Butane only", "2-methylpropane only", "Both butane and 2-methylpropane", "Butene"], ans: 2 },
+        { q: "In the IUPAC naming system, the suffix for alkanes is-", opts: ["-ene", "-yne", "-ane", "-ol"], ans: 2 },
+
+        // Section C: Alkenes (101-150)
+        { q: "Another term used to describe alkenes is-", opts: ["Acetylenes", "Olefins", "Paraffins", "Aromatics"], ans: 1 },
+        { q: "The functional group in alkenes is the-", opts: ["Single bond", "Double bond", "Triple bond", "Hydroxyl group"], ans: 1 },
+        { q: "The IUPAC name for CH₂=CH₂ is-", opts: ["Ethane", "Ethyne", "Ethene", "Ethanol"], ans: 2 },
+        { q: "The correct IUPAC name for CH₃CH=CHCH₃ is-", opts: ["But-1-ene", "But-2-ene", "Butene", "2-butene"], ans: 1 },
+        { q: "4-bromo-6-methyloct-3-ene has a longest carbon chain of how many carbons?", opts: ["6", "7", "8", "9"], ans: 2 },
+        { q: "In naming alkenes, the numbering of the chain starts from the carbon nearest to the-", opts: ["Methyl group", "Double bond", "End of the chain", "Halogen substituent"], ans: 1 },
+        { q: "If an alkene contains two double bonds, the suffix used is-", opts: ["-ene", "-diene", "-triene", "-yne"], ans: 1 },
+        { q: "The smallest cycloalkene is-", opts: ["Cyclopropene", "Cyclobutene", "Cyclopentene", "Cyclohexene"], ans: 0 },
+        { q: "The general formula for a cycloalkene is-", opts: ["CₙH₂ₙ", "CₙH₂ₙ₊₂", "CₙH₂ₙ₋₂", "CₙH₂ₙ₋₄"], ans: 2 },
+        { q: "Which of the following is NOT a property of alkenes?", opts: ["Insoluble in water", "Lower density than water", "Highly soluble in water", "Dissolve in organic solvents"], ans: 2 },
+        { q: "The cis-isomer of an alkene has a ______ melting point than the trans-isomer-", opts: ["Higher", "Lower", "Same", "Unpredictable"], ans: 1 },
+        { q: "At room temperature, which of the following alkenes is a gas?", opts: ["Ethene", "Propene", "Butene", "All of the above"], ans: 3 },
+        { q: "The characteristic reaction of alkenes is-", opts: ["Substitution reaction", "Addition reaction", "Elimination reaction", "Rearrangement reaction"], ans: 1 },
+        { q: "The double bond of an alkene consists of-", opts: ["Two sigma bonds", "Two pi bonds", "One sigma bond and one pi bond", "One sigma bond and two pi bonds"], ans: 2 },
+        { q: "The carbon-carbon pi bond in alkenes is relatively-", opts: ["Strong", "Weak", "Non-existent", "Ionic"], ans: 1 },
+        { q: "Catalytic hydrogenation of an alkene produces-", opts: ["An alkyne", "A saturated alkane", "An alcohol", "A dihalogenated alkane"], ans: 1 },
+        { q: "The heat released during hydrogenation of an alkene is called-", opts: ["Heat of combustion", "Heat of formation", "Heat of hydrogenation", "Heat of vaporization"], ans: 2 },
+        { q: "Hydrogenation of alkenes is an ______ reaction-", opts: ["Endothermic", "Exothermic", "Isothermic", "Non-thermic"], ans: 1 },
+        { q: "Which catalyst is NOT used in catalytic hydrogenation?", opts: ["Palladium (Pd-C)", "Platinum (PtO₂)", "Nickel (Ra-Ni)", "Iron (Fe)"], ans: 3 },
+        { q: "The Diels-Alder reaction is a ______ reaction-", opts: ["Substitution", "Elimination", "Cycloaddition", "Polymerization"], ans: 2 },
+        { q: "In the Diels-Alder reaction, 1,3-butadiene reacts with ethylene to produce-", opts: ["Benzene", "Cyclohexane", "Cyclohexene", "Cyclobutane"], ans: 2 },
+        { q: "The dienophile in a Diels-Alder reaction is the-", opts: ["Diene component", "Alkene component that reacts with the diene", "Catalyst", "Solvent"], ans: 1 },
+        { q: "Halogenation of an alkene results in a ______ product-", opts: ["Monohalogenated alkane", "Dihalogenated alkane", "Trihalogenated alkane", "Tetrahalogenated alkane"], ans: 1 },
+        { q: "When ethene reacts with bromine, the product is-", opts: ["Bromoethane", "1,2-dibromoethane", "1,1-dibromoethane", "Bromoethene"], ans: 1 },
+        { q: "Markovnikov's rule applies to the hydrohalogenation of-", opts: ["Symmetrical alkenes", "Asymmetrical alkenes", "Both symmetrical and asymmetrical alkenes", "Alkynes only"], ans: 1 },
+        { q: "According to Markovnikov's rule, the halide adds to the carbon with-", opts: ["Fewer alkyl substituents", "More alkyl substituents", "More hydrogen atoms", "Less steric hindrance"], ans: 1 },
+        { q: "In the reaction CH₃-CH=CH₂ + HBr, the major product is-", opts: ["1-bromopropane", "2-bromopropane", "1,2-dibromopropane", "Propane"], ans: 1 },
+        { q: "The addition of water to an alkene with a strong acid catalyst produces-", opts: ["An alkane", "An alkyne", "An alcohol", "A ketone"], ans: 2 },
+        { q: "The hydration of ethene produces-", opts: ["Methanol", "Ethanol", "Propanol", "Ethanal"], ans: 1 },
+        { q: "Under acidic medium, potassium manganate(VII) with an alkene becomes-", opts: ["Purple to green", "Purple to colourless", "Purple to brown", "Colourless to purple"], ans: 1 },
+        { q: "Under alkaline medium, potassium manganate(VII) with an alkene first becomes ______ and then produces a ______ precipitate-", opts: ["Colourless, purple", "Dark green, dark brown", "Purple, white", "Yellow, red"], ans: 1 },
+        { q: "Which of the following is a use of alkenes?", opts: ["Manufacture of polythene", "Manufacture of polystyrene", "Manufacture of ethanol", "All of the above"], ans: 3 },
+        { q: "Polythene is used for making-", opts: ["Buckets and bowls", "Car battery cases", "Motor car radiators", "Synthetic fibre terylene"], ans: 0 },
+        { q: "Ethane-1,2-diol is used as-", opts: ["A solvent", "Anti-freezing for motor car radiators", "A fuel", "A lubricant"], ans: 1 },
+        { q: "The isomerism exhibited by but-2-ene is-", opts: ["Chain isomerism", "Positional isomerism", "Geometric isomerism", "Functional isomerism"], ans: 2 },
+        { q: "In cis-but-2-ene, the two methyl groups are on the ______ side of the double bond-", opts: ["Same", "Opposite", "Random", "Alternating"], ans: 0 },
+        { q: "In trans-but-2-ene, the two methyl groups are on the ______ side of the double bond-", opts: ["Same", "Opposite", "Random", "Alternating"], ans: 1 },
+        { q: "The modern notation for cis-but-2-ene is-", opts: ["(E)-but-2-ene", "(Z)-but-2-ene", "(C)-but-2-ene", "(T)-but-2-ene"], ans: 1 },
+        { q: "The modern notation for trans-but-2-ene is-", opts: ["(E)-but-2-ene", "(Z)-but-2-ene", "(C)-but-2-ene", "(T)-but-2-ene"], ans: 0 },
+        { q: "In the E-Z notation system, 'E' comes from the German word 'Entgegen' meaning-", opts: ["Together", "Opposite", "Same", "Different"], ans: 1 },
+        { q: "In the E-Z notation system, 'Z' comes from the German word 'Zusammen' meaning-", opts: ["Together", "Opposite", "Same", "Different"], ans: 0 },
+        { q: "Which alkene has the molecular formula C₄H₈ and exhibits geometric isomerism?", opts: ["But-1-ene", "But-2-ene", "2-methylprop-1-ene", "Cyclobutene"], ans: 1 },
+        { q: "How many structural isomers does C₄H₈ have?", opts: ["2", "3", "4", "5"], ans: 1 },
+        { q: "Which of the following is NOT a structural isomer of C₄H₈?", opts: ["But-1-ene", "But-2-ene", "2-methylprop-1-ene", "Cyclobutane"], ans: 3 },
+        { q: "The double bond in alkenes consists of a sigma bond and a pi bond. The pi bond is formed by-", opts: ["End-on overlap of orbitals", "Sideways overlap of p-orbitals", "Ionic interaction", "Hydrogen bonding"], ans: 1 },
+        { q: "Which of the following alkenes will have the highest boiling point?", opts: ["Ethene", "Propene", "But-1-ene", "Hex-1-ene"], ans: 3 },
+        { q: "The density of alkenes compared to water is-", opts: ["Higher", "Lower", "Same", "Variable"], ans: 1 },
+        { q: "Which test is used to detect unsaturation in organic compounds?", opts: ["Iodoform test", "Bromine test", "Silver mirror test", "Sodium metal test"], ans: 1 },
+        { q: "In the bromine test for unsaturation, the color change observed is-", opts: ["Colourless to red-brown", "Red-brown to colourless", "Purple to colourless", "Colourless to purple"], ans: 1 },
+        { q: "Bayer's test uses which reagent to detect unsaturation?", opts: ["Bromine water", "Alkaline KMnO₄", "Fehling's solution", "Tollen's reagent"], ans: 1 },
+
+        // Section D: Alkynes (151-185)
+        { q: "Another term used to describe alkynes is-", opts: ["Olefins", "Acetylenes", "Paraffins", "Aromatics"], ans: 1 },
+        { q: "The functional group in alkynes is the-", opts: ["Single bond", "Double bond", "Triple bond", "Hydroxyl group"], ans: 2 },
+        { q: "The IUPAC name for HC≡CH is-", opts: ["Ethane", "Ethene", "Ethyne", "Ethanol"], ans: 2 },
+        { q: "The correct IUPAC name for CH₃C≡CCH₃ is-", opts: ["But-1-yne", "But-2-yne", "Butyne", "2-butyne"], ans: 1 },
+        { q: "5-bromo-7-methyloct-3-yne has a longest carbon chain of how many carbons?", opts: ["6", "7", "8", "9"], ans: 2 },
+        { q: "In naming alkynes, the numbering of the chain starts from the carbon nearest to the-", opts: ["Methyl group", "Double bond", "Triple bond", "Halogen substituent"], ans: 2 },
+        { q: "If an alkyne contains two triple bonds, the suffix used is-", opts: ["-yne", "-diyne", "-triyne", "-ene"], ans: 1 },
+        { q: "The general formula for a straight-chain alkyne is-", opts: ["CₙH₂ₙ", "CₙH₂ₙ₊₂", "CₙH₂ₙ₋₂", "CₙH₂ₙ₊₁"], ans: 2 },
+        { q: "Which of the following is a branched alkyne?", opts: ["HC≡CCH₃", "HC≡CCH₂CH₃", "CH₃C≡CCH(CH₃)₂", "CH₃CH₂C≡CH"], ans: 2 },
+        { q: "Which of the following statements about alkynes is FALSE?", opts: ["Alkynes are soluble in organic solvents", "Alkynes are insoluble in water", "Alkynes produce a sooty flame when burnt", "Alkynes are less acidic than alkanes"], ans: 3 },
+        { q: "The boiling point of alkynes compared to alkenes with the same number of carbons is-", opts: ["Lower", "Higher", "The same", "Unpredictable"], ans: 1 },
+        { q: "The triple bond of an alkyne consists of-", opts: ["Three sigma bonds", "Three pi bonds", "One sigma bond and two pi bonds", "Two sigma bonds and one pi bond"], ans: 2 },
+        { q: "Catalytic hydrogenation of an alkyne involves how many steps?", opts: ["One", "Two", "Three", "Four"], ans: 1 },
+        { q: "In the first step of catalytic hydrogenation of an alkyne, the product is-", opts: ["An alkane", "An alkene", "Another alkyne", "An alcohol"], ans: 1 },
+        { q: "In the second step of catalytic hydrogenation of an alkyne, the product is-", opts: ["An alkane", "An alkene", "Another alkyne", "An alcohol"], ans: 0 },
+        { q: "The halogenation of an alkyne produces a ______ in a stepwise fashion-", opts: ["Monohaloalkane", "Dihaloalkane", "Tetrahaloalkane", "Hexahaloalkane"], ans: 2 },
+        { q: "To stop the halogenation of an alkyne at the alkene stage, the reaction is run at temperatures-", opts: ["Above 100°C", "Slightly below 0°C", "Room temperature", "Below -100°C"], ans: 1 },
+        { q: "The hydrohalogenation of asymmetrical alkynes follows-", opts: ["Anti-Markovnikov's rule", "Markovnikov's rule", "Saytzeff's rule", "Hofmann's rule"], ans: 1 },
+        { q: "The oxidation of alkynes with potassium permanganate under vigorous conditions yields-", opts: ["Aldehydes", "Ketones", "Carboxylic acids", "Diketones"], ans: 2 },
+        { q: "The hydration of symmetrical or terminal alkynes gives-", opts: ["Ketones", "Aldehydes", "Alcohols", "Alkanes"], ans: 1 },
+        { q: "The hydration of asymmetrical or non-terminal alkynes gives-", opts: ["Ketones", "Aldehydes", "Alcohols", "Alkanes"], ans: 0 },
+        { q: "Ethyne is most often used to produce-", opts: ["Ethanoic acid", "Ethanol", "Acrylic acid", "All of the above"], ans: 3 },
+        { q: "Alkynes are used to chemically ______ fruits and vegetables-", opts: ["Preserve", "Ripen", "Color", "Flavor"], ans: 1 },
+        { q: "Which alkyne is used to make vinyl chloride for PVC production?", opts: ["Propane", "Ethyne", "Butyne", "Propyne"], ans: 1 },
+        { q: "When an alkyne is burnt, the flame produced is-", opts: ["Clean blue flame", "Sooty flame", "Non-luminous flame", "Invisible flame"], ans: 1 },
+        { q: "The acidity order of hydrocarbons is-", opts: ["Alkane > Alkene > Alkyne", "Alkyne > Alkene > Alkane", "Alkene > Alkyne > Alkane", "Alkane > Alkyne > Alkene"], ans: 1 },
+        { q: "The correct IUPAC name for CH₃CH₂C≡CH is-", opts: ["But-1-yne", "But-2-yne", "But-3-yne", "1-butyne"], ans: 0 },
+        { q: "The correct IUPAC name for 2-methylpent-2-yne has the molecular formula-", opts: ["C₅H₈", "C₆H₁₀", "C₆H₁₂", "C₅H₁₀"], ans: 1 },
+        { q: "Which of the following is a linear straight-chain alkyne?", opts: ["HC≡C-CH₃", "HC≡C-CH₂-CH₃", "HC≡C-CH₂-CH₂-CH₃", "All of the above"], ans: 3 },
+        { q: "The pi bond in alkynes is ______ than the pi bond in alkenes-", opts: ["Stronger", "Weaker", "Same strength", "Non-existent"], ans: 0 },
+        { q: "In alkynes, the sigma bond is the ______ bond-", opts: ["Weakest", "Strongest", "Most reactive", "Least stable"], ans: 1 },
+        { q: "In alkynes, the pi bond is the ______ bond-", opts: ["Weakest", "Strongest", "Least reactive", "Most stable"], ans: 0 },
+        { q: "Which reagent is used to distinguish between terminal and internal alkynes?", opts: ["Bromine water", "KMnO₄", "Ammoniacal silver nitrate (AgNO₃/NH₃)", "Fehling's solution"], ans: 2 },
+        { q: "The IUPAC name for CH₃-C≡C-CH(CH₃)₂ is-", opts: ["4-methylpent-2-yne", "2-methylpent-3-yne", "4-methylpent-1-yne", "2-methylpent-1-yne"], ans: 0 },
+        { q: "What is the name of the scientist who named benzene?", opts: ["Louis Pasteur", "Jean Biot", "August Kekulé", "Huckel"], ans: 2 },
+
+        // Section E: Isolation, Purification and Analytical Techniques (186-230)
+        { q: "In TLC (Thin Layer Chromatography), what does Rf stand for?", opts: ["Rate of flow", "Retention factor", "Relative front", "Ratio of front"], ans: 1 },
+        { q: "The formula for calculating Rf value is-", opts: ["Distance of solvent / Distance of solute", "Distance of solute / Distance of solvent", "Distance of solute × Distance of solvent", "Distance of solute + Distance of solvent"], ans: 1 },
+        { q: "If the spot on a TLC plate appeared at 4.50 mm and the solvent moved a distance of 6.50 mm, the Rf value is-", opts: ["0.69", "1.44", "0.50", "0.92"], ans: 0 },
+        { q: "If the retention factor (Rf) of a spot is 0.54 and the solvent front appears at 6.50 mm, the position of the spot from the origin is-", opts: ["3.51 mm", "12.04 mm", "6.50 mm", "4.50 mm"], ans: 0 },
+        { q: "Which solvent mixture is mentioned for TLC analysis in the notes?", opts: ["Methanol : Water", "Dichloromethane : n-Hexane (4:1)", "Ethyl acetate : Acetone", "Ethanol : Water"], ans: 1 },
+        { q: "Neutral organic compounds are ______ in nature-", opts: ["Hydrophilic", "Hydrophobic", "Ionic", "Polar"], ans: 1 },
+        { q: "Organic ionic compounds are ______, meaning they are soluble in water but insoluble in organic solvents-", opts: ["Hydrophobic", "Hydrophilic", "Lipophilic", "Non-polar"], ans: 1 },
+        { q: "Which of the following is NOT a factor that facilitates extraction?", opts: ["Solvent penetration into the solid matrix", "Solute dissolving into the solvent", "Solute diffusing out of the solid matrix", "Increasing the particle size"], ans: 3 },
+        { q: "Which factor enhances extraction efficiency?", opts: ["Larger particle size", "Smaller particle size", "Lower temperature", "Shorter extraction duration"], ans: 1 },
+        { q: "What is a disadvantage of using too fine particle size in extraction?", opts: ["Lower extraction yield", "Excessive absorption of solute and difficulty in filtration", "Faster extraction", "Lower solvent usage"], ans: 1 },
+        { q: "The greater the solvent-to-solid ratio, the ______ the extraction yield-", opts: ["Lower", "Higher", "Unaffected", "Unpredictable"], ans: 1 },
+        { q: "What is a disadvantage of a very high solvent-to-solid ratio?", opts: ["Lower extraction yield", "Revenue/cost increase", "Faster extraction", "Purer product"], ans: 1 },
+        { q: "Increasing extraction temperature generally ______ solubility-", opts: ["Decreases", "Increases", "Does not affect", "Destroys"], ans: 1 },
+        { q: "Too high extraction temperature may cause-", opts: ["Faster extraction", "Solvent loss and decomposition of thermolabile components", "Higher purity", "Lower cost"], ans: 1 },
+        { q: "Extraction efficiency increases with time until ______ is reached-", opts: ["Maximum temperature", "Equilibrium of solute inside and outside the solid material", "Solvent evaporation", "Complete dissolution"], ans: 1 },
+        { q: "Which of the following extractants is the most polar?", opts: ["Ethyl acetate", "Acetone", "Methanol", "Water (H₂O)"], ans: 3 },
+        { q: "Arrange the following in order of increasing polarity: Ethyl acetate, Acetone, Ethanol, Methanol-", opts: ["Ethyl acetate < Acetone < Ethanol < Methanol", "Methanol < Ethanol < Acetone < Ethyl acetate", "Ethanol < Methanol < Acetone < Ethyl acetate", "Acetone < Ethyl acetate < Methanol < Ethanol"], ans: 0 },
+        { q: "Which instrument tells us the functional groups present in a sample?", opts: ["GC-MS", "FTIR (Fourier Transform Infrared Spectroscopy)", "NMR", "UV-Vis"], ans: 1 },
+        { q: "Which technique gives the molecular mass of a sample?", opts: ["FTIR", "GC-MS (Gas Chromatography-Mass Spectrometry)", "TLC", "UV-Vis"], ans: 1 },
+        { q: "GC-MS analysis provides which of the following?", opts: ["Molecular mass", "Possible name of the sample", "Possible structure of the sample", "All of the above"], ans: 3 },
+        { q: "Proton NMR (¹H-NMR) gives information about-", opts: ["Total number of carbon atoms", "Total number of hydrogen atoms", "Total number of oxygen atoms", "Total number of nitrogen atoms"], ans: 1 },
+        { q: "Carbon-13 NMR (¹³C-NMR) gives information about-", opts: ["Total number of hydrogen atoms", "Total number of carbon atoms", "Total number of functional groups", "Total number of double bonds"], ans: 1 },
+        { q: "Which purification method involves solid changing directly to vapour without passing through a liquid state?", opts: ["Distillation", "Sublimation", "Filtration", "Chromatography"], ans: 1 },
+        { q: "Which of the following substances CAN be purified by sublimation?", opts: ["Camphor", "Naphthalene", "Benzoic acid", "All of the above"], ans: 3 },
+        { q: "Sublimation is used for the separation of ______ compounds from ______ impurities-", opts: ["Non-sublimable, volatile", "Sublimable volatile, non-volatile", "Non-volatile, sublimable", "Liquid, solid"], ans: 1 },
+        { q: "Simple distillation is useful for-", opts: ["Separating liquids with close boiling points", "Purification of liquids that boil without decomposition", "Separating sublimable compounds", "Analyzing TLC plates"], ans: 1 },
+        { q: "Fractional distillation is used to separate-", opts: ["Solids from liquids", "Two or more miscible liquids with close boiling points", "Sublimable compounds", "Colored compounds"], ans: 1 },
+        { q: "Which equipment is used in fractional distillation to provide a large surface area for efficient separation?", opts: ["Condenser", "Fractionating column", "Round bottom flask", "Separating funnel"], ans: 1 },
+        { q: "Fractional distillation can separate a mixture of acetone (300K) and methyl alcohol (338K). The difference in boiling points is-", opts: ["38°C", "30°C", "48°C", "10°C"], ans: 0 },
+        { q: "Azeotropic distillation involves the addition of a third component called-", opts: ["Catalyst", "Entrainer", "Solvent", "Drying agent"], ans: 1 },
+        { q: "Which of the following can be used as an entrainer in azeotropic distillation?", opts: ["Benzene", "Cyclohexane", "Acetone", "All of the above"], ans: 3 },
+        { q: "The ethanol-water mixture forms an azeotrope with what composition?", opts: ["50% ethanol, 50% water", "95% ethanol, 5% water", "80% ethanol, 20% water", "100% ethanol"], ans: 1 },
+        { q: "Chromatography is a technique used for-", opts: ["Separation of mixtures", "Purification of compounds", "Testing purity of compounds", "All of the above"], ans: 3 },
+        { q: "In chromatography, the two phases are-", opts: ["Solid and gas", "Stationary phase and mobile phase", "Liquid and solid", "Polar and non-polar"], ans: 1 },
+        { q: "In TLC, the stationary phase is typically-", opts: ["A liquid", "A solid (e.g., silica gel)", "A gas", "An organic solvent"], ans: 1 },
+        { q: "The mixture of benzoic acid and naphthalene can be separated using-", opts: ["Distillation", "Hot water (benzoic acid dissolves)", "Filtration", "Chromatography"], ans: 1 },
+        { q: "Which of the following is NOT a method of purification?", opts: ["Sublimation", "Distillation", "Combustion", "Chromatography"], ans: 2 },
+        { q: "The technique that uses the difference in the rate at which components move through a porous medium is-", opts: ["Distillation", "Sublimation", "Chromatography", "Filtration"], ans: 2 },
+        { q: "In TLC, the substance with the higher Rf value is-", opts: ["More polar", "Less polar", "Heavier", "Lighter"], ans: 1 },
+        { q: "Which solvent is described as a 'universal solvent' for phytochemical investigation?", opts: ["Water", "Alcohols (Ethanol/Methanol)", "Hexane", "Ethyl acetate"], ans: 1 },
+        { q: "Factors to consider when selecting an extraction solvent include-", opts: ["Selectivity", "Solubility", "Cost and safety", "All of the above"], ans: 3 },
+        { q: "A solvent with polarity value near the polarity of the solute will perform-", opts: ["Worse", "Better", "The same", "Unpredictably"], ans: 1 },
+        { q: "The process of vaporization followed by condensation is called-", opts: ["Sublimation", "Distillation", "Filtration", "Chromatography"], ans: 1 },
+        { q: "Which type of distillation is suitable for separating liquids that have a sufficient difference in their boiling points?", opts: ["Simple distillation", "Fractional distillation", "Azeotropic distillation", "Vacuum distillation"], ans: 0 },
+        { q: "The solvent used to calculate the retention factor (Rf) in the notes is-", opts: ["Methanol", "Dichloromethane : n-Hexane (4:1)", "Ethyl acetate", "Acetone"], ans: 1 },
+
+        // Section F: Qualitative and Quantitative Organic Chemistry (231-265)
+        { q: "The branch of chemistry that deals with the structure, properties and reactions of carbon-containing compounds is-", opts: ["Inorganic chemistry", "Physical chemistry", "Organic chemistry", "Analytical chemistry"], ans: 2 },
+        { q: "Qualitative analysis of organic compounds is used to identify-", opts: ["The quantity of each element", "Functional groups present", "Molecular weight only", "Boiling point only"], ans: 1 },
+        { q: "Which test is used to determine whether a compound is an alkane or alkene?", opts: ["Iodoform test", "Bromine test", "Sodium metal test", "Ester test"], ans: 1 },
+        { q: "In the bromine test, the orange-red color of bromine solution becomes ______ when added to an unsaturated compound-", opts: ["Purple", "Colourless", "Green", "Yellow"], ans: 1 },
+        { q: "In Bayer's test, the disappearance of ______ color indicates unsaturation-", opts: ["Bromine", "Potassium permanganate (KMnO₄)", "Iodine", "Fehling's solution"], ans: 1 },
+        { q: "Which test is used to detect the presence of alcohols using sodium metal?", opts: ["Ester test", "Sodium alkoxide formation (effervescence of H₂)", "Ceric ammonium nitrate test", "Iodoform test"], ans: 1 },
+        { q: "In the ester test for alcohols, the product has a characteristic-", opts: ["Bitter taste", "Sweet odour", "Blue color", "Red precipitate"], ans: 1 },
+        { q: "Which test is used to detect the presence of alcohols using ceric ammonium nitrate?", opts: ["Formation of red precipitate", "Formation of yellow color", "Formation of green color", "Formation of pink color"], ans: 0 },
+        { q: "The Liebermann's test involves adding sodium nitrite and sulphuric acid to a sample. The formation of deep blue or green color indicates the presence of-", opts: ["Alcohols", "Phenols", "Aldehydes", "Ketones"], ans: 1 },
+        { q: "In the Phthalein dye test, the addition of phthalic anhydride and concentrated sulphuric acid followed by heating and addition of alkali produces-", opts: ["Red color", "Phenolphthalein (colorless, turns pink/red with alkali)", "Blue color", "Yellow precipitate"], ans: 1 },
+        { q: "The functional group in carbonyl compounds (aldehydes and ketones) is-", opts: ["-OH", "-COOH", "C=O", "-NH₂"], ans: 2 },
+        { q: "The 2,4-dinitrophenylhydrazine (2,4-DNP) test for carbonyl compounds gives a ______ precipitate-", opts: ["White", "Yellow or orange-red", "Blue", "Green"], ans: 1 },
+        { q: "The sodium bisulphite test for aldehydes and ketones produces a-", opts: ["Red precipitate", "White crystalline precipitate (bisulphite addition product)", "Silver mirror", "Blue color"], ans: 1 },
+        { q: "The Schiff test gives a ______ color for aldehydes-", opts: ["Blue", "Pink", "Green", "Yellow"], ans: 1 },
+        { q: "Which test gives a 'silver mirror' inside the test tube for aldehydes?", opts: ["Fehling's test", "Tollen's test", "Schiff test", "Iodoform test"], ans: 1 },
+        { q: "Fehling's test for aldehydes produces a ______ precipitate-", opts: ["White", "Silver", "Red (cuprous oxide, Cu₂O)", "Yellow"], ans: 2 },
+        { q: "Which test is used to differentiate ketones from aldehydes using m-aminobenzoic acid?", opts: ["Yellow color", "Violet precipitate coloration", "Red color", "Blue color"], ans: 1 },
+        { q: "The sodium nitroprusside test for ketones produces a ______ color complex-", opts: ["Blue", "Green", "Red", "Yellow"], ans: 2 },
+        { q: "The azo-dye test is used for-", opts: ["Alcohols", "Aldehydes", "Aromatic amines", "Ketones"], ans: 2 },
+        { q: "In the azo-dye test, primary amines react with nitrous acid (HNO₃) to give-", opts: ["Azo salt", "Diazonium salt", "Ammonium salt", "Chloride salt"], ans: 1 },
+        { q: "When the diazonium salt is reacted with β-naphthol, the product is an ______ color-", opts: ["Blue", "Green", "Orange (azodye)", "Purple"], ans: 2 },
+        { q: "Which test is specific for aldehydes and not ketones?", opts: ["2,4-DNP test", "Sodium bisulphite test", "Tollen's test", "Sodium nitroprusside test"], ans: 2 },
+        { q: "Which of the following gives a positive iodoform test?", opts: ["Ethanol", "Acetaldehyde", "Methyl ketones", "All of the above"], ans: 3 },
+        { q: "The ceric ammonium nitrate test gives a ______ color with alcohols-", opts: ["Blue", "Red to brown", "Green", "Yellow"], ans: 1 },
+        { q: "Lucas test is used to distinguish between-", opts: ["Aldehydes and ketones", "Primary, secondary and tertiary alcohols", "Alkanes and alkenes", "Amines and amides"], ans: 1 },
+        { q: "In Lucas test, tertiary alcohols react ______ with Lucas reagent-", opts: ["Immediately (cloudiness appears)", "Slowly", "Not at all", "After heating"], ans: 0 },
+        { q: "In Lucas test, secondary alcohols react ______ with Lucas reagent-", opts: ["Immediately", "After several minutes", "Only upon heating", "Not at all"], ans: 1 },
+        { q: "In Lucas test, primary alcohols react ______ with Lucas reagent-", opts: ["Immediately", "After several minutes", "Only upon heating", "Readily"], ans: 2 },
+        { q: "Which reagent is used in the iodoform test?", opts: ["Iodine and sodium hydroxide", "Bromine water", "Potassium permanganate", "Fehling's solution"], ans: 0 },
+        { q: "A positive iodoform test produces a ______ precipitate-", opts: ["White", "Yellow (iodoform, CHI₃)", "Red", "Blue"], ans: 1 },
+        { q: "Which of the following compounds will NOT give a positive iodoform test?", opts: ["Ethanol (CH₃CH₂OH)", "Acetone (CH₃COCH₃)", "Propan-1-ol (CH₃CH₂CH₂OH)", "Acetaldehyde (CH₃CHO)"], ans: 2 },
+        { q: "The sodium metal test for alcohols produces-", opts: ["Oxygen gas", "Hydrogen gas (effervescence)", "Carbon dioxide", "Nitrogen gas"], ans: 1 },
+        { q: "Which functional group gives a positive result with 2,4-dinitrophenylhydrazine?", opts: ["Alcohol", "Carbonyl (aldehyde/ketone)", "Carboxylic acid", "Amine"], ans: 1 },
+        { q: "The product formed when an aldehyde reacts with Tollen's reagent is-", opts: ["Carboxylic acid and silver mirror", "Alcohol", "Alkane", "Ester"], ans: 0 },
+        { q: "Fehling's solution contains-", opts: ["Silver nitrate and ammonia", "Copper(II) sulfate in alkaline tartrate", "Iodine and potassium iodide", "Bromine in water"], ans: 1 },
+
+        // Section G: Stereochemistry and Isomerism (266-320)
+        { q: "Stereochemistry is the chemistry of molecules in-", opts: ["Two dimensions", "Three dimensions", "One dimension", "Four dimensions"], ans: 1 },
+        { q: "Isomers that have the same constitution but differ in spatial arrangement of atoms are called-", opts: ["Structural isomers", "Stereoisomers", "Tautomers", "Metamers"], ans: 1 },
+        { q: "An object is said to be ______ if it is not superimposable on its mirror image-", opts: ["Achiral", "Chiral", "Symmetrical", "Asymmetrical"], ans: 1 },
+        { q: "The opposite of chiral is-", opts: ["Asymmetric", "Achiral", "Symmetrical", "Racemic"], ans: 1 },
+        { q: "A molecule is chiral if its mirror image is ______ in three dimensions-", opts: ["Superimposable", "Not superimposable", "Identical", "The same"], ans: 1 },
+        { q: "In organic chemistry, chirality occurs in molecules that contain a carbon attached to ______ different groups-", opts: ["Two", "Three", "Four", "Six"], ans: 2 },
+        { q: "Bromochlorofluoromethane (BrClFCH) is a ______ molecule-", opts: ["Achiral", "Chiral", "Meso", "Racemic"], ans: 1 },
+        { q: "Chlorodifluoromethane is an ______ molecule because the central carbon does not attach to four different atoms-", opts: ["Chiral", "Achiral", "Optically active", "Racemic"], ans: 1 },
+        { q: "The two mirror images of a chiral molecule that cannot be superimposed are called-", opts: ["Diastereomers", "Enantiomers", "Tautomers", "Conformers"], ans: 1 },
+        { q: "The IUPAC recommended name for a tetrahedral carbon atom that bears four different atoms or groups is-", opts: ["Asymmetric carbon", "Chiral center", "Stereocenter", "Chirality center"], ans: 3 },
+        { q: "Which carbon in 2-butanol is a chirality center?", opts: ["C-1", "C-2", "C-3", "C-4"], ans: 1 },
+        { q: "In 2-propanol, none of the carbon atoms bear four different groups, so it is-", opts: ["Chiral", "Achiral", "Optically active", "Racemic"], ans: 1 },
+        { q: "The ability of a chiral substance to rotate the plane of polarized light is called-", opts: ["Optical rotation", "Optical activity", "Polarization", "Refraction"], ans: 1 },
+        { q: "Optical activity is measured using an instrument called a-", opts: ["Spectrophotometer", "Polarimeter", "Galvanometer", "Potentiometer"], ans: 1 },
+        { q: "Rotation of the plane of polarized light in the clockwise direction is taken as-", opts: ["Negative (-)", "Positive (+)", "Dextrorotatory", "Both B and C"], ans: 3 },
+        { q: "Rotation of the plane of polarized light in the anticlockwise direction is taken as-", opts: ["Positive (+)", "Negative (-)", "Levorotatory", "Both B and C"], ans: 3 },
+        { q: "The older term for positive rotation was-", opts: ["Levorotatory", "Dextrorotatory", "Racemic", "Inactive"], ans: 1 },
+        { q: "The older term for negative rotation was-", opts: ["Dextrorotatory", "Levorotatory", "Racemic", "Active"], ans: 1 },
+        { q: "A ______ mixture is a mixture containing equal quantities of enantiomers-", opts: ["Racemic", "Chiral", "Achiral", "Meso"], ans: 0 },
+        { q: "A racemic mixture is optically-", opts: ["Active", "Inactive", "Dextrorotatory", "Levorotatory"], ans: 1 },
+        { q: "The formula for optical purity is-", opts: ["% of one enantiomer × % of another enantiomer", "% of one enantiomer + % of another enantiomer", "% of one enantiomer - % of another enantiomer", "% of one enantiomer / % of another enantiomer"], ans: 2 },
+        { q: "Calculate the % optical purity of a material containing 67% and 33% of enantiomers-", opts: ["100%", "67%", "34%", "33%"], ans: 2 },
+        { q: "A substance that does not rotate the plane of polarized light is said to be-", opts: ["Optically active", "Optically inactive", "Chiral", "Enantiomeric"], ans: 1 },
+        { q: "All achiral substances are optically-", opts: ["Active", "Inactive", "Dextrorotatory", "Levorotatory"], ans: 1 },
+        { q: "Who discovered that some substances have the ability to rotate the plane of polarized light?", opts: ["Friedrich Wöhler", "A. Baeyer", "Jean Biot", "Louis Pasteur"], ans: 2 },
+        { q: "In which year did Jean Biot make this discovery?", opts: ["1811", "1812", "1813", "1815"], ans: 1 },
+        { q: "Who was one of the first scientists to make a study of optical activity?", opts: ["Jean Biot", "Mendeléev", "Heisenberg", "Louis Pasteur"], ans: 0 },
+        { q: "In which year did Louis Pasteur make a crucial observation while working on salts of tartaric acid?", opts: ["1844", "1846", "1848", "1850"], ans: 2 },
+        { q: "The modern name for tartaric acid is-", opts: ["1,2-dihydroxypentanedioic acid", "2,3-dihydroxybutanedioic acid", "1,2-dihydroxybutanedioic acid", "1,2,3-trihydroxyhexanedioic acid"], ans: 1 },
+        { q: "The modern name for lactic acid is-", opts: ["5-hydroxypropanoic acid", "1-hydroxybutanoic acid", "2-hydroxybutanoic acid", "2-hydroxypropanoic acid"], ans: 3 },
+        { q: "The carbon atom at the center of four different groups is called-", opts: ["Symmetric carbon", "Asymmetric carbon", "Master carbon", "Holding carbon"], ans: 1 },
+        { q: "The separation of enantiomers or diastereoisomers is called-", opts: ["Configuration", "Rotation", "Resolution", "Segregation"], ans: 2 },
+        { q: "The Cahn, Ingold and Prelog (CIP) naming system was invented in-", opts: ["1956", "1960", "1964", "1962"], ans: 0 },
+        { q: "In the CIP system, R stands for-", opts: ["Rectes", "Rectis", "Rectus", "Rector"], ans: 2 },
+        { q: "In the CIP system, S stands for-", opts: ["Sinister", "Sinister", "Sinistra", "Sinistro"], ans: 0 },
+        { q: "The spontaneous change of a solution of α-glucose into β-glucose is termed-", opts: ["Spontaneity of glucose", "Mutarotation", "Resolution of glucose", "Racemicity of glucose"], ans: 1 },
+        { q: "Which of the following is NOT a type of structural isomerism?", opts: ["Chain isomerism", "Positional isomerism", "Geometric isomerism", "Functional isomerism"], ans: 2 },
+        { q: "Chain isomerism is also known as-", opts: ["Skeletal isomerism", "Positional isomerism", "Tautomerism", "Metamerism"], ans: 0 },
+        { q: "In positional isomerism, the basic carbon skeleton-", opts: ["Changes completely", "Remains unchanged", "Becomes branched", "Becomes cyclic"], ans: 1 },
+        { q: "Which molecular formula exhibits functional isomerism (propanal and propanone)?", opts: ["C₃H₆O", "C₃H₆O₂", "C₄H₈O", "C₂H₄O"], ans: 0 },
+        { q: "Propanoic acid and methyl ethanoate are functional isomers with the molecular formula-", opts: ["C₃H₆O", "C₃H₆O₂", "C₄H₈O₂", "C₂H₄O₂"], ans: 1 },
+        { q: "Tautomerism involves the interchange of isomers via-", opts: ["Intermolecular proton transfer", "Intramolecular proton transfer", "Electron transfer", "Bond breaking"], ans: 1 },
+        { q: "The most common type of tautomerism is-", opts: ["Keto-enol tautomerism", "Amide-imide tautomerism", "Lactam-lactim tautomerism", "All of the above"], ans: 0 },
+        { q: "In keto-enol tautomerism, the keto form has a ______ group and the enol form has a ______ group-", opts: ["C=O, C=C-OH", "C=C-OH, C=O", "C-O, C=C", "C=O, C-C"], ans: 0 },
+        { q: "Geometric isomers are NOT interconvertible due to-", opts: ["Free rotation about single bonds", "Restricted rotation about double bonds", "High temperature", "Presence of a catalyst"], ans: 1 },
+        { q: "The dipole moment of cis-isomers is generally ______ than that of trans-isomers-", opts: ["Greater", "Smaller", "Equal", "Unrelated"], ans: 0 },
+        { q: "Cis isomers usually have ______ solubility in polar solvents compared to trans isomers-", opts: ["Less", "More", "Equal", "No difference"], ans: 1 },
+        { q: "In general, trans isomers are ______ than cis isomers-", opts: ["Less stable", "More stable", "Equally stable", "More reactive"], ans: 1 },
+        { q: "The simple cis/trans notation is insufficient when there are ______ different substituents on a double bond-", opts: ["Two", "More than two", "One", "Three or more"], ans: 1 },
+        { q: "In the E-Z notation, if groups with higher priorities are on opposite sides of the double bond, the isomer is denoted by-", opts: ["Z", "E", "Cis", "Trans"], ans: 1 },
+        { q: "In the E-Z notation, if groups with higher priorities are on the same side of the double bond, the isomer is denoted by-", opts: ["Z", "E", "Cis", "Trans"], ans: 0 },
+        { q: "The letters E and Z are represented within parentheses and separated from the rest of the name with a-", opts: ["Space", "Hyphen", "Comma", "Period"], ans: 1 },
+        { q: "Optical isomers that are non-superimposable mirror images are called-", opts: ["Diastereomers", "Enantiomers", "Tautomers", "Conformers"], ans: 1 },
+        { q: "Dextro enantiomers rotate the plane of polarized light to the-", opts: ["Left", "Right", "Center", "No rotation"], ans: 1 },
+        { q: "Laevo enantiomers rotate the plane of polarized light to the-", opts: ["Left", "Right", "Center", "No rotation"], ans: 0 },
+
+        // Section H: Functional Groups and Derivatives (321-340)
+        { q: "What is the functional group in nitriles?", opts: ["Triple bond (C≡C)", "Double bond (C=C)", "OH group", "Cyanide group (-C≡N)"], ans: 3 },
+        { q: "What is the functional group in ketones?", opts: ["Cyanide group", "Triple bond", "Carbonyl group (C=O) within the chain", "Oxygen"], ans: 2 },
+        { q: "What is the functional group in amides?", opts: ["CONH₂ group", "NH₂ group", "CO group", "OH group"], ans: 0 },
+        { q: "What is the functional group in arenes?", opts: ["NH₂ group", "Benzene ring", "CO group", "OH group"], ans: 1 },
+        { q: "The name of the molecule CH₃CHNH₂CH₂OH is-", opts: ["1-aminopropan-1-ol", "2-aminopropan-3-ol", "2-aminopropan-1-ol", "None of the above"], ans: 2 },
+        { q: "Which of the following is an electrophile?", opts: ["OH⁻", "H₂O", "BF₃", "NH₃"], ans: 2 },
+        { q: "Nucleophiles seek out centers of ______ charge-", opts: ["Positive", "Negative", "Neutral", "No"], ans: 0 },
+        { q: "Electrophiles seek out centers of ______ charge-", opts: ["Positive", "Negative", "Neutral", "No"], ans: 1 },
+        { q: "The reaction A-B + X⁻ → A-X + B⁻ is bond breaking through-", opts: ["Homolysis", "Catalysis", "Heterolysis", "None of the above"], ans: 2 },
+        { q: "Ethanoic acid is used in-", opts: ["Sugar", "Petrol", "Clothing", "Vinegar"], ans: 3 },
+        { q: "Which substance is contained in alcoholic drinks?", opts: ["Ethanoic acid", "Glycine", "Ethanol", "Glucose"], ans: 2 },
+        { q: "Which is NOT a property of a homologous series?", opts: ["They have the same functional group", "They have similar physical properties", "They have similar chemical properties", "They have the same general formula"], ans: 1 },
+        { q: "Organic compounds are mainly-", opts: ["Electrovalent", "Covalent", "Ionic", "Metallic"], ans: 1 },
+        { q: "Trimethyl amine is a ______ amine-", opts: ["Primary", "Secondary", "Tertiary", "Quaternary"], ans: 2 },
+        { q: "Cocaine is-", opts: ["An amide", "An amine", "A nitrile", "A carboxylic acid"], ans: 1 },
+        { q: "The nitrous acid test is used to test-", opts: ["Amines", "Amides", "Nitriles", "Carbonyl compounds"], ans: 0 },
+        { q: "Glucose is a ______ sugar-", opts: ["Reducing", "Oxidizing", "Reducing-oxidizing", "Non-reducing"], ans: 0 },
+        { q: "Monosaccharides have the general formula-", opts: ["CₙH₂ₙ₊₂Oₙ", "Cₙ₊₂H₂ₙOₙ", "CₙH₂ₙOₙ", "CₙH₂ₙOₙ₋₁"], ans: 2 },
+        { q: "Esters are also known as-", opts: ["Aldehydes", "Alkanols", "Alkanoates", "Epoxides"], ans: 2 },
+        { q: "Proteins are made up of-", opts: ["Amides", "Alkenes", "Amino acids", "Alcohols"], ans: 2 }
+    ];
+
+    // ========== STATE MANAGEMENT ==========
+    const STATE_KEY = 'chm102_organic_quiz_state';
+    let state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false };
+
+    function saveState() { localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
+    function loadState() { const r = localStorage.getItem(STATE_KEY); if(r){try{state=JSON.parse(r);return true;}catch(e){}} return false; }
+    function clearState() { state = { total:30,indices:[],current:0,answers:{},skipped:[],submitted:false}; localStorage.removeItem(STATE_KEY); }
+
+    function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+    function getQ() { if(!state.indices.length) return null; const bi = state.indices[state.current]; return {...questionBank[bi], bankIndex:bi}; }
+
+    function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); }
+    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+    function startQuiz(n) {
+        clearState();
+        const allIndices = shuffle(Array.from({length: questionBank.length}, (_,i)=>i));
+        const selected = allIndices.slice(0, n);
+        state = { total: n, indices: selected, current: 0, answers: {}, skipped: [], submitted: false };
+        saveState();
+        renderQuiz();
+        switchScreen('quizScreen');
+        renderQuestion();
+        updateProgress();
+        updateNav();
+    }
+
+    function resumeQuiz() {
+        if(!loadState() || !state.indices.length || state.submitted){ toast('No saved quiz. Start a new one.'); return; }
+        renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav(); toast('Quiz resumed.');
+    }
+
+    function clearStorage() { clearState(); saveState(); document.getElementById('resumeSection').style.display='none'; toast('Saved progress cleared.'); }
+
+    function renderQuiz() {
+        const dots = document.getElementById('questionDots'); dots.innerHTML = '';
+        for(let i=0;i<state.total;i++){ const d=document.createElement('span'); d.className='dot'; d.title=`Q${i+1}`; d.onclick=()=>{state.current=i;saveState();renderQuestion();updateProgress();updateNav();}; dots.appendChild(d); }
+    }
+
+    function renderQuestion() {
+        const q = getQ(); if(!q) return;
+        document.getElementById('questionNumber').textContent = `QUESTION ${state.current+1}`;
+        document.getElementById('questionText').textContent = q.q;
+        document.getElementById('progressLabel').textContent = `Question ${state.current+1} of ${state.total}`;
+        const opts = document.getElementById('optionsList'); opts.innerHTML = '';
+        const letters = ['A','B','C','D','E'];
+        q.opts.forEach((opt,i)=>{
+            const li = document.createElement('li'); li.className='option-item';
+            if(state.answers[state.current]===i) li.classList.add('selected');
+            li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
+            li.onclick = ()=> selectOption(i);
+            opts.appendChild(li);
+        });
+        const dots = document.querySelectorAll('#questionDots .dot');
+        dots.forEach((d,i)=>{ d.classList.remove('current','answered','skipped'); if(i===state.current) d.classList.add('current'); if(state.answers[i]!==undefined) d.classList.add('answered'); if(state.skipped.includes(i) && state.answers[i]===undefined) d.classList.add('skipped'); });
+        document.getElementById('quizScreen').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function selectOption(i) { if(state.submitted) return; state.answers[state.current]=i; state.skipped = state.skipped.filter(s=>s!==state.current); saveState(); renderQuestion(); updateProgress(); updateNav(); }
+    function skipQuestion() {
+        if(state.submitted) return;
+        if(state.answers[state.current]===undefined && !state.skipped.includes(state.current)) state.skipped.push(state.current);
+        if(state.current < state.total-1){ state.current++; saveState(); renderQuestion(); updateProgress(); updateNav(); }
+        else { updateProgress(); updateNav(); renderQuestion(); }
+    }
+    function navigate(dir) { if(state.submitted) return; const nxt = state.current+dir; if(nxt>=0 && nxt<state.total){ state.current=nxt; saveState(); renderQuestion(); updateProgress(); updateNav(); } }
+    function updateProgress() { const a = Object.keys(state.answers).length; document.getElementById('answeredCount').textContent = `${a} answered`; document.getElementById('progressFill').style.width = Math.round((a/state.total)*100)+'%'; }
+    function updateNav() { document.getElementById('btnPrev').disabled = state.current===0; document.getElementById('btnNext').disabled = state.current===state.total-1; }
+
+    function submitQuiz() {
+        const skipped = state.total - Object.keys(state.answers).length;
+        if(skipped>0 && !confirm(`You have ${skipped} unanswered. Submit anyway?`)) return;
+        state.submitted = true; saveState();
+        showResults(); switchScreen('resultsScreen');
+    }
+
+    function showResults() {
+        let correct = 0; const review = [];
+        state.indices.forEach((bi,i)=>{ const q = questionBank[bi]; const ua = state.answers[i]; const ok = ua===q.ans; if(ok) correct++; review.push({ q:q.q, opts:q.opts, correctAns:q.ans, userAns:ua, isCorrect:ok, idx:i+1 }); });
+        const pct = Math.round((correct/state.total)*100);
+        document.getElementById('scorePercent').textContent = pct+'%';
+        document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
+        document.getElementById('resultMessage').textContent = pct>=90?'🏆 Outstanding!':pct>=70?'👏 Great job!':pct>=50?'📖 Good effort.':'💪 Keep studying.';
+        window._review = review;
+        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+    }
+
+    function reviewAnswers() {
+        const sec = document.getElementById('reviewSection');
+        if(sec.style.display==='block'){ sec.style.display='none'; sec.innerHTML=''; return; }
+        if(!window._review) return;
+        sec.innerHTML = '<h3>📋 Detailed Review</h3>';
+        const letters = ['A','B','C','D','E'];
+        window._review.forEach(r=>{
+            const d = document.createElement('div'); d.className = 'review-item '+(r.isCorrect?'correct-r':'wrong');
+            const uTxt = r.userAns!==undefined?`${letters[r.userAns]}. ${r.opts[r.userAns]}`:'Not answered';
+            const cTxt = `${letters[r.correctAns]}. ${r.opts[r.correctAns]}`;
+            d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div><div class="rev-ans">Your answer: <span class="your-ans">${uTxt}</span><br>Correct: <span class="correct-ans">${cTxt}</span></div>`;
+            sec.appendChild(d);
+        });
+        sec.style.display='block'; sec.scrollIntoView({behavior:'smooth'});
+    }
+
+    function restartQuiz() {
+        clearState(); saveState();
+        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+        window._review = null; switchScreen('startScreen');
+        document.getElementById('resumeSection').style.display='none';
+        updateResumeBtn();
+    }
+
+    function updateResumeBtn() {
+        const s = document.getElementById('resumeSection');
+        if(loadState() && state.indices.length && !state.submitted){ s.style.display='block'; }
+        else { s.style.display='none'; clearState(); saveState(); }
+    }
+
+    document.addEventListener('keydown',(e)=>{
+        if(state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
+        switch(e.key.toLowerCase()){
+            case 'a': selectOption(0); break;
+            case 'b': selectOption(1); break;
+            case 'c': selectOption(2); break;
+            case 'd': selectOption(3); break;
+            case 'e': selectOption(4); break;
+            case 'arrowleft': e.preventDefault(); navigate(-1); break;
+            case 'arrowright': e.preventDefault(); navigate(1); break;
+            case 's': if(!e.ctrlKey&&!e.metaKey){ e.preventDefault(); skipQuestion(); } break;
+            case 'enter': e.preventDefault(); if(Object.keys(state.answers).length===state.total) submitQuiz(); break;
+        }
+    });
+
+    updateResumeBtn();
+    switchScreen('startScreen');
+</script>
+</body>
+</html>
