@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHM 102 · Chemistry of Metals and Non-Metals Quiz - Dr Akpa</title>
+    <style>
+        :root {
+            --bg: #f0f4f8; --card-bg: #ffffff; --primary: #00695c; --primary-dark: #004d40;
+            --accent: #1a1a2e; --text: #2d3436; --text-light: #636e72; --border: #dfe6e9;
+            --correct: #00b894; --incorrect: #e17055; --warning: #fdcb6e;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08); --radius: 16px; --transition: 0.3s ease;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Segoe UI',Inter,system-ui,sans-serif;background:var(--bg);
+            min-height:100vh;display:flex;align-items:center;justify-content:center;
+            padding:20px;line-height:1.6;color:var(--text);
+        }
+        .container{
+            width:100%;max-width:850px;background:var(--card-bg);
+            border-radius:var(--radius);box-shadow:var(--shadow);
+            padding:32px 28px;position:relative;overflow:hidden;transition:var(--transition);
+        }
+        .quiz-header{text-align:center;margin-bottom:20px;}
+        .quiz-header .metal-icon{font-size:2.2rem;display:block;margin-bottom:4px;}
+        .quiz-header h1{font-size:1.5rem;color:var(--primary-dark);font-weight:700;}
+        .subtitle{font-size:0.85rem;color:var(--text-light);margin-top:4px;}
+        .screen{display:none;animation:fadeIn 0.4s;}
+        .screen.active{display:block;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+        .start-options{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:24px 0 18px;}
+        .start-btn{
+            flex:1;min-width:150px;padding:22px 16px;border:2px solid var(--border);
+            border-radius:var(--radius);background:var(--card-bg);cursor:pointer;
+            text-align:center;font-weight:600;transition:var(--transition);color:var(--text);
+        }
+        .start-btn:hover{border-color:var(--primary);box-shadow:0 8px 20px rgba(0,105,92,0.12);transform:translateY(-2px);}
+        .start-btn .icon{font-size:2.2rem;display:block;margin-bottom:4px;}
+        .start-btn .badge{background:var(--primary);color:#fff;font-size:0.75rem;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px;}
+        .start-info{font-size:0.8rem;color:var(--text-light);text-align:center;}
+        .progress-wrap{margin-bottom:16px;}
+        .progress-stats{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-light);margin-bottom:4px;}
+        .progress-bar{height:8px;background:var(--border);border-radius:10px;overflow:hidden;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#009688);border-radius:10px;transition:width 0.4s;}
+        .question-dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+        .dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:var(--transition);}
+        .dot.answered{background:var(--primary);opacity:0.6;}
+        .dot.current{background:var(--primary);transform:scale(1.5);box-shadow:0 0 0 4px rgba(0,105,92,0.2);}
+        .dot.skipped{background:var(--warning);}
+        .question-card{background:#fafbfc;border-radius:12px;padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+        .question-number{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);font-weight:700;margin-bottom:6px;}
+        .question-text{font-size:1.05rem;font-weight:600;color:var(--text);}
+        .options-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+        .option-item{
+            padding:14px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;background:#fff;
+            display:flex;align-items:center;gap:10px;transition:var(--transition);font-size:0.95rem;user-select:none;
+        }
+        .option-item:hover{border-color:#b2bec3;background:#f8f9fa;}
+        .option-item.selected{border-color:var(--primary);background:#e0f2f1;font-weight:600;}
+        .option-item .radio-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;
+            display:flex;align-items:center;justify-content:center;transition:var(--transition);}
+        .option-item.selected .radio-dot{border-color:var(--primary);background:var(--primary);}
+        .option-item.selected .radio-dot::after{content:'';width:6px;height:6px;background:#fff;border-radius:50%;}
+        .option-item .opt-letter{font-weight:700;color:var(--primary);width:24px;}
+        .nav-buttons{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:18px;}
+        .btn{padding:11px 20px;border-radius:25px;border:none;cursor:pointer;font-weight:600;font-size:0.9rem;
+            transition:var(--transition);display:inline-flex;align-items:center;gap:6px;}
+        .btn-outline{background:#fff;border:2px solid var(--border);color:var(--text);}
+        .btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+        .btn-primary{background:var(--primary);color:#fff;border:2px solid var(--primary);}
+        .btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark);}
+        .btn-submit{background:var(--accent);color:#fff;border:2px solid var(--accent);font-size:1rem;padding:13px 32px;}
+        .btn-submit:hover{background:#2d2d4e;}
+        .btn:disabled{opacity:0.5;pointer-events:none;}
+        .results-card{text-align:center;}
+        .score-circle{width:130px;height:130px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;
+            justify-content:center;flex-direction:column;border:6px solid var(--primary);font-weight:700;}
+        .score-circle .big-score{font-size:2.8rem;color:var(--primary);}
+        .score-circle .total{font-size:0.9rem;color:var(--text-light);}
+        .result-message{font-size:1.1rem;margin-bottom:20px;font-weight:500;}
+        .review-section{text-align:left;margin-top:24px;max-height:400px;overflow-y:auto;padding-right:8px;}
+        .review-item{background:#fafbfc;border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid var(--border);font-size:0.9rem;}
+        .review-item.wrong{border-left-color:var(--incorrect);background:#fffaf9;}
+        .review-item.correct-r{border-left-color:var(--correct);background:#f9fffb;}
+        .review-item .rev-q{font-weight:600;margin-bottom:4px;}
+        .review-item .rev-ans{font-size:0.82rem;color:var(--text-light);}
+        .correct-ans{color:var(--correct);font-weight:600;}
+        .your-ans{color:var(--incorrect);font-weight:600;text-decoration:line-through;}
+        .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--primary-dark);color:#fff;
+            padding:10px 22px;border-radius:25px;font-size:0.85rem;font-weight:600;z-index:999;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+        .toast.show{opacity:1;}
+        @media(max-width:600px){
+            .container{padding:20px 14px;}
+            .start-btn{min-width:120px;padding:16px 12px;}
+            .question-text{font-size:0.95rem;}
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+    <div class="toast" id="toast"></div>
+
+    <!-- START SCREEN -->
+    <div class="screen active" id="startScreen">
+        <div class="quiz-header">
+            <span class="metal-icon">🔩</span>
+            <h1>CHM 102 · Chemistry of Metals and Non-Metals - Dr Akpa</h1>
+            <p class="subtitle">250 Medium to Hard Questions by Dr Akpa — All Sections</p>
+        </div>
+        <p style="text-align:center;font-weight:500;">Select quiz length:</p>
+        <div class="start-options">
+            <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📝</span>30 Questions<span class="badge">~30 min</span></button>
+            <button class="start-btn" onclick="startQuiz(60)"><span class="icon">📚</span>60 Questions<span class="badge">~60 min</span></button>
+        </div>
+        <p class="start-info">🎲 250 questions randomly selected · No timer · Resume supported</p>
+        <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
+            <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
+            <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#e17055;">🗑 Clear saved</button>
+        </div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div class="screen" id="quizScreen">
+        <div class="quiz-header"><span style="font-size:1.8rem;">⚗️</span></div>
+        <div class="progress-wrap">
+            <div class="progress-stats"><span id="progressLabel">Question 1 of 30</span><span id="answeredCount">0 answered</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+            <div class="question-dots" id="questionDots"></div>
+        </div>
+        <div class="question-card">
+            <div class="question-number" id="questionNumber">QUESTION 1</div>
+            <div class="question-text" id="questionText"></div>
+        </div>
+        <ul class="options-list" id="optionsList"></ul>
+        <div class="nav-buttons">
+            <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Prev</button>
+            <div class="nav-center">
+                <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
+                <button class="btn btn-submit" id="btnSubmit" onclick="submitQuiz()">✅ Submit</button>
+            </div>
+            <button class="btn btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
+        </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div class="screen" id="resultsScreen">
+        <div class="results-card">
+            <div class="quiz-header"><h1>📊 Quiz Results</h1></div>
+            <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/30</span></div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
+            <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">🔍 Review</button>
+            <div class="review-section" id="reviewSection" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== 250 QUESTION BANK ==========
+    const questionBank = [
+        // Section A: General Metal Chemistry (1-25)
+        { q: "Which of the following properties is NOT characteristic of metals?", opts: ["High electrical conductivity", "Tendency to form positive ions", "High ionization energy", "Malleability"], ans: 2 },
+        { q: "A metal that is liquid at room temperature (25°C) is:", opts: ["Sodium", "Gallium", "Mercury", "Cesium"], ans: 2 },
+        { q: "The ability of a metal to be hammered into thin sheets is referred to as:", opts: ["Ductility", "Malleability", "Conductivity", "Luster"], ans: 1 },
+        { q: "Which statement best explains why metals are good conductors of electricity?", opts: ["They have high melting points", "They contain delocalized electrons in a sea of electrons", "They form covalent bonds with each other", "They have low electronegativity"], ans: 1 },
+        { q: "A metal that does NOT readily form a cation by losing electrons would be classified as:", opts: ["Alkali metal", "Transition metal", "Noble metal", "Alkaline earth metal"], ans: 2 },
+        { q: "Which of the following is NOT a typical physical property of most metals?", opts: ["Opaque and lustrous", "High density", "Low thermal conductivity", "Solid at room temperature"], ans: 2 },
+        { q: "The tendency of a metal to lose electrons and form positive ions is primarily determined by its:", opts: ["Atomic mass", "Ionization energy and electronegativity", "Density", "Melting point"], ans: 1 },
+        { q: "Which group of elements occupies the left and center positions of the periodic table?", opts: ["Non-metals", "Metalloids", "Metals", "Noble gases"], ans: 2 },
+        { q: "A student observes that an unknown element is brittle, poor conductor of electricity, and gains electrons during reactions. This element is most likely a:", opts: ["Metal", "Non-metal", "Metalloid", "Transition metal"], ans: 1 },
+        { q: "Which of the following correctly describes the trend in metallic character across a period from left to right?", opts: ["Increases", "Decreases", "Remains constant", "Increases then decreases"], ans: 1 },
+        { q: "The zig-zag line on the periodic table separates:", opts: ["Metals from transition metals", "Metals from non-metals", "Non-metals from noble gases", "Alkali metals from alkaline earth metals"], ans: 1 },
+        { q: "Which element exhibits the properties of both metals and non-metals?", opts: ["Sodium", "Silicon", "Chlorine", "Argon"], ans: 1 },
+        { q: "The formation of a cation by a metal atom involves:", opts: ["Gain of protons", "Loss of electrons", "Gain of electrons", "Sharing of electrons"], ans: 1 },
+        { q: "Which physical property of metals allows them to be drawn into wires?", opts: ["Malleability", "Ductility", "Conductivity", "Luster"], ans: 1 },
+        { q: "A metal with low electronegativity and low ionization energy will most likely:", opts: ["Be very unreactive", "Form negative ions easily", "Be highly reactive", "Exist as a gas at room temperature"], ans: 2 },
+        { q: "Which of the following elements is classified as a metalloid?", opts: ["Boron", "Beryllium", "Barium", "Bismuth"], ans: 0 },
+        { q: "The 'sea of delocalized electrons' model explains which property of metals?", opts: ["Luster only", "Conductivity and malleability", "High density only", "Low reactivity"], ans: 1 },
+        { q: "Which element would you expect to have the highest metallic character?", opts: ["Fluorine", "Oxygen", "Cesium", "Neon"], ans: 2 },
+        { q: "Metals are described as 'electropositive elements' because they:", opts: ["Attract electrons strongly", "Readily donate electrons", "Have high electron affinity", "Form covalent bonds readily"], ans: 1 },
+        { q: "Which of the following is NOT a location where metals are typically found on the periodic table?", opts: ["Far left side", "Center", "Far right side", "Bottom of groups"], ans: 2 },
+        { q: "The characteristic luster (shininess) of metals is primarily due to:", opts: ["Their high density", "Their ability to absorb and re-emit light due to free electrons", "Their high melting points", "Their crystalline structure"], ans: 1 },
+        { q: "Which statement correctly compares metals and non-metals?", opts: ["Both are good conductors of heat", "Metals form acidic oxides while non-metals form basic oxides", "Metals have low electronegativity while non-metals have high electronegativity", "Both are malleable and ductile"], ans: 2 },
+        { q: "The number of metals in the periodic table compared to non-metals is:", opts: ["Fewer", "About equal", "Greater", "Exactly half"], ans: 2 },
+        { q: "Which property is generally higher for non-metals than for metals?", opts: ["Electrical conductivity", "Melting point", "Electronegativity", "Density"], ans: 2 },
+        { q: "A shiny, malleable element that conducts electricity and reacts with acid to produce hydrogen gas is definitely a:", opts: ["Metalloid", "Metal", "Non-metal", "Noble gas"], ans: 1 },
+
+        // Section B: Chemical Properties and Reactions of Metals (26-55)
+        { q: "The product formed when magnesium reacts with oxygen is:", opts: ["Magnesium hydroxide", "Magnesium oxide", "Magnesium peroxide", "Magnesium hydride"], ans: 1 },
+        { q: "Balance the following equation: __Na + __H₂O → __NaOH + __H₂. The coefficients are:", opts: ["1,1,1,1", "2,2,2,1", "2,1,2,1", "1,2,1,2"], ans: 1 },
+        { q: "When zinc reacts with hydrochloric acid, the products are:", opts: ["ZnCl₂ + H₂O", "ZnCl + H₂", "ZnCl₂ + H₂", "ZnO + HCl"], ans: 2 },
+        { q: "Which of the following oxides is classified as amphoteric?", opts: ["Na₂O", "CaO", "Al₂O₃", "CO"], ans: 2 },
+        { q: "Carbon monoxide (CO) is an example of a:", opts: ["Basic oxide", "Acidic oxide", "Amphoteric oxide", "Neutral oxide"], ans: 3 },
+        { q: "Which metal oxide would react with both HCl and NaOH solutions?", opts: ["MgO", "ZnO", "Na₂O", "K₂O"], ans: 1 },
+        { q: "The reaction 2Mg + O₂ → 2MgO is an example of:", opts: ["Reduction", "Displacement", "Oxidation", "Decomposition"], ans: 2 },
+        { q: "When a metal reacts with an acid, the gas produced is:", opts: ["Oxygen", "Carbon dioxide", "Hydrogen", "Chlorine"], ans: 2 },
+        { q: "Which metal would react most violently with cold water?", opts: ["Magnesium", "Calcium", "Sodium", "Aluminum"], ans: 2 },
+        { q: "The product formed when sodium reacts with water is:", opts: ["Na₂O + H₂", "NaOH + H₂", "NaH + O₂", "Na₂O₂ + H₂O"], ans: 1 },
+        { q: "A basic oxide is one that:", opts: ["Reacts with acids to form salt and water", "Reacts with bases to form salt and water", "Reacts with both acids and bases", "Does not react with anything"], ans: 0 },
+        { q: "Which of the following is NOT a property of basic oxides?", opts: ["They are usually formed by metals", "They turn red litmus blue", "They react with acids to form salts", "They react with bases to form salts"], ans: 3 },
+        { q: "An amphoteric oxide is characterized by its ability to:", opts: ["Only react with acids", "Only react with bases", "React with both acids and bases", "Remain inert in all conditions"], ans: 2 },
+        { q: "Which reaction represents a metal displacing hydrogen from an acid?", opts: ["Cu + H₂SO₄ → CuSO₄ + H₂", "Ag + HCl → AgCl + H₂", "Zn + 2HCl → ZnCl₂ + H₂", "Au + H₂SO₄ → AuSO₄ + H₂"], ans: 2 },
+        { q: "The reactivity of a metal with water depends primarily on its:", opts: ["Atomic radius", "Position in the reactivity series", "Density", "Melting point"], ans: 1 },
+        { q: "Which of the following metals does NOT react with steam?", opts: ["Iron", "Zinc", "Copper", "Magnesium"], ans: 2 },
+        { q: "When calcium oxide reacts with water, the product is:", opts: ["Ca(OH)₂", "CaH₂", "CaO₂", "CaCO₃"], ans: 0 },
+        { q: "The reaction between a metal and oxygen generally produces:", opts: ["A salt and water", "A metal oxide", "Hydrogen gas", "A metal hydride"], ans: 1 },
+        { q: "Which metal oxide when dissolved in water forms a solution that turns red litmus blue?", opts: ["CO₂", "SO₂", "Na₂O", "Al₂O₃"], ans: 2 },
+        { q: "The correct balanced equation for aluminum reacting with oxygen is:", opts: ["Al + O₂ → AlO", "2Al + O₂ → 2AlO", "4Al + 3O₂ → 2Al₂O₃", "Al + 3O₂ → Al₂O₃"], ans: 2 },
+        { q: "Which metal will NOT displace hydrogen from dilute hydrochloric acid?", opts: ["Magnesium", "Zinc", "Iron", "Copper"], ans: 3 },
+        { q: "The type of oxide formed by a metal is generally related to its:", opts: ["Atomic mass", "Position in the periodic table", "Color", "Density"], ans: 1 },
+        { q: "Which statement about the reaction of metals with oxygen is INCORRECT?", opts: ["All metals react with oxygen at room temperature", "Some metals react slowly with oxygen", "The product is always a metal oxide", "The reaction is an oxidation process"], ans: 0 },
+        { q: "The reaction 2Na + 2H₂O → 2NaOH + H₂ is classified as:", opts: ["Single displacement", "Double displacement", "Combination", "Decomposition"], ans: 0 },
+        { q: "Which metal would require the highest temperature to react with oxygen?", opts: ["Sodium", "Magnesium", "Gold", "Calcium"], ans: 2 },
+        { q: "When a metal reacts with water, the type of reaction and products depend on the metal's:", opts: ["Color", "Reactivity", "Conductivity", "Density"], ans: 1 },
+        { q: "Which of the following is a neutral oxide?", opts: ["Na₂O", "MgO", "CO", "SO₂"], ans: 2 },
+        { q: "The reaction between zinc oxide and sodium hydroxide produces:", opts: ["Zn(OH)₂", "Na₂ZnO₂ + H₂O", "Zn + NaOH", "ZnO + Na₂O"], ans: 1 },
+        { q: "A metal that forms a protective oxide layer preventing further reaction is:", opts: ["Iron", "Sodium", "Aluminum", "Copper"], ans: 2 },
+        { q: "Which statement correctly describes the reactivity trend of metals with oxygen down a group?", opts: ["Reactivity decreases", "Reactivity increases", "Reactivity remains constant", "Reactivity fluctuates randomly"], ans: 1 },
+
+        // Section C: Reactivity Series of Metals (56-80)
+        { q: "The most reactive metal in the reactivity series K > Na > Ca > Mg > Al > Mn is:", opts: ["Sodium", "Calcium", "Potassium", "Magnesium"], ans: 2 },
+        { q: "Which metal would displace iron from iron(II) sulfate solution?", opts: ["Copper", "Zinc", "Silver", "Gold"], ans: 1 },
+        { q: "In the reactivity series K > Na > Ca > Mg > Al > Mn, which metal is least reactive among those listed?", opts: ["Al", "Mg", "Mn", "Ca"], ans: 2 },
+        { q: "A metal that is below hydrogen in the reactivity series will:", opts: ["React vigorously with acids", "Not displace hydrogen from acids", "React slowly with cold water", "Form stable oxides"], ans: 1 },
+        { q: "Which displacement reaction would NOT occur?", opts: ["Zn + CuSO₄ → ZnSO₄ + Cu", "Cu + FeSO₄ → CuSO₄ + Fe", "Mg + ZnSO₄ → MgSO₄ + Zn", "Ca + CuSO₄ → CaSO₄ + Cu"], ans: 1 },
+        { q: "The reactivity series of metals is primarily based on the metals' tendency to:", opts: ["Gain electrons", "Lose electrons", "Share electrons", "Form covalent bonds"], ans: 1 },
+        { q: "Which metal would be most suitable for sacrificial protection of iron?", opts: ["Copper", "Silver", "Zinc", "Gold"], ans: 2 },
+        { q: "In the reactivity series, the position of a metal determines its:", opts: ["Color", "Density", "Method of extraction", "Melting point"], ans: 2 },
+        { q: "A metal that can displace magnesium from magnesium sulfate solution would be:", opts: ["Zinc", "Iron", "Calcium", "Copper"], ans: 2 },
+        { q: "Which of the following statements about the reactivity series is FALSE?", opts: ["Potassium is more reactive than sodium", "Calcium is more reactive than magnesium", "Aluminum is more reactive than manganese", "Manganese is less reactive than aluminum"], ans: 3 },
+        { q: "The ability of a metal to displace another from its salt solution depends on:", opts: ["The atomic mass of the metals", "The relative positions in the reactivity series", "The color of the salt solution", "The temperature of the solution"], ans: 1 },
+        { q: "Which metal would react most vigorously with dilute sulfuric acid?", opts: ["Copper", "Silver", "Magnesium", "Lead"], ans: 2 },
+        { q: "In a displacement reaction, the metal that is displaced is:", opts: ["More reactive than the displacing metal", "Less reactive than the displacing metal", "Equally reactive as the displacing metal", "A noble metal"], ans: 1 },
+        { q: "Which of the following pairs would result in a spontaneous displacement reaction?", opts: ["Copper + Zinc sulfate", "Zinc + Copper sulfate", "Silver + Copper sulfate", "Gold + Iron sulfate"], ans: 1 },
+        { q: "The reactivity series K > Na > Ca > Mg > Al > Mn shows that:", opts: ["Sodium is more reactive than potassium", "Aluminum is more reactive than magnesium", "Calcium is more reactive than sodium", "Magnesium is more reactive than aluminum"], ans: 3 },
+        { q: "A metal X displaces Y from YSO₄ solution, but Z displaces X from XSO₄ solution. The correct order of reactivity is:", opts: ["Z > X > Y", "X > Y > Z", "Y > X > Z", "Z > Y > X"], ans: 0 },
+        { q: "Which metal would not be suitable for making containers for storing acidic solutions?", opts: ["Gold", "Platinum", "Magnesium", "Copper"], ans: 2 },
+        { q: "The reactivity series is also known as the:", opts: ["Electrochemical series", "Periodic series", "Activity series", "Both A and C"], ans: 3 },
+        { q: "A metal that is high in the reactivity series will have:", opts: ["High ionization energy", "Low ionization energy", "High electronegativity", "High electron affinity"], ans: 1 },
+        { q: "Which of the following displacement reactions would be most exothermic?", opts: ["Zn + CuSO₄ → ZnSO₄ + Cu", "Mg + CuSO₄ → MgSO₄ + Cu", "Fe + CuSO₄ → FeSO₄ + Cu", "Pb + CuSO₄ → PbSO₄ + Cu"], ans: 1 },
+        { q: "In the reactivity series, metals above hydrogen can:", opts: ["Displace hydrogen from acids", "Displace hydrogen from bases", "React with noble gases", "Form hydrides readily"], ans: 0 },
+        { q: "Which metal would you expect to have the lowest melting point among K, Na, Ca, Mg?", opts: ["K", "Na", "Ca", "Mg"], ans: 0 },
+        { q: "The reactivity of a metal is inversely proportional to its:", opts: ["Atomic radius", "Ionization energy", "Atomic number", "Density"], ans: 1 },
+        { q: "Which statement about the reactivity series is correct?", opts: ["The most reactive metals are found at the bottom of the series", "The least reactive metals are found at the top of the series", "Highly reactive metals are difficult to extract from their ores", "All metals react with cold water"], ans: 2 },
+        { q: "A metal that is above aluminum in the reactivity series would:", opts: ["Be extracted by electrolysis", "Be extracted by carbon reduction", "Occur naturally in pure form", "Not form oxides"], ans: 0 },
+
+        // Section D: Extraction of Metals (81-110)
+        { q: "Which method is used to extract highly reactive metals like sodium and potassium?", opts: ["Reduction with carbon", "Electrolysis", "Roasting alone", "Calcination alone"], ans: 1 },
+        { q: "Metals of medium reactivity such as iron and zinc are typically extracted by:", opts: ["Electrolysis of their molten salts", "Reduction with carbon or carbon monoxide", "Thermal decomposition", "Direct heating"], ans: 1 },
+        { q: "The process of heating a sulfide ore strongly in excess air below its melting point is called:", opts: ["Calcination", "Roasting", "Smelting", "Leaching"], ans: 1 },
+        { q: "What is the main purpose of roasting a sulfide ore?", opts: ["To remove water", "To convert sulfide to oxide", "To decompose carbonate", "To reduce the metal"], ans: 1 },
+        { q: "The reaction 2ZnS + 3O₂ → 2ZnO + 2SO₂ occurs during:", opts: ["Calcination of zinc carbonate", "Roasting of zinc blende", "Reduction of zinc oxide", "Electrolysis of zinc sulfate"], ans: 1 },
+        { q: "Which of the following is an example of calcination?", opts: ["2ZnS + 3O₂ → 2ZnO + 2SO₂", "CaCO₃ → CaO + CO₂", "Fe₂O₃ + 3CO → 2Fe + 3CO₂", "2NaCl → 2Na + Cl₂"], ans: 1 },
+        { q: "Calcination is carried out in:", opts: ["Excess air", "Limited or no air", "Pure oxygen atmosphere", "Hydrogen atmosphere"], ans: 1 },
+        { q: "The main purpose of calcination is to:", opts: ["Remove sulfur from the ore", "Drive off volatile materials like CO₂ and water", "Convert the metal to its pure form", "Oxidize the ore completely"], ans: 1 },
+        { q: "Which ore would be processed by calcination rather than roasting?", opts: ["ZnS (Zinc blende)", "Cu₂S (Copper(I) sulfide)", "ZnCO₃ (Calamine)", "FeS₂ (Iron pyrite)"], ans: 2 },
+        { q: "The gas released during roasting of zinc blende is:", opts: ["CO₂", "SO₂", "H₂O vapor", "O₂"], ans: 1 },
+        { q: "Why is roasting necessary before reducing sulfide ores with carbon?", opts: ["Sulfides are more expensive to reduce", "Sulfides are hard to reduce directly with carbon", "Sulfides are already in the correct form", "Sulfides react violently with carbon"], ans: 1 },
+        { q: "Which statement about roasting is INCORRECT?", opts: ["It is carried out below the melting point of the ore", "It converts sulfides to oxides", "It releases carbon dioxide gas", "It helps remove sulfur"], ans: 2 },
+        { q: "The reaction 4FeS₂ + 11O₂ → 2Fe₂O₃ + 8SO₂ occurs during roasting of:", opts: ["Hematite", "Magnetite", "Iron pyrite", "Limonite"], ans: 2 },
+        { q: "Sulfur is removed during roasting because:", opts: ["Sulfur makes the metal brittle", "Sulfur increases the metal's strength", "Sulfur is valuable as a byproduct", "Both A and C"], ans: 3 },
+        { q: "During calcination of a hydrated ore, the volatile material driven off is:", opts: ["SO₂", "CO₂", "H₂O vapor", "O₂"], ans: 2 },
+        { q: "The main difference between roasting and calcination is that roasting requires:", opts: ["Excess air and is for sulfide ores", "Limited air and is for carbonate ores", "High pressure and is for all ores", "Catalysts and is for oxide ores"], ans: 0 },
+        { q: "Which furnace is typically used for roasting operations?", opts: ["Blast furnace", "Reverberatory furnace", "Open hearth furnace", "Electric arc furnace"], ans: 1 },
+        { q: "During calcination of calcium carbonate, the product formed is:", opts: ["CaO and CO", "CaO and CO₂", "Ca(OH)₂ and CO₂", "Ca and CO₂"], ans: 1 },
+        { q: "The significance of roasting includes all EXCEPT:", opts: ["Converts sulfide to oxide", "Makes the ore porous", "Directly produces the pure metal", "Removes sulfur as SO₂"], ans: 2 },
+        { q: "Which metal is typically extracted by both roasting and calcination during its extraction process?", opts: ["Sodium", "Iron", "Zinc", "Copper"], ans: 2 },
+        { q: "The extraction of zinc from zinc blende (ZnS) involves roasting followed by:", opts: ["Electrolysis", "Reduction with carbon", "Further roasting", "Calcination"], ans: 1 },
+        { q: "Why is the removal of sulfur important during metal extraction?", opts: ["Sulfur makes the metal ductile", "Sulfur makes the metal brittle", "Sulfur increases melting point", "Sulfur improves conductivity"], ans: 1 },
+        { q: "During calcination, the ore undergoes:", opts: ["Complete oxidation", "Thermal decomposition", "Reduction", "Hydrolysis"], ans: 1 },
+        { q: "Which of the following is NOT a purpose of calcination?", opts: ["Remove water of hydration", "Decompose carbonates", "Make the ore porous", "Oxidize sulfides to sulfates"], ans: 3 },
+        { q: "The temperature range for roasting zinc blende is approximately:", opts: ["120-150°C", "500-600°C", "800-1000°C", "1500-1700°C"], ans: 0 },
+        { q: "In the extraction of iron, the ore is roasted primarily to:", opts: ["Convert FeS₂ to Fe₂O₃", "Convert Fe₂O₃ to Fe", "Remove CO₂", "Add sulfur"], ans: 0 },
+        { q: "Which statement about the extraction of medium reactivity metals is correct?", opts: ["They are extracted by electrolysis of aqueous solutions", "They are extracted by reduction with carbon", "They occur naturally as pure metals", "They cannot be extracted from their ores"], ans: 1 },
+        { q: "The term 'thermal shock' in calcination refers to:", opts: ["The chemical reaction with carbon", "The breaking down of large lumps due to heating", "The cooling process of the metal", "The formation of shock waves"], ans: 1 },
+        { q: "Highly reactive metals are extracted by electrolysis because:", opts: ["They are cheap to produce", "Carbon cannot displace them from their compounds", "They occur in pure form naturally", "They have low melting points"], ans: 1 },
+        { q: "Which extraction method would be used for a metal that forms very stable compounds that cannot be reduced by carbon?", opts: ["Reduction with hydrogen", "Electrolysis", "Thermal decomposition", "Displacement with a less reactive metal"], ans: 1 },
+
+        // Section E: Alkali Metals (Group 1) (111-140)
+        { q: "Which of the following is NOT an alkali metal?", opts: ["Lithium", "Sodium", "Calcium", "Potassium"], ans: 2 },
+        { q: "Alkali metals are stored under oil to prevent reaction with:", opts: ["Carbon dioxide only", "Air and water", "Nitrogen only", "Hydrogen only"], ans: 1 },
+        { q: "Which property is characteristic of alkali metals?", opts: ["High melting points", "Hard and difficult to cut", "+1 oxidation state", "Form insoluble white salts"], ans: 2 },
+        { q: "The reaction of alkali metals with water produces:", opts: ["Metal oxide and hydrogen", "Metal hydroxide and hydrogen", "Metal hydride and oxygen", "Metal peroxide and water"], ans: 1 },
+        { q: "Which alkali metal is the most reactive?", opts: ["Lithium", "Sodium", "Potassium", "Francium"], ans: 3 },
+        { q: "The general reaction 2M + 2H₂O → 2MOH + H₂ represents the reaction of:", opts: ["Alkaline earth metals with water", "Alkali metals with water", "Transition metals with water", "Noble metals with water"], ans: 1 },
+        { q: "The flame test color for sodium is:", opts: ["Lilac", "Crimson red", "Yellow", "Brick red"], ans: 2 },
+        { q: "The flame test color for potassium is:", opts: ["Yellow", "Lilac (pale purple)", "Brick red", "Green"], ans: 1 },
+        { q: "Which statement about alkali metals is FALSE?", opts: ["They are soft and can be cut with a knife", "They have low density", "They have high melting points", "They are highly electropositive"], ans: 2 },
+        { q: "As you go down Group 1, the reactivity:", opts: ["Decreases", "Increases", "Remains constant", "First decreases then increases"], ans: 1 },
+        { q: "The oxide formed by sodium when burned in excess oxygen is:", opts: ["Na₂O", "Na₂O₂", "NaO₂", "NaO"], ans: 1 },
+        { q: "Potassium forms a superoxide with the formula:", opts: ["K₂O", "KO₂", "K₂O₂", "K₂O₃"], ans: 1 },
+        { q: "Which alkali metal reacts most violently with water?", opts: ["Li", "Na", "K", "Cs"], ans: 3 },
+        { q: "The low density of alkali metals is unusual for metals because:", opts: ["They have high atomic masses but large atomic radii", "They have low atomic masses and large atomic radii", "They form covalent bonds", "They have high ionization energies"], ans: 1 },
+        { q: "Which property increases down Group 1?", opts: ["Ionization energy", "Electronegativity", "Atomic radius", "Melting point"], ans: 2 },
+        { q: "The reaction between alkali metals and oxygen produces different types of oxides depending on:", opts: ["The temperature only", "The metal and conditions", "The pressure only", "The catalyst used"], ans: 1 },
+        { q: "Lithium is unique among alkali metals because it:", opts: ["Forms a normal oxide (Li₂O) rather than peroxide", "Is the most reactive", "Has the largest atomic radius", "Is stored in water"], ans: 0 },
+        { q: "Which alkali metal is radioactive?", opts: ["Rubidium", "Cesium", "Francium", "Potassium"], ans: 2 },
+        { q: "The general electronic configuration of alkali metals is:", opts: ["ns¹", "ns²", "ns²np¹", "ns²np⁶"], ans: 0 },
+        { q: "When an alkali metal loses one electron, it forms an ion with a charge of:", opts: ["+1", "-1", "+2", "0"], ans: 0 },
+        { q: "Which of the following is NOT a characteristic of alkali metal compounds?", opts: ["They are generally ionic", "They are usually soluble in water", "They form colorless solutions", "They form covalent bonds with halogens"], ans: 3 },
+        { q: "The softness of alkali metals is attributed to:", opts: ["Strong metallic bonding", "Weak metallic bonding due to only one valence electron", "Their high density", "Their crystalline structure"], ans: 1 },
+        { q: "As you go down Group 1, the melting point:", opts: ["Increases", "Decreases", "Remains constant", "Fluctuates randomly"], ans: 1 },
+        { q: "Which alkali metal is used in some types of batteries?", opts: ["Francium", "Cesium", "Lithium", "Rubidium"], ans: 2 },
+        { q: "The reason alkali metals are stored under oil is because they:", opts: ["React with glass", "React with oxygen and moisture in air", "Are toxic when exposed to air", "Melt at room temperature"], ans: 1 },
+        { q: "Which statement correctly describes the trend in ionization energy down Group 1?", opts: ["Increases because atomic radius decreases", "Decreases because atomic radius increases", "Remains constant because of similar electron configuration", "Increases because nuclear charge increases significantly"], ans: 1 },
+        { q: "The reaction of alkali metals with halogens produces:", opts: ["Metal halides (MX)", "Metal halides (MX₂)", "Metal oxyhalides", "Hydrogen halides"], ans: 0 },
+        { q: "Which alkali metal is least reactive?", opts: ["Cs", "Rb", "K", "Li"], ans: 3 },
+        { q: "The flame test color for lithium is:", opts: ["Yellow", "Lilac", "Crimson red", "Brick red"], ans: 2 },
+        { q: "Alkali metals are good reducing agents because they:", opts: ["Readily gain electrons", "Readily lose electrons", "Have high electronegativity", "Form stable negative ions"], ans: 1 },
+
+        // Section F: Alkaline Earth Metals (Group 2) (141-160)
+        { q: "Which element belongs to Group 2 (alkaline earth metals)?", opts: ["Sodium", "Magnesium", "Aluminum", "Chlorine"], ans: 1 },
+        { q: "The general electronic configuration of alkaline earth metals is:", opts: ["ns¹", "ns²", "ns²np¹", "ns²np²"], ans: 1 },
+        { q: "Compared to alkali metals, alkaline earth metals are:", opts: ["More reactive", "Less reactive", "Equally reactive", "Non-reactive"], ans: 1 },
+        { q: "The reaction 2Mg + O₂ → 2MgO produces:", opts: ["Magnesium hydroxide", "Magnesium oxide", "Magnesium peroxide", "Magnesium superoxide"], ans: 1 },
+        { q: "Calcium carbonate decomposes upon heating according to the equation:", opts: ["CaCO₃ → Ca + CO₂ + O₂", "CaCO₃ → CaO + CO₂", "CaCO₃ → CaO + CO", "CaCO₃ → Ca(OH)₂ + CO₂"], ans: 1 },
+        { q: "Which alkaline earth metal is used in X-ray imaging as BaSO₄?", opts: ["Magnesium", "Calcium", "Barium", "Strontium"], ans: 2 },
+        { q: "The use of calcium in cement and construction relies on the formation of:", opts: ["CaO from CaCO₃", "Ca from CaO", "Ca(OH)₂ from Ca", "CaCO₃ from CaO"], ans: 0 },
+        { q: "Magnesium is used in:", opts: ["Jewelry only", "Alloys and fireworks", "X-ray imaging", "Battery production"], ans: 1 },
+        { q: "Which statement about alkaline earth metals is TRUE?", opts: ["They have +2 oxidation state", "They form insoluble white salts", "They are stored under oil", "They are more reactive than Group 1 metals"], ans: 0 },
+        { q: "The reactivity of alkaline earth metals down the group:", opts: ["Decreases", "Increases", "Remains constant", "First decreases then increases"], ans: 1 },
+        { q: "Barium sulfate is used in medical imaging because it:", opts: ["Is soluble in water", "Is opaque to X-rays and insoluble", "Is radioactive", "Reacts with body tissues"], ans: 1 },
+        { q: "The product when magnesium reacts with steam is:", opts: ["MgO + H₂", "Mg(OH)₂ + H₂", "MgH₂ + O₂", "Mg + H₂O"], ans: 0 },
+        { q: "Which alkaline earth metal has the smallest atomic radius?", opts: ["Be", "Mg", "Ca", "Ba"], ans: 0 },
+        { q: "Calcium oxide (quicklime) reacts with water to form:", opts: ["CaCO₃", "Ca(OH)₂ (slaked lime)", "CaH₂", "CaO₂"], ans: 1 },
+        { q: "Compared to Group 1 metals, Group 2 metals have:", opts: ["Higher melting points", "Lower melting points", "Similar melting points", "No melting points"], ans: 0 },
+        { q: "The second ionization energy of alkaline earth metals is:", opts: ["Lower than the first ionization energy", "Higher than the first ionization energy", "Equal to the first ionization energy", "Zero"], ans: 1 },
+        { q: "Which alkaline earth metal does NOT react with water at room temperature?", opts: ["Be", "Mg", "Ca", "Sr"], ans: 0 },
+        { q: "The solubility of alkaline earth metal hydroxides in water:", opts: ["Decreases down the group", "Increases down the group", "Remains constant", "Shows no trend"], ans: 1 },
+        { q: "Magnesium burns in air with a:", opts: ["Red flame", "Brilliant white flame", "Blue flame", "Green flame"], ans: 1 },
+        { q: "The thermal stability of Group 2 carbonates:", opts: ["Decreases down the group", "Increases down the group", "Remains constant", "Is unpredictable"], ans: 1 },
+
+        // Section G: Transition Metals (161-190)
+        { q: "Which of the following is a characteristic property of transition metals?", opts: ["Fixed oxidation state", "Colorless compounds", "Variable oxidation states", "Low melting points"], ans: 2 },
+        { q: "Iron exhibits oxidation states of:", opts: ["+1 and +2", "+2 and +3", "+3 and +4", "+1 and +3"], ans: 1 },
+        { q: "The rusting of iron can be represented by:", opts: ["4Fe + 3O₂ + xH₂O → 2Fe₂O₃·xH₂O", "Fe + O₂ → FeO₂", "2Fe + O₂ → 2FeO", "Fe + H₂O → FeO + H₂"], ans: 0 },
+        { q: "Copper forms Cu²⁺ solutions that are:", opts: ["Colorless", "Green", "Blue", "Yellow"], ans: 2 },
+        { q: "Which property makes transition metals good catalysts?", opts: ["Their high density", "Their variable oxidation states", "Their high melting points", "Their low reactivity"], ans: 1 },
+        { q: "Zinc reacts with hydrochloric acid according to the equation:", opts: ["Zn + HCl → ZnCl + H₂", "Zn + 2HCl → ZnCl₂ + H₂", "Zn + HCl → ZnCl₂ + H₂", "Zn + 2HCl → ZnCl + H₂"], ans: 1 },
+        { q: "Which transition metal is used in electrical wiring due to its excellent conductivity?", opts: ["Iron", "Copper", "Zinc", "Titanium"], ans: 1 },
+        { q: "The ability of transition metals to form colored compounds is due to:", opts: ["Their high melting points", "d-d electron transitions", "Their metallic luster", "Their high density"], ans: 1 },
+        { q: "Which of the following is a transition metal?", opts: ["Aluminum", "Calcium", "Copper", "Sodium"], ans: 2 },
+        { q: "The oxidation state of zinc in its compounds is typically:", opts: ["+1", "+2", "+3", "Variable"], ans: 1 },
+        { q: "Which transition metal is used in the Haber process as a catalyst?", opts: ["Copper", "Iron", "Zinc", "Silver"], ans: 1 },
+        { q: "The electronic configuration of transition metals is characterized by:", opts: ["Filled d-orbitals", "Partially filled d-orbitals", "Empty d-orbitals", "Filled f-orbitals"], ans: 1 },
+        { q: "Which statement about transition metals is FALSE?", opts: ["They have variable oxidation states", "They form colorless compounds", "They are good catalysts", "They have high melting points"], ans: 1 },
+        { q: "Copper(I) and copper(II) are examples of:", opts: ["Different allotropes", "Different oxidation states", "Different isotopes", "Different ions of the same charge"], ans: 1 },
+        { q: "Which transition metal is liquid at room temperature?", opts: ["Iron", "Copper", "Mercury", "Zinc"], ans: 2 },
+        { q: "The high melting points of transition metals are due to:", opts: ["Weak metallic bonding", "Strong metallic bonding from unpaired d-electrons", "Covalent bonding", "Ionic bonding"], ans: 1 },
+        { q: "Which of the following compounds is typically colored?", opts: ["NaCl", "CuSO₄·5H₂O", "KCl", "CaCO₃"], ans: 1 },
+        { q: "The refining of copper involves:", opts: ["Electrolysis", "Roasting only", "Calcination only", "Reduction with carbon"], ans: 0 },
+        { q: "Which transition metal is most resistant to corrosion?", opts: ["Iron", "Copper", "Silver", "Chromium (when alloyed)"], ans: 3 },
+        { q: "The catalytic activity of transition metals is often explained by:", opts: ["Their ability to adsorb reactants", "Their high melting points", "Their low densities", "Their magnetic properties"], ans: 0 },
+        { q: "Which oxidation state is common for iron in nature?", opts: ["+1", "+2 and +3", "+4", "+5"], ans: 1 },
+        { q: "The blue color of copper(II) sulfate solution is due to:", opts: ["The Cu²⁺ ion", "The SO₄²⁻ ion", "The water molecules", "The Cu⁺ ion"], ans: 0 },
+        { q: "Which property is NOT typical of transition metals?", opts: ["Formation of complex ions", "Paramagnetism", "Low density", "Catalytic activity"], ans: 2 },
+        { q: "Zinc is not considered a true transition metal because:", opts: ["It has no variable oxidation states", "It is too reactive", "It has low melting point", "It is not a good conductor"], ans: 0 },
+        { q: "The use of platinum as a catalyst is based on its:", opts: ["High cost", "Resistance to corrosion and ability to adsorb gases", "High density", "Low melting point"], ans: 1 },
+        { q: "Which transition metal is essential for hemoglobin?", opts: ["Copper", "Zinc", "Iron", "Manganese"], ans: 2 },
+        { q: "The term 'transition metal' refers to elements that:", opts: ["Are in Groups 1 and 2", "Form compounds with partially filled d-orbitals", "Are in Group 17", "Are radioactive"], ans: 1 },
+        { q: "Which of the following is NOT a transition metal?", opts: ["Chromium", "Manganese", "Aluminum", "Cobalt"], ans: 2 },
+        { q: "The density of transition metals is generally:", opts: ["Low", "High", "Very low", "Unpredictable"], ans: 1 },
+        { q: "Transition metals form complexes because:", opts: ["They have empty d-orbitals", "They are highly reactive", "They have low charge density", "They are non-metallic"], ans: 0 },
+
+        // Section H: Specific Metals (Aluminum, Noble Metals) (191-215)
+        { q: "Aluminum is extracted from its ore bauxite using:", opts: ["Carbon reduction", "Electrolysis (Hall-Héroult process)", "Thermal decomposition", "Roasting"], ans: 1 },
+        { q: "Which property of aluminum makes it useful for aircraft construction?", opts: ["High density and weak", "Light weight and strong", "High reactivity", "Poor conductivity"], ans: 1 },
+        { q: "Aluminum is amphoteric, meaning it can react with:", opts: ["Only acids", "Only bases", "Both acids and bases", "Neither acids nor bases"], ans: 2 },
+        { q: "The reaction of aluminum with hydrochloric acid produces:", opts: ["AlCl₃ + H₂", "AlCl₂ + H₂", "AlCl₃ + H₂O", "Al₂O₃ + HCl"], ans: 0 },
+        { q: "The reaction of aluminum with sodium hydroxide produces:", opts: ["NaAlO₂ + H₂", "Na₃AlO₃ + H₂", "NaAl(OH)₄ + H₂", "Al(OH)₃ + NaOH"], ans: 2 },
+        { q: "The balanced equation for aluminum with base (NaOH) and water is:", opts: ["2Al + 2NaOH + 6H₂O → 2NaAl(OH)₄ + 3H₂", "Al + NaOH + H₂O → NaAlO₂ + H₂", "2Al + 6NaOH → 2Al(OH)₃ + 3Na", "Al + 3NaOH → Al(OH)₃ + 3Na"], ans: 0 },
+        { q: "Which of the following is a noble metal?", opts: ["Iron", "Copper", "Gold", "Zinc"], ans: 2 },
+        { q: "Noble metals are characterized by:", opts: ["High reactivity", "Resistance to corrosion and oxidation", "Low economic value", "High reactivity with acids"], ans: 1 },
+        { q: "Silver is used in photography because:", opts: ["It is cheap", "Silver compounds are light-sensitive", "It is highly reactive", "It dissolves in water"], ans: 1 },
+        { q: "Platinum is used as a catalyst because:", opts: ["It is inexpensive", "It is highly reactive", "It is resistant to corrosion and has catalytic properties", "It has low melting point"], ans: 2 },
+        { q: "Gold does not react with:", opts: ["Aqua regia", "Oxygen", "Cyanide solutions", "Mercury"], ans: 1 },
+        { q: "The corrosion resistance of aluminum is due to:", opts: ["Its high reactivity", "The formation of a protective Al₂O₃ layer", "Its low density", "Its high melting point"], ans: 1 },
+        { q: "Which noble metal is used in some electronics?", opts: ["Lead", "Tin", "Gold", "Iron"], ans: 2 },
+        { q: "Aqua regia, a mixture of concentrated HCl and HNO₃, can dissolve:", opts: ["Only iron", "Only aluminum", "Gold and platinum", "Only silver"], ans: 2 },
+        { q: "Which of the following is NOT a noble metal?", opts: ["Silver", "Gold", "Platinum", "Copper"], ans: 3 },
+        { q: "The Hall-Héroult process is used to extract:", opts: ["Iron", "Copper", "Aluminum", "Zinc"], ans: 2 },
+        { q: "Aluminum does not react readily with water because:", opts: ["It is not reactive", "It forms a protective oxide layer", "It sinks in water", "It reacts only with steam"], ans: 1 },
+        { q: "Which noble metal is the most malleable and ductile?", opts: ["Platinum", "Silver", "Gold", "Palladium"], ans: 2 },
+        { q: "The main ore of aluminum is:", opts: ["Hematite", "Bauxite", "Galena", "Calamine"], ans: 1 },
+        { q: "Silver tarnishes in air due to reaction with:", opts: ["Oxygen", "Nitrogen", "Hydrogen sulfide", "Carbon dioxide"], ans: 2 },
+        { q: "Which statement about noble metals is INCORRECT?", opts: ["They are very unreactive", "They occur naturally in pure form", "They are easily extracted from their ores", "They have high economic value"], ans: 2 },
+        { q: "The reaction 2Al + 6HCl → 2AlCl₃ + 3H₂ is an example of:", opts: ["A metal reacting with a base", "A metal reacting with an acid", "A displacement reaction", "A decomposition reaction"], ans: 1 },
+        { q: "The protective oxide layer on aluminum can be enhanced by:", opts: ["Adding water", "Anodizing", "Heating strongly", "Adding salt"], ans: 1 },
+        { q: "Gold is used in jewelry because it is:", opts: ["Hard and brittle", "Soft, malleable, and resistant to tarnish", "Highly reactive", "Light and cheap"], ans: 1 },
+        { q: "Platinum is used in catalytic converters in cars because it:", opts: ["Is cheap", "Converts harmful gases to less harmful ones", "Melts at low temperature", "Reacts with all gases"], ans: 1 },
+
+        // Section I: Periodic Trends and General Properties (216-240)
+        { q: "As you go down a group, the atomic size of metals:", opts: ["Decreases", "Increases", "Remains constant", "First decreases then increases"], ans: 1 },
+        { q: "Metallic character across a period:", opts: ["Increases", "Decreases", "Remains constant", "Is unpredictable"], ans: 1 },
+        { q: "The ionization energy of metals generally:", opts: ["Decreases down a group", "Increases down a group", "Is constant down a group", "Shows no trend"], ans: 0 },
+        { q: "Which factor primarily determines the reactivity of a metal?", opts: ["Atomic mass", "Ionization energy", "Density", "Melting point"], ans: 1 },
+        { q: "The trend in atomic radius down a group is due to:", opts: ["Decreasing number of electron shells", "Increasing number of electron shells", "Increasing nuclear charge only", "Decreasing shielding effect"], ans: 1 },
+        { q: "Which of the following has the largest atomic radius?", opts: ["Li", "Na", "K", "Rb"], ans: 3 },
+        { q: "The most reactive metals are found in which part of the periodic table?", opts: ["Top right", "Bottom left", "Top left", "Bottom right"], ans: 1 },
+        { q: "As the atomic number increases down a group, the number of electron shells:", opts: ["Increases", "Decreases", "Remains the same", "Doubles"], ans: 0 },
+        { q: "The shielding effect in atoms:", opts: ["Increases down a group", "Decreases down a group", "Remains constant", "Is unrelated to reactivity"], ans: 0 },
+        { q: "Which statement about ionization energy is TRUE?", opts: ["It is the energy required to add an electron to an atom", "It is the energy required to remove an electron from an atom", "It is highest for alkali metals", "It increases down a group"], ans: 1 },
+        { q: "The effective nuclear charge experienced by valence electrons:", opts: ["Increases across a period", "Decreases across a period", "Is constant across a period", "Is zero for metals"], ans: 0 },
+        { q: "Which metal would have the lowest ionization energy?", opts: ["Lithium", "Sodium", "Potassium", "Cesium"], ans: 3 },
+        { q: "The tendency of a metal to lose electrons is directly related to its:", opts: ["High electronegativity", "Low ionization energy", "Small atomic radius", "High electron affinity"], ans: 1 },
+        { q: "As you move from left to right across a period, the atomic radius:", opts: ["Increases", "Decreases", "Remains constant", "Increases then decreases"], ans: 1 },
+        { q: "Which group shows the greatest increase in reactivity down the group?", opts: ["Group 1", "Group 2", "Group 17", "Group 18"], ans: 0 },
+        { q: "The metallic bond strength is influenced by:", opts: ["Number of valence electrons and atomic radius", "Color of the metal", "Density of the metal", "Reactivity with water"], ans: 0 },
+        { q: "Which of the following trends is INCORRECT for metals down a group?", opts: ["Atomic radius increases", "Ionization energy decreases", "Reactivity increases", "Melting point increases"], ans: 3 },
+        { q: "The ease of forming a cation increases with:", opts: ["Decreasing atomic radius", "Increasing ionization energy", "Decreasing ionization energy", "Increasing electronegativity"], ans: 2 },
+        { q: "Which factor decreases across a period for metals?", opts: ["Nuclear charge", "Ionization energy", "Atomic radius", "Electronegativity"], ans: 2 },
+        { q: "The metallic character of elements is highest for those with:", opts: ["High ionization energy and high electronegativity", "Low ionization energy and low electronegativity", "High ionization energy and low electronegativity", "Low ionization energy and high electronegativity"], ans: 1 },
+        { q: "Which of the following has the smallest atomic radius?", opts: ["K", "Ca", "Sc", "Ti"], ans: 3 },
+        { q: "The reactivity of metals depends on their ability to:", opts: ["Gain electrons", "Lose electrons", "Share electrons", "Form covalent bonds"], ans: 1 },
+        { q: "As you go down a group, the number of valence electrons:", opts: ["Increases", "Decreases", "Remains the same", "Doubles"], ans: 2 },
+        { q: "Which statement about periodic trends is FALSE?", opts: ["Atomic radius increases down a group", "Ionization energy increases across a period", "Metallic character decreases across a period", "Electronegativity decreases across a period"], ans: 3 },
+        { q: "The diagonal relationship in the periodic table refers to similarities between:", opts: ["Adjacent elements in the same period", "Elements in the same group", "Elements diagonally adjacent (e.g., Li and Mg)", "Noble gases"], ans: 2 },
+
+        // Section J: Mixed and Application Questions (241-250)
+        { q: "A student observes that metal X reacts vigorously with cold water, metal Y reacts slowly with steam, and metal Z does not react even with steam. The correct order of reactivity is:", opts: ["X > Y > Z", "Z > Y > X", "Y > X > Z", "X > Z > Y"], ans: 0 },
+        { q: "During the extraction of a metal, the ore is first roasted. The gas released is collected to produce sulfuric acid. The ore is most likely:", opts: ["Fe₂O₃", "ZnCO₃", "ZnS", "Al₂O₃"], ans: 2 },
+        { q: "A metal forms two different oxides: MO and M₂O₃. This metal is likely a:", opts: ["Group 1 metal", "Group 2 metal", "Transition metal", "Noble metal"], ans: 2 },
+        { q: "Which metal would be most suitable for making a container to store both acidic and basic solutions?", opts: ["Sodium", "Aluminum", "Iron", "Copper"], ans: 1 },
+        { q: "An unknown metal gives a lilac flame test, reacts violently with water, and is stored under oil. The metal is:", opts: ["Sodium", "Calcium", "Potassium", "Magnesium"], ans: 2 },
+        { q: "A metal ore contains both sulfur and carbonate. The extraction process should include:", opts: ["Roasting only", "Calcination only", "Both roasting and calcination", "Neither roasting nor calcination"], ans: 2 },
+        { q: "Which statement best explains why aluminum is used in overhead power lines despite being less conductive than copper?", opts: ["Aluminum is more reactive", "Aluminum is lighter and cheaper", "Aluminum has higher melting point", "Aluminum is more abundant"], ans: 1 },
+        { q: "A metal that is high in the reactivity series is extracted by electrolysis because:", opts: ["It is too expensive to use carbon", "Carbon is not a strong enough reducing agent", "The ore is too hard to crush", "Electrolysis is faster"], ans: 1 },
+        { q: "Which of the following reactions would you expect to occur most readily?", opts: ["2Na + 2H₂O → 2NaOH + H₂", "Mg + H₂O → MgO + H₂ (with steam)", "Fe + H₂O → FeO + H₂ (very high temperature)", "Cu + H₂O → No reaction"], ans: 0 },
+        { q: "A metal M forms a basic oxide M₂O, reacts vigorously with water to form MOH, and has a flame test color of yellow. Metal M is:", opts: ["Lithium", "Sodium", "Potassium", "Calcium"], ans: 1 }
+    ];
+
+    // ========== STATE MANAGEMENT ==========
+    const STATE_KEY = 'chm102_metals_quiz_state';
+    let state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false };
+
+    function saveState() { localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
+    function loadState() { const r = localStorage.getItem(STATE_KEY); if(r){try{state=JSON.parse(r);return true;}catch(e){}} return false; }
+    function clearState() { state = { total:30,indices:[],current:0,answers:{},skipped:[],submitted:false}; localStorage.removeItem(STATE_KEY); }
+
+    function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+    function getQ() { if(!state.indices.length) return null; const bi = state.indices[state.current]; return {...questionBank[bi], bankIndex:bi}; }
+
+    function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); }
+    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+    function startQuiz(n) {
+        clearState();
+        const allIndices = shuffle(Array.from({length: questionBank.length}, (_,i)=>i));
+        const selected = allIndices.slice(0, n);
+        state = { total: n, indices: selected, current: 0, answers: {}, skipped: [], submitted: false };
+        saveState(); renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav();
+    }
+
+    function resumeQuiz() {
+        if(!loadState() || !state.indices.length || state.submitted){ toast('No saved quiz. Start a new one.'); return; }
+        renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav(); toast('Quiz resumed.');
+    }
+
+    function clearStorage() { clearState(); saveState(); document.getElementById('resumeSection').style.display='none'; toast('Saved progress cleared.'); }
+
+    function renderQuiz() {
+        const dots = document.getElementById('questionDots'); dots.innerHTML = '';
+        for(let i=0;i<state.total;i++){ const d=document.createElement('span'); d.className='dot'; d.title=`Q${i+1}`; d.onclick=()=>{state.current=i;saveState();renderQuestion();updateProgress();updateNav();}; dots.appendChild(d); }
+    }
+
+    function renderQuestion() {
+        const q = getQ(); if(!q) return;
+        document.getElementById('questionNumber').textContent = `QUESTION ${state.current+1}`;
+        document.getElementById('questionText').textContent = q.q;
+        document.getElementById('progressLabel').textContent = `Question ${state.current+1} of ${state.total}`;
+        const opts = document.getElementById('optionsList'); opts.innerHTML = '';
+        const letters = ['A','B','C','D'];
+        q.opts.forEach((opt,i)=>{
+            const li = document.createElement('li'); li.className='option-item';
+            if(state.answers[state.current]===i) li.classList.add('selected');
+            li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
+            li.onclick = ()=> selectOption(i);
+            opts.appendChild(li);
+        });
+        const dots = document.querySelectorAll('#questionDots .dot');
+        dots.forEach((d,i)=>{ d.classList.remove('current','answered','skipped'); if(i===state.current) d.classList.add('current'); if(state.answers[i]!==undefined) d.classList.add('answered'); if(state.skipped.includes(i) && state.answers[i]===undefined) d.classList.add('skipped'); });
+        document.getElementById('quizScreen').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function selectOption(i) { if(state.submitted) return; state.answers[state.current]=i; state.skipped = state.skipped.filter(s=>s!==state.current); saveState(); renderQuestion(); updateProgress(); updateNav(); }
+    function skipQuestion() {
+        if(state.submitted) return;
+        if(state.answers[state.current]===undefined && !state.skipped.includes(state.current)) state.skipped.push(state.current);
+        if(state.current < state.total-1){ state.current++; saveState(); renderQuestion(); updateProgress(); updateNav(); }
+        else { updateProgress(); updateNav(); renderQuestion(); }
+    }
+    function navigate(dir) { if(state.submitted) return; const nxt = state.current+dir; if(nxt>=0 && nxt<state.total){ state.current=nxt; saveState(); renderQuestion(); updateProgress(); updateNav(); } }
+    function updateProgress() { const a = Object.keys(state.answers).length; document.getElementById('answeredCount').textContent = `${a} answered`; document.getElementById('progressFill').style.width = Math.round((a/state.total)*100)+'%'; }
+    function updateNav() { document.getElementById('btnPrev').disabled = state.current===0; document.getElementById('btnNext').disabled = state.current===state.total-1; }
+
+    function submitQuiz() {
+        const skipped = state.total - Object.keys(state.answers).length;
+        if(skipped>0 && !confirm(`You have ${skipped} unanswered. Submit anyway?`)) return;
+        state.submitted = true; saveState(); showResults(); switchScreen('resultsScreen');
+    }
+
+    function showResults() {
+        let correct = 0; const review = [];
+        state.indices.forEach((bi,i)=>{ const q = questionBank[bi]; const ua = state.answers[i]; const ok = ua===q.ans; if(ok) correct++; review.push({ q:q.q, opts:q.opts, correctAns:q.ans, userAns:ua, isCorrect:ok, idx:i+1 }); });
+        const pct = Math.round((correct/state.total)*100);
+        document.getElementById('scorePercent').textContent = pct+'%';
+        document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
+        document.getElementById('resultMessage').textContent = pct>=90?'🏆 Outstanding!':pct>=70?'👏 Great job!':pct>=50?'📖 Good effort.':'💪 Keep studying.';
+        window._review = review;
+        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+    }
+
+    function reviewAnswers() {
+        const sec = document.getElementById('reviewSection');
+        if(sec.style.display==='block'){ sec.style.display='none'; sec.innerHTML=''; return; }
+        if(!window._review) return;
+        sec.innerHTML = '<h3>📋 Detailed Review</h3>';
+        const letters = ['A','B','C','D'];
+        window._review.forEach(r=>{
+            const d = document.createElement('div'); d.className = 'review-item '+(r.isCorrect?'correct-r':'wrong');
+            const uTxt = r.userAns!==undefined?`${letters[r.userAns]}. ${r.opts[r.userAns]}`:'Not answered';
+            const cTxt = `${letters[r.correctAns]}. ${r.opts[r.correctAns]}`;
+            d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div><div class="rev-ans">Your answer: <span class="your-ans">${uTxt}</span><br>Correct: <span class="correct-ans">${cTxt}</span></div>`;
+            sec.appendChild(d);
+        });
+        sec.style.display='block'; sec.scrollIntoView({behavior:'smooth'});
+    }
+
+    function restartQuiz() {
+        clearState(); saveState();
+        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+        window._review = null; switchScreen('startScreen');
+        document.getElementById('resumeSection').style.display='none'; updateResumeBtn();
+    }
+
+    function updateResumeBtn() {
+        const s = document.getElementById('resumeSection');
+        if(loadState() && state.indices.length && !state.submitted){ s.style.display='block'; }
+        else { s.style.display='none'; clearState(); saveState(); }
+    }
+
+    document.addEventListener('keydown',(e)=>{
+        if(state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
+        switch(e.key.toLowerCase()){
+            case 'a': selectOption(0); break;
+            case 'b': selectOption(1); break;
+            case 'c': selectOption(2); break;
+            case 'd': selectOption(3); break;
+            case 'arrowleft': e.preventDefault(); navigate(-1); break;
+            case 'arrowright': e.preventDefault(); navigate(1); break;
+            case 's': if(!e.ctrlKey&&!e.metaKey){ e.preventDefault(); skipQuestion(); } break;
+            case 'enter': e.preventDefault(); if(Object.keys(state.answers).length===state.total) submitQuiz(); break;
+        }
+    });
+
+    updateResumeBtn();
+    switchScreen('startScreen');
+</script>
+</body>
+</html>
