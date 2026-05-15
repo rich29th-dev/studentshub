@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHY 102 · SHM & Waves Quiz</title>
+    <style>
+        :root {
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --primary: #00695c;
+            --primary-dark: #004d40;
+            --accent: #1a1a2e;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --border: #dfe6e9;
+            --correct: #00b894;
+            --incorrect: #e17055;
+            --warning: #fdcb6e;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --radius: 16px;
+            --transition: 0.3s ease;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Segoe UI',Inter,system-ui,sans-serif;
+            background:var(--bg);min-height:100vh;
+            display:flex;align-items:center;justify-content:center;
+            padding:20px;line-height:1.6;color:var(--text);
+        }
+        .container{
+            width:100%;max-width:850px;background:var(--card-bg);
+            border-radius:var(--radius);box-shadow:var(--shadow);
+            padding:32px 28px;position:relative;overflow:hidden;transition:var(--transition);
+        }
+        .quiz-header{text-align:center;margin-bottom:20px;}
+        .quiz-header .wave-icon{font-size:2.2rem;display:block;margin-bottom:4px;}
+        .quiz-header h1{font-size:1.5rem;color:var(--primary-dark);font-weight:700;}
+        .subtitle{font-size:0.85rem;color:var(--text-light);margin-top:4px;}
+        .screen{display:none;animation:fadeIn 0.4s;}
+        .screen.active{display:block;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+        .start-options{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:24px 0 18px;}
+        .start-btn{
+            flex:1;min-width:200px;padding:22px 16px;border:2px solid var(--border);
+            border-radius:var(--radius);background:var(--card-bg);cursor:pointer;
+            text-align:center;font-weight:600;transition:var(--transition);color:var(--text);
+        }
+        .start-btn:hover{border-color:var(--primary);box-shadow:0 8px 20px rgba(0,105,92,0.12);transform:translateY(-2px);}
+        .start-btn .icon{font-size:2.2rem;display:block;margin-bottom:4px;}
+        .start-btn .badge{background:var(--primary);color:#fff;font-size:0.75rem;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px;}
+        .start-info{font-size:0.8rem;color:var(--text-light);text-align:center;}
+        .progress-wrap{margin-bottom:16px;}
+        .progress-stats{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-light);margin-bottom:4px;}
+        .progress-bar{height:8px;background:var(--border);border-radius:10px;overflow:hidden;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#26a69a);border-radius:10px;transition:width 0.4s;}
+        .question-dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+        .dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:var(--transition);}
+        .dot.answered{background:var(--primary);opacity:0.6;}
+        .dot.current{background:var(--primary);transform:scale(1.5);box-shadow:0 0 0 4px rgba(0,105,92,0.2);}
+        .dot.skipped{background:var(--warning);}
+        .question-card{background:#fafbfc;border-radius:12px;padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+        .question-number{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);font-weight:700;margin-bottom:6px;}
+        .question-text{font-size:1.05rem;font-weight:600;color:var(--text);}
+        .options-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+        .option-item{
+            padding:14px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;background:#fff;
+            display:flex;align-items:center;gap:10px;transition:var(--transition);font-size:0.95rem;user-select:none;
+        }
+        .option-item:hover{border-color:#b2bec3;background:#f8f9fa;}
+        .option-item.selected{border-color:var(--primary);background:#e0f2f1;font-weight:600;}
+        .option-item .radio-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;
+            display:flex;align-items:center;justify-content:center;transition:var(--transition);}
+        .option-item.selected .radio-dot{border-color:var(--primary);background:var(--primary);}
+        .option-item.selected .radio-dot::after{content:'';width:6px;height:6px;background:#fff;border-radius:50%;}
+        .option-item .opt-letter{font-weight:700;color:var(--primary);width:24px;}
+        .nav-buttons{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:18px;}
+        .btn{padding:11px 20px;border-radius:25px;border:none;cursor:pointer;font-weight:600;font-size:0.9rem;
+            transition:var(--transition);display:inline-flex;align-items:center;gap:6px;}
+        .btn-outline{background:#fff;border:2px solid var(--border);color:var(--text);}
+        .btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+        .btn-primary{background:var(--primary);color:#fff;border:2px solid var(--primary);}
+        .btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark);}
+        .btn-submit{background:var(--accent);color:#fff;border:2px solid var(--accent);font-size:1rem;padding:13px 32px;}
+        .btn-submit:hover{background:#2d2d4e;}
+        .btn:disabled{opacity:0.5;pointer-events:none;}
+        .results-card{text-align:center;}
+        .score-circle{width:130px;height:130px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;
+            justify-content:center;flex-direction:column;border:6px solid var(--primary);font-weight:700;}
+        .score-circle .big-score{font-size:2.8rem;color:var(--primary);}
+        .score-circle .total{font-size:0.9rem;color:var(--text-light);}
+        .result-message{font-size:1.1rem;margin-bottom:20px;font-weight:500;}
+        .review-section{text-align:left;margin-top:24px;max-height:400px;overflow-y:auto;padding-right:8px;}
+        .review-item{background:#fafbfc;border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid var(--border);font-size:0.9rem;}
+        .review-item.wrong{border-left-color:var(--incorrect);background:#fffaf9;}
+        .review-item.correct-r{border-left-color:var(--correct);background:#f9fffb;}
+        .review-item .rev-q{font-weight:600;margin-bottom:4px;}
+        .review-item .rev-ans{font-size:0.82rem;color:var(--text-light);}
+        .correct-ans{color:var(--correct);font-weight:600;}
+        .your-ans{color:var(--incorrect);font-weight:600;text-decoration:line-through;}
+        .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--primary-dark);color:#fff;
+            padding:10px 22px;border-radius:25px;font-size:0.85rem;font-weight:600;z-index:999;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+        .toast.show{opacity:1;}
+        @media(max-width:600px){
+            .container{padding:20px 14px;}
+            .start-btn{min-width:160px;padding:16px 12px;}
+            .question-text{font-size:0.95rem;}
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+    <div class="toast" id="toast"></div>
+
+    <!-- START SCREEN -->
+    <div class="screen active" id="startScreen">
+        <div class="quiz-header">
+            <span class="wave-icon">🌊</span>
+            <h1>PHY 102 · SHM & Waves Quiz</h1>
+            <p class="subtitle">19 Questions — Randomised Options · Auto‑Save Progress</p>
+        </div>
+        <div class="start-options">
+            <button class="start-btn" onclick="startQuiz(19)"><span class="icon">📝</span>Start Full 19‑Question Quiz<span class="badge">~20 min</span></button>
+        </div>
+        <p class="start-info">🔀 Options are randomly rearranged each time to prevent memorisation</p>
+        <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
+            <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
+            <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#e17055;">🗑 Clear saved</button>
+        </div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div class="screen" id="quizScreen">
+        <div class="quiz-header"><span style="font-size:1.8rem;">〰️</span></div>
+        <div class="progress-wrap">
+            <div class="progress-stats"><span id="progressLabel">Question 1 of 19</span><span id="answeredCount">0 answered</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+            <div class="question-dots" id="questionDots"></div>
+        </div>
+        <div class="question-card">
+            <div class="question-number" id="questionNumber">QUESTION 1</div>
+            <div class="question-text" id="questionText"></div>
+        </div>
+        <ul class="options-list" id="optionsList"></ul>
+        <div class="nav-buttons">
+            <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Prev</button>
+            <div class="nav-center">
+                <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
+                <button class="btn btn-submit" id="btnSubmit" onclick="submitQuiz()">✅ Submit</button>
+            </div>
+            <button class="btn btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
+        </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div class="screen" id="resultsScreen">
+        <div class="results-card">
+            <div class="quiz-header"><h1>📊 Quiz Results</h1></div>
+            <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/19</span></div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
+            <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">🔍 Review</button>
+            <div class="review-section" id="reviewSection" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== 19 SHM & WAVES QUESTION BANK ==========
+    const questionBank = [
+        { q: "The ______ of a wave is the time it takes the wave to go through one complete cycle", opts: ["Amplitude", "Period", "Frequency", "None of the above"], ans: "Period" },
+        { q: "The rate of change of angular displacement is ______", opts: ["Velocity", "Angular acceleration", "Angular Velocity", "Amplitude"], ans: "Angular Velocity" },
+        { q: "The ______ of a wave is the number of cycles per second", opts: ["Amplitude", "Period", "Frequency", "None of the above"], ans: "Frequency" },
+        { q: "The S.I. unit of Frequency of an oscillatory motion is", opts: ["s", "s⁻¹", "m", "None of the above"], ans: "s⁻¹" },
+        { q: "The ______ of a wave is the maximum disturbance undergone during a cycle of vibration", opts: ["Amplitude", "Period", "Frequency", "None of the above"], ans: "Amplitude" },
+        { q: "An object hung at the end of a spring oscillates, performing simple harmonic motion with an angular frequency w = 2.0 rads⁻¹. What is the period of the oscillation?", opts: ["0.080 s", "0.32 s", "3.41 s", "None of the above"], ans: "3.41 s" },
+        { q: "The maximum displacement of an oscillating mass from its equilibrium position is the ______ of the motion", opts: ["Frequency", "Period", "Amplitude", "Phase"], ans: "Amplitude" },
+        { q: "The expression for the angular velocity, w, is ______", opts: ["Vr", "V/r", "r/V", "None of the above"], ans: "V/r" },
+        { q: "______ is the distance between two successive crests", opts: ["Period", "Amplitude", "Wavelength", "None of the above"], ans: "Wavelength" },
+        { q: "What is the speed of sound waves in water? The bulk modulus for water is 2.2 × 10⁹ N/m² and density 1000 kg/m³", opts: ["1.2 km/s", "1.3 km/s", "1.5 km/s", "None of the above"], ans: "1.5 km/s" },
+        { q: "A tuning fork oscillates at 284 Hz in air. Calculate the wavelength of the tone emitted at 25°C", opts: ["1.02 m", "1.22 m", "1.33 m", "None of the above"], ans: "1.22 m" },
+        { q: "A tuning fork oscillates at 284 Hz in air. Calculate the velocity of the wave emitted at 25°C", opts: ["146 m/s", "246 m/s", "346 m/s", "None of the above"], ans: "346 m/s" },
+        { q: "Find the speed of compression waves in a metal rod if the material of the rod has a Young's modulus of 1.20 × 10¹⁰ N/m² and density of 8920 kg/m³", opts: ["1.12 km/s", "1.14 km/s", "1.16 km/s", "None of the above"], ans: "1.16 km/s" },
+        { q: "The wave which propagates in the horizontal direction, whereas the medium is disturbed in the vertical direction is known as ______ waves", opts: ["Longitudinal", "Transverse", "Polarization", "None of the above"], ans: "Transverse" },
+        { q: "The wave in which the disturbance is parallel to the direction of propagation is known as ______ wave", opts: ["Longitudinal", "Transverse", "Polarization", "None of the above"], ans: "Longitudinal" },
+        { q: "A wave is given by the expression Y(x, t) = A Sin (wt + kx); this means the wave travelling toward ______ direction", opts: ["Positive", "Negative", "Neutral", "None of the above"], ans: "Negative" },
+        { q: "The linear mass density of a clothes line is 0.25 kg/m. How much tension does Ojo have to apply to produce the observed wave speed of 12.0 m/s", opts: ["32 N", "34 N", "36 N", "None of the above"], ans: "36 N" },
+        { q: "Calculate the particle velocity of the expression Y(x, t) = A Sin (wt – kx)", opts: ["wA Sin (wt – kx)", "wA Cos (wt – kx)", "wA tan (wt – kx)", "None of the above"], ans: "wA Cos (wt – kx)" },
+        { q: "The expression for a wave motion is Y(x, t) = A Sin (wt – kx), calculate its acceleration", opts: ["–w²A Sin (wt – kx)", "–w²A Cos (wt – kx)", "w²A tan (wt – kx)", "None of the above"], ans: "–w²A Sin (wt – kx)" }
+    ];
+
+    // ========== STATE MANAGEMENT ==========
+    const STATE_KEY = 'phy102_shm_quiz_state';
+    let state = {
+        total: 19,
+        indices: [],           // order of questions (shuffled once)
+        current: 0,
+        answers: {},           // {questionIndex: chosenOptionText}
+        skipped: [],
+        submitted: false,
+        shuffledOptions: {}    // {questionIndex: [array of options in displayed order]}
+    };
+
+    function saveState() { localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
+    function loadState() { const r = localStorage.getItem(STATE_KEY); if(r){try{state=JSON.parse(r);return true;}catch(e){}} return false; }
+    function clearState() {
+        state = { total:19, indices:[], current:0, answers:{}, skipped:[], submitted:false, shuffledOptions:{} };
+        localStorage.removeItem(STATE_KEY);
+    }
+
+    function shuffle(arr) {
+        const a = [...arr];
+        for(let i=a.length-1; i>0; i--){
+            const j = Math.floor(Math.random() * (i+1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function toast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(t._t);
+        t._t = setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    function switchScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function startQuiz(n) {
+        clearState();
+        const allIndices = shuffle([...Array(questionBank.length).keys()]);
+        const selected = allIndices.slice(0, n);
+        state.total = selected.length;
+        state.indices = selected;
+        state.shuffledOptions = {};
+        selected.forEach(qi => {
+            state.shuffledOptions[qi] = shuffle(questionBank[qi].opts);
+        });
+        state.current = 0;
+        state.answers = {};
+        state.skipped = [];
+        state.submitted = false;
+        saveState();
+        renderQuiz();
+        switchScreen('quizScreen');
+        renderQuestion();
+        updateProgress();
+        updateNav();
+    }
+
+    function resumeQuiz() {
+        if(!loadState() || !state.indices.length || state.submitted){
+            toast('No saved quiz. Start a new one.');
+            return;
+        }
+        renderQuiz();
+        switchScreen('quizScreen');
+        renderQuestion();
+        updateProgress();
+        updateNav();
+        toast('Quiz resumed.');
+    }
+
+    function clearStorage() {
+        clearState();
+        saveState();
+        document.getElementById('resumeSection').style.display = 'none';
+        toast('Saved progress cleared.');
+    }
+
+    function renderQuiz() {
+        const dots = document.getElementById('questionDots');
+        dots.innerHTML = '';
+        for(let i=0; i<state.total; i++){
+            const d = document.createElement('span');
+            d.className = 'dot';
+            d.title = `Q${i+1}`;
+            d.onclick = () => { state.current=i; saveState(); renderQuestion(); updateProgress(); updateNav(); };
+            dots.appendChild(d);
+        }
+    }
+
+    function getShuffledOptions(qIndex) {
+        if(state.shuffledOptions[qIndex]) {
+            return state.shuffledOptions[qIndex];
+        } else {
+            const shuffled = shuffle(questionBank[qIndex].opts);
+            state.shuffledOptions[qIndex] = shuffled;
+            saveState();
+            return shuffled;
+        }
+    }
+
+    function renderQuestion() {
+        if(state.current >= state.indices.length) return;
+        const bankIndex = state.indices[state.current];
+        const qData = questionBank[bankIndex];
+        const opts = getShuffledOptions(bankIndex);
+        document.getElementById('questionNumber').textContent = `QUESTION ${state.current+1}`;
+        document.getElementById('questionText').textContent = qData.q;
+        document.getElementById('progressLabel').textContent = `Question ${state.current+1} of ${state.total}`;
+        const optsList = document.getElementById('optionsList');
+        optsList.innerHTML = '';
+        const letters = ['A','B','C','D'];
+        const currentAnswer = state.answers[bankIndex];
+        opts.forEach((opt, i) => {
+            const li = document.createElement('li');
+            li.className = 'option-item';
+            if(currentAnswer === opt) li.classList.add('selected');
+            li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
+            li.onclick = () => selectOption(opt);
+            optsList.appendChild(li);
+        });
+        const dots = document.querySelectorAll('#questionDots .dot');
+        dots.forEach((d, i) => {
+            d.classList.remove('current','answered','skipped');
+            if(i === state.current) d.classList.add('current');
+            const qi = state.indices[i];
+            if(state.answers[qi] !== undefined) d.classList.add('answered');
+            if(state.skipped.includes(qi) && state.answers[qi] === undefined) d.classList.add('skipped');
+        });
+        document.getElementById('quizScreen').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    function selectOption(optionText) {
+        if(state.submitted) return;
+        const bankIndex = state.indices[state.current];
+        state.answers[bankIndex] = optionText;
+        state.skipped = state.skipped.filter(s => s !== bankIndex);
+        saveState();
+        renderQuestion();
+        updateProgress();
+        updateNav();
+    }
+
+    function skipQuestion() {
+        if(state.submitted) return;
+        const bankIndex = state.indices[state.current];
+        if(state.answers[bankIndex] === undefined && !state.skipped.includes(bankIndex)){
+            state.skipped.push(bankIndex);
+        }
+        if(state.current < state.total - 1) {
+            state.current++;
+            saveState();
+            renderQuestion();
+            updateProgress();
+            updateNav();
+        } else {
+            updateProgress();
+            updateNav();
+            renderQuestion();
+        }
+    }
+
+    function navigate(dir) {
+        if(state.submitted) return;
+        const nxt = state.current + dir;
+        if(nxt >= 0 && nxt < state.total) {
+            state.current = nxt;
+            saveState();
+            renderQuestion();
+            updateProgress();
+            updateNav();
+        }
+    }
+
+    function updateProgress() {
+        const answeredCount = Object.keys(state.answers).length;
+        document.getElementById('answeredCount').textContent = `${answeredCount} answered`;
+        document.getElementById('progressFill').style.width = Math.round((answeredCount / state.total) * 100) + '%';
+    }
+
+    function updateNav() {
+        document.getElementById('btnPrev').disabled = (state.current === 0);
+        document.getElementById('btnNext').disabled = (state.current === state.total - 1);
+    }
+
+    function submitQuiz() {
+        const skippedCount = state.total - Object.keys(state.answers).length;
+        if(skippedCount > 0 && !confirm(`You have ${skippedCount} unanswered question(s). Submit anyway?`)) return;
+        state.submitted = true;
+        saveState();
+        showResults();
+        switchScreen('resultsScreen');
+    }
+
+    function showResults() {
+        let correct = 0;
+        const review = [];
+        state.indices.forEach((bankIndex, i) => {
+            const qData = questionBank[bankIndex];
+            const userAns = state.answers[bankIndex];
+            const correctAns = qData.ans;
+            const isCorrect = (userAns === correctAns);
+            if(isCorrect) correct++;
+            review.push({
+                q: qData.q,
+                opts: state.shuffledOptions[bankIndex] || qData.opts,
+                correctAns: correctAns,
+                userAns: userAns,
+                isCorrect: isCorrect,
+                idx: i+1
+            });
+        });
+        const pct = Math.round((correct / state.total) * 100);
+        document.getElementById('scorePercent').textContent = pct + '%';
+        document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
+        document.getElementById('resultMessage').textContent =
+            pct >= 90 ? '🏆 Outstanding!' : pct >= 70 ? '👏 Great job!' : pct >= 50 ? '📖 Good effort.' : '💪 Keep studying.';
+        window._review = review;
+        document.getElementById('reviewSection').style.display = 'none';
+        document.getElementById('reviewSection').innerHTML = '';
+    }
+
+    function reviewAnswers() {
+        const sec = document.getElementById('reviewSection');
+        if(sec.style.display === 'block'){ sec.style.display='none'; sec.innerHTML=''; return; }
+        if(!window._review) return;
+        sec.innerHTML = '<h3>📋 Detailed Review</h3>';
+        const letters = ['A','B','C','D'];
+        window._review.forEach(r => {
+            const d = document.createElement('div');
+            d.className = 'review-item ' + (r.isCorrect ? 'correct-r' : 'wrong');
+            let uIdx = r.userAns ? r.opts.indexOf(r.userAns) : -1;
+            let uTxt = uIdx >= 0 ? `${letters[uIdx]}. ${r.userAns}` : 'Not answered';
+            let cIdx = r.opts.indexOf(r.correctAns);
+            let cTxt = `${letters[cIdx]}. ${r.correctAns}`;
+            d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div>
+                           <div class="rev-ans">Your answer: <span class="your-ans">${uTxt}</span><br>
+                           Correct: <span class="correct-ans">${cTxt}</span></div>`;
+            sec.appendChild(d);
+        });
+        sec.style.display = 'block';
+        sec.scrollIntoView({behavior:'smooth'});
+    }
+
+    function restartQuiz() {
+        clearState();
+        saveState();
+        document.getElementById('reviewSection').style.display = 'none';
+        document.getElementById('reviewSection').innerHTML = '';
+        window._review = null;
+        switchScreen('startScreen');
+        document.getElementById('resumeSection').style.display = 'none';
+        updateResumeBtn();
+    }
+
+    function updateResumeBtn() {
+        const s = document.getElementById('resumeSection');
+        if(loadState() && state.indices.length && !state.submitted) {
+            s.style.display = 'block';
+        } else {
+            s.style.display = 'none';
+            clearState();
+            saveState();
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if(state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
+        const bankIndex = state.indices[state.current];
+        const opts = state.shuffledOptions[bankIndex] || questionBank[bankIndex].opts;
+        switch(e.key.toLowerCase()){
+            case 'a': if(opts[0]) selectOption(opts[0]); break;
+            case 'b': if(opts[1]) selectOption(opts[1]); break;
+            case 'c': if(opts[2]) selectOption(opts[2]); break;
+            case 'd': if(opts[3]) selectOption(opts[3]); break;
+            case 'arrowleft': e.preventDefault(); navigate(-1); break;
+            case 'arrowright': e.preventDefault(); navigate(1); break;
+            case 's': if(!e.ctrlKey && !e.metaKey){ e.preventDefault(); skipQuestion(); } break;
+            case 'enter': e.preventDefault(); if(Object.keys(state.answers).length === state.total) submitQuiz(); break;
+        }
+    });
+
+    updateResumeBtn();
+    switchScreen('startScreen');
+</script>
+</body>
+</html>
