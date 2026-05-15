@@ -8,8 +8,8 @@
         :root {
             --bg: #f5f6fa;
             --card-bg: #ffffff;
-            --primary: #283593;
-            --primary-dark: #1a237e;
+            --primary: #3742fa;
+            --primary-dark: #1e28c9;
             --accent: #1a1a2e;
             --text: #2d3436;
             --text-light: #636e72;
@@ -34,7 +34,7 @@
             padding:32px 28px;position:relative;overflow:hidden;transition:var(--transition);
         }
         .quiz-header{text-align:center;margin-bottom:20px;}
-        .quiz-header .phys-icon{font-size:2.2rem;display:block;margin-bottom:4px;}
+        .quiz-header .phy-icon{font-size:2.2rem;display:block;margin-bottom:4px;}
         .quiz-header h1{font-size:1.5rem;color:var(--primary-dark);font-weight:700;}
         .subtitle{font-size:0.85rem;color:var(--text-light);margin-top:4px;}
         .screen{display:none;animation:fadeIn 0.4s;}
@@ -42,22 +42,22 @@
         @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
         .start-options{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:24px 0 18px;}
         .start-btn{
-            flex:1;min-width:200px;padding:22px 16px;border:2px solid var(--border);
+            flex:1;min-width:150px;padding:22px 16px;border:2px solid var(--border);
             border-radius:var(--radius);background:var(--card-bg);cursor:pointer;
             text-align:center;font-weight:600;transition:var(--transition);color:var(--text);
         }
-        .start-btn:hover{border-color:var(--primary);box-shadow:0 8px 20px rgba(40,53,147,0.12);transform:translateY(-2px);}
+        .start-btn:hover{border-color:var(--primary);box-shadow:0 8px 20px rgba(55,66,250,0.12);transform:translateY(-2px);}
         .start-btn .icon{font-size:2.2rem;display:block;margin-bottom:4px;}
         .start-btn .badge{background:var(--primary);color:#fff;font-size:0.75rem;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px;}
         .start-info{font-size:0.8rem;color:var(--text-light);text-align:center;}
         .progress-wrap{margin-bottom:16px;}
         .progress-stats{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-light);margin-bottom:4px;}
         .progress-bar{height:8px;background:var(--border);border-radius:10px;overflow:hidden;}
-        .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#5c6bc0);border-radius:10px;transition:width 0.4s;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#7c83ff);border-radius:10px;transition:width 0.4s;}
         .question-dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
         .dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:var(--transition);}
         .dot.answered{background:var(--primary);opacity:0.6;}
-        .dot.current{background:var(--primary);transform:scale(1.5);box-shadow:0 0 0 4px rgba(40,53,147,0.2);}
+        .dot.current{background:var(--primary);transform:scale(1.5);box-shadow:0 0 0 4px rgba(55,66,250,0.2);}
         .dot.skipped{background:var(--warning);}
         .question-card{background:#fafbfc;border-radius:12px;padding:18px;margin-bottom:12px;border:1px solid var(--border);}
         .question-number{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);font-weight:700;margin-bottom:6px;}
@@ -103,7 +103,7 @@
         .toast.show{opacity:1;}
         @media(max-width:600px){
             .container{padding:20px 14px;}
-            .start-btn{min-width:160px;padding:16px 12px;}
+            .start-btn{min-width:120px;padding:16px 12px;}
             .question-text{font-size:0.95rem;}
         }
     </style>
@@ -115,14 +115,16 @@
     <!-- START SCREEN -->
     <div class="screen active" id="startScreen">
         <div class="quiz-header">
-            <span class="phys-icon">⚛️</span>
+            <span class="phy-icon">⚡</span>
             <h1>PHY 102 · Electricity & Magnetism Quiz</h1>
-            <p class="subtitle">40 Questions — Randomised Options · Auto‑Save Progress</p>
+            <p class="subtitle">40 Questions — Electrostatics, Current Electricity, Capacitance & Resistance</p>
         </div>
+        <p style="text-align:center;font-weight:500;">Select quiz length:</p>
         <div class="start-options">
-            <button class="start-btn" onclick="startQuiz(40)"><span class="icon">📝</span>Start Full 40‑Question Quiz<span class="badge">~40 min</span></button>
+            <button class="start-btn" onclick="startQuiz(20)"><span class="icon">📝</span>20 Questions<span class="badge">~20 min</span></button>
+            <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📚</span>30 Questions<span class="badge">~30 min</span></button>
         </div>
-        <p class="start-info">🔀 Options are randomly rearranged each time to prevent memorisation</p>
+        <p class="start-info">🎲 Questions randomly selected · No timer · Resume supported</p>
         <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
             <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
             <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#e17055;">🗑 Clear saved</button>
@@ -131,9 +133,9 @@
 
     <!-- QUIZ SCREEN -->
     <div class="screen" id="quizScreen">
-        <div class="quiz-header"><span style="font-size:1.8rem;">🔌</span></div>
+        <div class="quiz-header"><span style="font-size:1.8rem;">🔬</span></div>
         <div class="progress-wrap">
-            <div class="progress-stats"><span id="progressLabel">Question 1 of 40</span><span id="answeredCount">0 answered</span></div>
+            <div class="progress-stats"><span id="progressLabel">Question 1 of 20</span><span id="answeredCount">0 answered</span></div>
             <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
             <div class="question-dots" id="questionDots"></div>
         </div>
@@ -156,7 +158,7 @@
     <div class="screen" id="resultsScreen">
         <div class="results-card">
             <div class="quiz-header"><h1>📊 Quiz Results</h1></div>
-            <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/40</span></div>
+            <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/20</span></div>
             <div class="result-message" id="resultMessage"></div>
             <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
             <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">🔍 Review</button>
@@ -166,499 +168,171 @@
 </div>
 
 <script>
-    // ========== 40 QUESTION BANK (original order) ==========
+    // ========== PHY 102 QUESTION BANK (40 Questions) ==========
     const questionBank = [
-        {
-            q: "An ebonite rod rubbed with fur becomes negatively charged because, the:",
-            opts: ["Rod has gained electrons from the fur", "Rod has gained some protons from the fur", "Fur has gained electrons from the rod", "None of the above"],
-            ans: "Rod has gained electrons from the fur"
-        },
-        {
-            q: "The resistance, R, of a conductor carrying a current, I, through a given potential difference, V",
-            opts: ["V / I = R", "V × I = R", "I / V = R", "None of the above"],
-            ans: "V / I = R"
-        },
-        {
-            q: "A glass becomes positively charged when rubbed with silk. This is because the glass rod",
-            opts: ["Gains protons", "Gains electrons", "Loses electrons", "None of the above"],
-            ans: "Loses electrons"
-        },
-        {
-            q: "The equivalent capacitance for two capacitances 3.0μF and 6.0μF joined in parallel is",
-            opts: ["9.0μF", "12.0μF", "18.0μF", "2.0μF"],
-            ans: "9.0μF"
-        },
-        {
-            q: "The impedance of a direct current circuit is said to be matched when the:",
-            opts: ["Internal resistance r of the source is equal to the external load R (r = R)", "r < R", "When (R > r)", "internal resistance tends to zero"],
-            ans: "Internal resistance r of the source is equal to the external load R (r = R)"
-        },
-        {
-            q: "The S.I. unit of Capacitance F is",
-            opts: ["Volt", "Ampere", "Coulomb/Volt", "Coulomb"],
-            ans: "Coulomb/Volt"
-        },
-        {
-            q: "The S.I. unit for Electric Charge is",
-            opts: ["Ampere", "Volt", "Coulomb", "Ohm"],
-            ans: "Coulomb"
-        },
-        {
-            q: "The conductance G of a device that draws 0.55A of current from a 120V source supply is",
-            opts: ["218.2 Siemens", "4.85 × 10⁻³ Siemens", "59.66 Siemens", "None of the above"],
-            ans: "4.85 × 10⁻³ Siemens"
-        },
-        {
-            q: "The S.I. unit of the total flux from a Gaussian surface is",
-            opts: ["N²m²C⁻²", "Nm²C⁻²", "Nm²C⁻¹", "None of the above"],
-            ans: "Nm²C⁻¹"
-        },
-        {
-            q: "A material that can be used to generate very high current at a very low temperature is called a ________",
-            opts: ["Semiconductor", "Superconductor", "Superconductivity", "Ohmic material"],
-            ans: "Superconductor"
-        },
-        {
-            q: "The resistance of a piece of platinum is 11 ohms at 20°C. What will be the resistance of the metal at 80°C? (α = 3.6 × 10⁻³ °C⁻¹)",
-            opts: ["13.38 ohm", "24.8 ohm", "440 ohm", "None of the above"],
-            ans: "13.38 ohm"
-        },
-        {
-            q: "Calculate the capacitance of a parallel-metal plate capacitor separated by a distance, d, 1.0mm. The area of the plate is 1.0m².",
-            opts: ["8.85 × 10⁻⁷ F", "8.85 × 10⁻⁹ F", "8.85 × 10⁻⁸ F", "None of the above"],
-            ans: "8.85 × 10⁻⁹ F"
-        },
-        {
-            q: "Three charges q₁, q₂ and q₃ having values of 7.0C; 6.0C and 4.0C respectively, are enclosed in a surface. Find the total flux enclosed by the surface.",
-            opts: ["1.82 × 10¹² Nm²C⁻¹", "1.92 × 10¹² Nm²C⁻¹", "1.72 × 10¹² Nm²C⁻¹", "None of the above"],
-            ans: "1.92 × 10¹² Nm²C⁻¹"
-        },
-        {
-            q: "Pith balls, M, N, O and P behave as follows when brought close together: (i) M repels N (ii) M attracts O (iii) O repels P. If ball P is positively charged, then",
-            opts: ["N must be positively charged", "N must be negatively charged", "M must be positively charged", "None of the above"],
-            ans: "N must be negatively charged"
-        },
-        {
-            q: "The quantity of charge that passes a given point in a circuit when a current of 1 Ampere flows for one second is",
-            opts: ["Newton", "1 Volt", "1 Coulomb", "1 Farad"],
-            ans: "1 Coulomb"
-        },
-        {
-            q: "The equivalent resistance of two equal resistances joined in parallel is 15 ohms. What will be the equivalent resistance if the same two resistances are joined in series?",
-            opts: ["15 ohms", "30 ohms", "60 ohms", "7.5 ohms"],
-            ans: "60 ohms"
-        },
-        {
-            q: "What is the effective capacitance of 4 equal capacitors connected as in the Fig. shown: C1 in series with (C2 parallel C3) and then with C4? (C1=C2=C3=C4=C)",
-            opts: ["C/4", "5C/2", "4C", "None of the above"],
-            ans: "5C/2"
-        },
-        {
-            q: "A region where a force is experienced by a charged body is ______",
-            opts: ["Dielectric field", "Electric field", "Gaussian field", "None of the above"],
-            ans: "Electric field"
-        },
-        {
-            q: "What resistance can be connected in parallel with a resistance of 15 ohms to yield an equivalent resistance of 5 ohms?",
-            opts: ["7.5 ohms", "3 ohms", "10 ohms", "None of the above"],
-            ans: "7.5 ohms"
-        },
-        {
-            q: "The electron mobility μₑ of a material is the",
-            opts: ["Velocity of an electron per unit electric field", "Drift velocity of an electron per unit electric field", "Electric field × Drift velocity of the electron", "None of the above"],
-            ans: "Drift velocity of an electron per unit electric field"
-        },
-        {
-            q: "The electrical conductivity of copper is 5.8 × 10⁸ (Ω·m)⁻¹. What is the current density of the metal when placed in an electric field of 25 V/m?",
-            opts: ["145 × 10⁶ A/m²", "4.31 × 10⁶ A/m²", "4.25 × 10⁶ A/m²", "None of the above"],
-            ans: "145 × 10⁶ A/m²"
-        },
-        {
-            q: "The microscopic statement of Ohm's law is _________ (Symbols have usual meanings)",
-            opts: ["J = σE", "J = E/σ", "J = σ/E", "None of the above"],
-            ans: "J = σE"
-        },
-        {
-            q: "The force experienced by two charges q₁, q₂ separated by a distance r apart is expressed as",
-            opts: ["F = (Kq₁q₂)/r²", "F = (Kq₁q₂)/r", "F = (q₁q₂)/(Kr²)", "F = (q₁q₂r²)/K"],
-            ans: "F = (Kq₁q₂)/r²"
-        },
-        {
-            q: "A series combination of two capacitors C1 = 2μF and C2 = 3μF, is connected in parallel with a third capacitor C3 = 5μF. The equivalent capacitance of the three combined capacitors is",
-            opts: ["5.2μF", "6.2μF", "7.2μF", "None of the above"],
-            ans: "6.2μF"
-        },
-        {
-            q: "The electric potential energy between two protons separated by a distance r apart is",
-            opts: ["Kq/r²", "-Kq/r²", "Kq²/r²", "+Kq/r"],
-            ans: "+Kq/r"
-        },
-        {
-            q: "The power of an electrical device is 1050W. It operates from a source supply of 220V. What is the resistance of the device?",
-            opts: ["4.77 ohm", "46.1 ohm", "2.1 ohm", "None of the above"],
-            ans: "46.1 ohm"
-        },
-        {
-            q: "Two 5.0 ohm resistances are joined in series. The equivalent resistance of these two is then joined in parallel to another 5.0 ohm resistor. What is the final resultant of the combination?",
-            opts: ["3.33 ohm", "7.5 ohm", "0.30 ohm", "1.67 ohm"],
-            ans: "3.33 ohm"
-        },
-        {
-            q: "Three resistors A, B, C are joined in series and then to a source supply.",
-            opts: ["The current in A is less than the current in C", "The current in B is greater than the current in A and C", "Equal current flows through A, B, and C", "The currents in A and B add to two-thirds of the current from the source"],
-            ans: "Equal current flows through A, B, and C"
-        },
-        {
-            q: "Materials in which electric charges move freely are called:",
-            opts: ["Dielectrics", "Insulators", "Conductors", "Semiconductors"],
-            ans: "Conductors"
-        },
-        {
-            q: "Capacitors C1 = 5μF; C2 = 3μF are connected in series across a 9.0V source supply (battery). How much energy is stored in the capacitors?",
-            opts: ["1.25 × 10⁻³ J", "1.25 × 10⁻⁴ J", "1.25 × 10⁻⁵ J", "None of the above"],
-            ans: "1.25 × 10⁻⁴ J"
-        },
-        {
-            q: "The S.I. unit for electric potential is",
-            opts: ["J·C", "J·C⁻¹", "J", "None of the above"],
-            ans: "J·C⁻¹"
-        },
-        {
-            q: "How much power is developed by an electric device which draws a current of 4.0A, and operates at 240V?",
-            opts: ["60W", "960W", "15W", "None of the above"],
-            ans: "960W"
-        },
-        {
-            q: "The second Kirchhoff’s law for a network of resistors is a statement of the conservation of ________",
-            opts: ["Charge", "Energy", "Current", "Electric field intensity"],
-            ans: "Energy"
-        },
-        {
-            q: "Two charges repel each other with a force of 10⁻⁵N when they are 20cm apart. What is the force on each of them when they are 5.0cm apart?",
-            opts: ["4.0 × 10⁻⁵ N", "1.6 × 10⁻⁴ N", "2.5 × 10⁻⁶ N", "None of the above"],
-            ans: "1.6 × 10⁻⁴ N"
-        },
-        {
-            q: "A potential difference of 20V is applied across two parallel plates and an electric field, E, of 500 V/m is produced. How far apart are the plates?",
-            opts: ["4 × 10⁻² m", "4.0 m", "25 m", "None of the above"],
-            ans: "4 × 10⁻² m"
-        },
-        {
-            q: "Two electrons (-e) repel each other with a force of 10⁻⁸N. How far apart are they? (K = 9.0 × 10⁹ Nm²C⁻²)",
-            opts: ["1.5 × 10⁻¹⁰ m", "1.5 m", "4.8 × 10⁻¹⁰ m", "None of the above"],
-            ans: "1.5 × 10⁻¹⁰ m"
-        },
-        {
-            q: "Electric power is expressed as P = IV; an equivalent expression for power is ____",
-            opts: ["RV²", "V²/R", "(R/V)²", "None of the above"],
-            ans: "V²/R"
-        },
-        {
-            q: "30J of work is done to transfer 5μC of charge from a point B to a point A in an electric field. The potential difference between the points B and A is",
-            opts: ["6.0 × 10³ V", "6.0 × 10⁴ V", "6.0 × 10² V", "None of the above"],
-            ans: "6.0 × 10⁴ V"
-        },
-        {
-            q: "A device supplies a current of 1.5A across a copper wire of length 1.2m. If the resistance of the wire is 10 ohm, what is the voltage of the source?",
-            opts: ["15V", "6.67V", "12V", "None of the above"],
-            ans: "15V"
-        },
-        {
-            q: "A source supply is said to be on open circuit when",
-            opts: ["Current is drawn from the source", "No current is drawn from the source", "The impedance is matched", "None of the above"],
-            ans: "No current is drawn from the source"
-        }
+        { q: "An ebonite rod rubbed with fur becomes negatively charged because the:", opts: ["Rod has gained electrons from the fur", "Rod has gained some protons from the fur", "Fur has gained electrons from the rod", "None of the above"], ans: 0 },
+        { q: "The resistance R of a conductor carrying a current I through a given potential difference V is:", opts: ["V ÷ I = R", "V × I = R", "I ÷ V = R", "None of the above"], ans: 0 },
+        { q: "A glass becomes positively charged when rubbed with silk. This is because the glass rod:", opts: ["Gains protons", "Gains electrons", "Loses electrons", "None of the above"], ans: 2 },
+        { q: "The equivalent capacitance for two capacitances 3.0μF and 6.0μF joined in parallel is:", opts: ["9.0μF", "12.0μF", "18.0μF", "2.0μF"], ans: 0 },
+        { q: "The impedance of a direct current circuit is said to be matched when the:", opts: ["Internal resistance r of the source is equal to the external load R (r = R)", "r < R", "When R > r", "Internal resistance tends to zero"], ans: 0 },
+        { q: "The S.I. unit of Capacitance F is:", opts: ["Volt", "Ampere", "Coulomb/Volt", "Coulomb"], ans: 2 },
+        { q: "The S.I. unit for Electric Charge is:", opts: ["Ampere", "Volt", "Coulomb", "Ohm"], ans: 2 },
+        { q: "The conductance G of a device that draws 0.55A of current from a 120V source supply is:", opts: ["218.2 Siemens", "4.85 × 10⁻³ Siemens", "59.66 Siemens", "None of the above"], ans: 1 },
+        { q: "The S.I. unit of the total flux from a Gaussian surface is:", opts: ["N²m²C⁻²", "Nm²C⁻²", "Nm²C⁻¹", "None of the above"], ans: 2 },
+        { q: "A material that can be used to generate very high current at a very low temperature is called a:", opts: ["Semiconductor", "Superconductor", "Superconductivity", "Ohmic material"], ans: 1 },
+        { q: "The resistance of a piece of platinum is 11Ω at 20°C. What will be the resistance at 80°C? (α = 3.6 × 10⁻³ °C⁻¹)", opts: ["13.38Ω", "24.8Ω", "440Ω", "None of the above"], ans: 0 },
+        { q: "Calculate the capacitance of a parallel-metal plate capacitor separated by distance d = 1.0mm. The area of the plate is 1.0m².", opts: ["8.85 × 10⁻⁷ F", "8.85 × 10⁻⁹ F", "8.85 × 10⁻⁸ F", "None of the above"], ans: 1 },
+        { q: "Three charges q₁, q₂ and q₃ having values of 7.0C, 6.0C and 4.0C respectively, are enclosed in a surface. Find the total flux enclosed by the surface.", opts: ["1.82 × 10¹² Nm²C⁻¹", "1.92 × 10¹² Nm²C⁻¹", "1.72 × 10¹² Nm²C⁻¹", "None of the above"], ans: 1 },
+        { q: "Pith balls M, N, O and P: M repels N, M attracts O, O repels P. If P is positively charged, then:", opts: ["N must be positively charged", "N must be negatively charged", "M must be positively charged", "None of the above"], ans: 1 },
+        { q: "The quantity of charge that passes a given point in a circuit when a current of 1 Ampere flows for one second is:", opts: ["1 Newton", "1 Volt", "1 Coulomb", "1 Farad"], ans: 2 },
+        { q: "The equivalent resistance of two equal resistances joined in parallel is 15Ω. What will be the equivalent resistance if the same two resistances are joined in series?", opts: ["15Ω", "30Ω", "60Ω", "7.5Ω"], ans: 2 },
+        { q: "What is the effective capacitance of 4 equal capacitors C connected as shown: C1 in series with parallel combination of C2 and C3, all in series with C4?", opts: ["C/4", "5C/2", "4C", "None of the above"], ans: 1 },
+        { q: "A region where a force is experienced by a charged body is:", opts: ["Dielectric field", "Electric field", "Gaussian field", "None of the above"], ans: 1 },
+        { q: "What resistance can be connected in parallel with a resistance of 15Ω to yield an equivalent resistance of 5Ω?", opts: ["7.5Ω", "3Ω", "10Ω", "None of the above"], ans: 0 },
+        { q: "The electron mobility μₑ of a material is the:", opts: ["Velocity of an electron per unit electric field", "Drift velocity of an electron per unit electric field", "Electric field × Drift velocity of the electron", "None of the above"], ans: 1 },
+        { q: "The electrical conductivity of copper is 5.8 × 10⁸ (Ω·m)⁻¹. What is the current density when placed in an electric field of 25 Vm⁻¹?", opts: ["145 × 10⁶ Am⁻²", "4.31 × 10⁶ Am⁻²", "4.25 × 10⁶ Am⁻²", "None of the above"], ans: 0 },
+        { q: "The microscopic statement of Ohm's law is (symbols have usual meanings):", opts: ["J = σE Am⁻²", "J = E/σ Am⁻²", "J = σ/E Am⁻²", "None of the above"], ans: 0 },
+        { q: "The force experienced by two charges q₁, q₂ separated by a distance r apart is expressed as:", opts: ["F = (Kq₁q₂)/r²", "(Kq₁q₂)/r = F", "(q₁q₂)/(Kr²) = F", "(q₁q₂r²)/K = F"], ans: 0 },
+        { q: "A series combination of two capacitors C1 = 2μF and C2 = 3μF is connected in parallel with a third capacitor C3 = 5μF. The equivalent capacitance is:", opts: ["5.2μF", "6.2μF", "7.2μF", "None of the above"], ans: 1 },
+        { q: "The electric potential energy between two protons separated by a distance r apart is:", opts: ["Kq/r²", "−Kq/r²", "Kq²/r²", "+Kq²/r"], ans: 3 },
+        { q: "The power of an electrical device is 1050W. It operates from a source supply of 220V. What is the resistance of the device?", opts: ["4.77Ω", "46.1Ω", "2.1Ω", "None of the above"], ans: 1 },
+        { q: "Two 5.0Ω resistances are joined in series. The equivalent resistance is then joined in parallel to another 5.0Ω resistor. What is the final resultant resistance?", opts: ["3.33Ω", "7.5Ω", "0.30Ω", "1.67Ω"], ans: 0 },
+        { q: "Three resistors A, B, C are joined in series and then to a source supply. Which statement is correct?", opts: ["The current in A is less than the current through C", "The current in B is greater than the current through A and C", "Equal current flows through A, B, and C", "The currents in A and B add to two thirds of the source current"], ans: 2 },
+        { q: "Materials in which electric charges move freely are called:", opts: ["Dielectrics", "Insulators", "Conductors", "Semiconductors"], ans: 2 },
+        { q: "Capacitors C1 = 5μF and C2 = 3μF are connected in series across a 9.0V source supply. How much energy is stored in the capacitors?", opts: ["1.25 × 10⁻³ J", "1.25 × 10⁻⁴ J", "1.25 × 10⁻⁵ J", "None of the above"], ans: 1 },
+        { q: "The S.I. unit for electric potential is:", opts: ["J·C", "J·C⁻¹", "J", "None of the above"], ans: 1 },
+        { q: "How much power is developed by an electric device which draws a current of 4.0A and operates at 240V?", opts: ["60W", "960W", "15W", "None of the above"], ans: 1 },
+        { q: "Kirchhoff's second law for a network of resistors is a statement of the conservation of:", opts: ["Charge", "Energy", "Current", "Electric field intensity"], ans: 1 },
+        { q: "Two charges repel each other with a force of 10⁻⁵N when they are 20cm apart. What is the force on each of them when they are 5.0cm apart?", opts: ["4.0 × 10⁻⁵ N", "1.6 × 10⁻⁴ N", "2.5 × 10⁻⁶ N", "None of the above"], ans: 1 },
+        { q: "A potential difference of 20V is applied across two parallel plates and an electric field E of 500 Vm⁻¹ is produced. How far apart are the plates?", opts: ["4 × 10⁻² m", "4.0m", "25m", "None of the above"], ans: 0 },
+        { q: "Two electrons (−e) repel each other with a force of 10⁻⁸N. How far apart are they? (K = 9.0 × 10⁹ Nm²C⁻²)", opts: ["1.5 × 10⁻¹⁰ m", "1.5m", "4.8 × 10⁻¹⁰ m", "None of the above"], ans: 0 },
+        { q: "Electric power is expressed as P = IV; an equivalent expression for power is:", opts: ["RV²", "V²/R", "(R/V)²", "None of the above"], ans: 1 },
+        { q: "30J of work is done to transfer 5μC of charge from a point B to a point A in an electric field. The potential difference between points B and A is:", opts: ["6.0 × 10³ V", "6.0 × 10⁴ V", "6.0 × 10² V", "None of the above"], ans: 3 },
+        { q: "A device supplies a current of 1.5A across a copper wire of length 1.2m. If the resistance of the wire is 10Ω, what is the voltage of the source?", opts: ["15V", "6.67V", "12V", "None of the above"], ans: 0 },
+        { q: "A source supply is said to be on open circuit when:", opts: ["Current is drawn from the source", "No current is drawn from the source", "The impedance is matched", "None of the above"], ans: 1 }
     ];
 
     // ========== STATE MANAGEMENT ==========
     const STATE_KEY = 'phy102_quiz_state';
-    let state = {
-        total: 40,
-        indices: [],      // order of questions (shuffled once)
-        current: 0,
-        answers: {},      // {questionIndex: chosenOptionText}
-        skipped: [],
-        submitted: false,
-        // Store the shuffled options order for each question (for review consistency)
-        shuffledOptions: {} // {questionIndex: [array of options in displayed order]}
-    };
+    let state = { total: 20, indices: [], current: 0, answers: {}, skipped: [], submitted: false };
 
     function saveState() { localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
     function loadState() { const r = localStorage.getItem(STATE_KEY); if(r){try{state=JSON.parse(r);return true;}catch(e){}} return false; }
-    function clearState() {
-        state = { total:40, indices:[], current:0, answers:{}, skipped:[], submitted:false, shuffledOptions:{} };
-        localStorage.removeItem(STATE_KEY);
-    }
+    function clearState() { state = { total:20,indices:[],current:0,answers:{},skipped:[],submitted:false}; localStorage.removeItem(STATE_KEY); }
 
-    function shuffle(arr) {
-        const a = [...arr];
-        for(let i=a.length-1; i>0; i--){
-            const j = Math.floor(Math.random() * (i+1));
-            [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
-    }
+    function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+    function getQ() { if(!state.indices.length) return null; const bi = state.indices[state.current]; return {...questionBank[bi], bankIndex:bi}; }
 
-    function toast(msg) {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.classList.add('show');
-        clearTimeout(t._t);
-        t._t = setTimeout(() => t.classList.remove('show'), 2200);
-    }
-
-    function switchScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
+    function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); }
+    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
     function startQuiz(n) {
         clearState();
-        const allIndices = shuffle([...Array(questionBank.length).keys()]); // shuffle question order
-        const selected = allIndices.slice(0, n);
-        state.total = selected.length;
-        state.indices = selected;
-        // Pre-shuffle options for each question
-        state.shuffledOptions = {};
-        selected.forEach((qi, i) => {
-            state.shuffledOptions[qi] = shuffle(questionBank[qi].opts);
-        });
-        state.current = 0;
-        state.answers = {};
-        state.skipped = [];
-        state.submitted = false;
-        saveState();
-        renderQuiz();
-        switchScreen('quizScreen');
-        renderQuestion();
-        updateProgress();
-        updateNav();
+        const allIndices = shuffle(Array.from({length: questionBank.length}, (_,i)=>i));
+        const selected = allIndices.slice(0, Math.min(n, questionBank.length));
+        state = { total: selected.length, indices: selected, current: 0, answers: {}, skipped: [], submitted: false };
+        saveState(); renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav();
     }
 
     function resumeQuiz() {
-        if(!loadState() || !state.indices.length || state.submitted){
-            toast('No saved quiz. Start a new one.');
-            return;
-        }
-        renderQuiz();
-        switchScreen('quizScreen');
-        renderQuestion();
-        updateProgress();
-        updateNav();
-        toast('Quiz resumed.');
+        if(!loadState() || !state.indices.length || state.submitted){ toast('No saved quiz. Start a new one.'); return; }
+        renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav(); toast('Quiz resumed.');
     }
 
-    function clearStorage() {
-        clearState();
-        saveState();
-        document.getElementById('resumeSection').style.display = 'none';
-        toast('Saved progress cleared.');
-    }
+    function clearStorage() { clearState(); saveState(); document.getElementById('resumeSection').style.display='none'; toast('Saved progress cleared.'); }
 
     function renderQuiz() {
-        const dots = document.getElementById('questionDots');
-        dots.innerHTML = '';
-        for(let i=0; i<state.total; i++){
-            const d = document.createElement('span');
-            d.className = 'dot';
-            d.title = `Q${i+1}`;
-            d.onclick = () => { state.current=i; saveState(); renderQuestion(); updateProgress(); updateNav(); };
-            dots.appendChild(d);
-        }
-    }
-
-    function getShuffledOptions(qIndex) {
-        // If we already have a saved shuffled order for this question, use it; otherwise create new and save.
-        if (state.shuffledOptions[qIndex]) {
-            return state.shuffledOptions[qIndex];
-        } else {
-            const shuffled = shuffle(questionBank[qIndex].opts);
-            state.shuffledOptions[qIndex] = shuffled;
-            saveState();
-            return shuffled;
-        }
+        const dots = document.getElementById('questionDots'); dots.innerHTML = '';
+        for(let i=0;i<state.total;i++){ const d=document.createElement('span'); d.className='dot'; d.title=`Q${i+1}`; d.onclick=()=>{state.current=i;saveState();renderQuestion();updateProgress();updateNav();}; dots.appendChild(d); }
     }
 
     function renderQuestion() {
-        if(state.current >= state.indices.length) return;
-        const bankIndex = state.indices[state.current];
-        const qData = questionBank[bankIndex];
-        const opts = getShuffledOptions(bankIndex);
+        const q = getQ(); if(!q) return;
         document.getElementById('questionNumber').textContent = `QUESTION ${state.current+1}`;
-        document.getElementById('questionText').textContent = qData.q;
+        document.getElementById('questionText').textContent = q.q;
         document.getElementById('progressLabel').textContent = `Question ${state.current+1} of ${state.total}`;
-        const optsList = document.getElementById('optionsList');
-        optsList.innerHTML = '';
+        const opts = document.getElementById('optionsList'); opts.innerHTML = '';
         const letters = ['A','B','C','D'];
-        const currentAnswer = state.answers[bankIndex]; // the selected answer text (or undefined)
-        opts.forEach((opt, i) => {
-            const li = document.createElement('li');
-            li.className = 'option-item';
-            if(currentAnswer === opt) li.classList.add('selected');
+        q.opts.forEach((opt,i)=>{
+            const li = document.createElement('li'); li.className='option-item';
+            if(state.answers[state.current]===i) li.classList.add('selected');
             li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
-            li.onclick = () => selectOption(opt);
-            optsList.appendChild(li);
+            li.onclick = ()=> selectOption(i);
+            opts.appendChild(li);
         });
-        // update dots
         const dots = document.querySelectorAll('#questionDots .dot');
-        dots.forEach((d, i) => {
-            d.classList.remove('current','answered','skipped');
-            if(i === state.current) d.classList.add('current');
-            const qi = state.indices[i];
-            if(state.answers[qi] !== undefined) d.classList.add('answered');
-            if(state.skipped.includes(qi) && state.answers[qi] === undefined) d.classList.add('skipped');
-        });
-        document.getElementById('quizScreen').scrollIntoView({behavior:'smooth', block:'start'});
+        dots.forEach((d,i)=>{ d.classList.remove('current','answered','skipped'); if(i===state.current) d.classList.add('current'); if(state.answers[i]!==undefined) d.classList.add('answered'); if(state.skipped.includes(i) && state.answers[i]===undefined) d.classList.add('skipped'); });
+        document.getElementById('quizScreen').scrollIntoView({behavior:'smooth',block:'start'});
     }
 
-    function selectOption(optionText) {
-        if(state.submitted) return;
-        const bankIndex = state.indices[state.current];
-        state.answers[bankIndex] = optionText;
-        state.skipped = state.skipped.filter(s => s !== bankIndex);
-        saveState();
-        renderQuestion(); // re-render to show selection
-        updateProgress();
-        updateNav();
-    }
-
+    function selectOption(i) { if(state.submitted) return; state.answers[state.current]=i; state.skipped = state.skipped.filter(s=>s!==state.current); saveState(); renderQuestion(); updateProgress(); updateNav(); }
     function skipQuestion() {
         if(state.submitted) return;
-        const bankIndex = state.indices[state.current];
-        if(state.answers[bankIndex] === undefined && !state.skipped.includes(bankIndex)){
-            state.skipped.push(bankIndex);
-        }
-        if(state.current < state.total - 1) {
-            state.current++;
-            saveState();
-            renderQuestion();
-            updateProgress();
-            updateNav();
-        } else {
-            updateProgress();
-            updateNav();
-            renderQuestion();
-        }
+        if(state.answers[state.current]===undefined && !state.skipped.includes(state.current)) state.skipped.push(state.current);
+        if(state.current < state.total-1){ state.current++; saveState(); renderQuestion(); updateProgress(); updateNav(); }
+        else { updateProgress(); updateNav(); renderQuestion(); }
     }
-
-    function navigate(dir) {
-        if(state.submitted) return;
-        const nxt = state.current + dir;
-        if(nxt >= 0 && nxt < state.total) {
-            state.current = nxt;
-            saveState();
-            renderQuestion();
-            updateProgress();
-            updateNav();
-        }
-    }
-
-    function updateProgress() {
-        const answeredCount = Object.keys(state.answers).length;
-        document.getElementById('answeredCount').textContent = `${answeredCount} answered`;
-        document.getElementById('progressFill').style.width = Math.round((answeredCount / state.total) * 100) + '%';
-    }
-
-    function updateNav() {
-        document.getElementById('btnPrev').disabled = (state.current === 0);
-        document.getElementById('btnNext').disabled = (state.current === state.total - 1);
-    }
+    function navigate(dir) { if(state.submitted) return; const nxt = state.current+dir; if(nxt>=0 && nxt<state.total){ state.current=nxt; saveState(); renderQuestion(); updateProgress(); updateNav(); } }
+    function updateProgress() { const a = Object.keys(state.answers).length; document.getElementById('answeredCount').textContent = `${a} answered`; document.getElementById('progressFill').style.width = Math.round((a/state.total)*100)+'%'; }
+    function updateNav() { document.getElementById('btnPrev').disabled = state.current===0; document.getElementById('btnNext').disabled = state.current===state.total-1; }
 
     function submitQuiz() {
-        const skippedCount = state.total - Object.keys(state.answers).length;
-        if(skippedCount > 0 && !confirm(`You have ${skippedCount} unanswered question(s). Submit anyway?`)) return;
-        state.submitted = true;
-        saveState();
-        showResults();
-        switchScreen('resultsScreen');
+        const skipped = state.total - Object.keys(state.answers).length;
+        if(skipped>0 && !confirm(`You have ${skipped} unanswered. Submit anyway?`)) return;
+        state.submitted = true; saveState(); showResults(); switchScreen('resultsScreen');
     }
 
     function showResults() {
-        let correct = 0;
-        const review = [];
-        state.indices.forEach((bankIndex, i) => {
-            const qData = questionBank[bankIndex];
-            const userAns = state.answers[bankIndex]; // text
-            const correctAns = qData.ans;
-            const isCorrect = (userAns === correctAns);
-            if(isCorrect) correct++;
-            review.push({
-                q: qData.q,
-                opts: state.shuffledOptions[bankIndex] || qData.opts, // display in the order shown
-                correctAns: correctAns,
-                userAns: userAns,
-                isCorrect: isCorrect,
-                idx: i+1
-            });
-        });
-        const pct = Math.round((correct / state.total) * 100);
-        document.getElementById('scorePercent').textContent = pct + '%';
+        let correct = 0; const review = [];
+        state.indices.forEach((bi,i)=>{ const q = questionBank[bi]; const ua = state.answers[i]; const ok = ua===q.ans; if(ok) correct++; review.push({ q:q.q, opts:q.opts, correctAns:q.ans, userAns:ua, isCorrect:ok, idx:i+1 }); });
+        const pct = Math.round((correct/state.total)*100);
+        document.getElementById('scorePercent').textContent = pct+'%';
         document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
-        document.getElementById('resultMessage').textContent =
-            pct >= 90 ? '🏆 Outstanding!' : pct >= 70 ? '👏 Great job!' : pct >= 50 ? '📖 Good effort.' : '💪 Keep studying.';
+        document.getElementById('resultMessage').textContent = pct>=90?'🏆 Outstanding!':pct>=70?'👏 Great job!':pct>=50?'📖 Good effort.':'💪 Keep studying.';
         window._review = review;
-        document.getElementById('reviewSection').style.display = 'none';
-        document.getElementById('reviewSection').innerHTML = '';
+        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
     }
 
     function reviewAnswers() {
         const sec = document.getElementById('reviewSection');
-        if(sec.style.display === 'block'){ sec.style.display='none'; sec.innerHTML=''; return; }
+        if(sec.style.display==='block'){ sec.style.display='none'; sec.innerHTML=''; return; }
         if(!window._review) return;
         sec.innerHTML = '<h3>📋 Detailed Review</h3>';
         const letters = ['A','B','C','D'];
-        window._review.forEach(r => {
-            const d = document.createElement('div');
-            d.className = 'review-item ' + (r.isCorrect ? 'correct-r' : 'wrong');
-            // find index of user answer in displayed opts
-            let uIdx = r.userAns ? r.opts.indexOf(r.userAns) : -1;
-            let uTxt = uIdx >= 0 ? `${letters[uIdx]}. ${r.userAns}` : 'Not answered';
-            let cIdx = r.opts.indexOf(r.correctAns);
-            let cTxt = `${letters[cIdx]}. ${r.correctAns}`;
-            d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div>
-                           <div class="rev-ans">Your answer: <span class="your-ans">${uTxt}</span><br>
-                           Correct: <span class="correct-ans">${cTxt}</span></div>`;
+        window._review.forEach(r=>{
+            const d = document.createElement('div'); d.className = 'review-item '+(r.isCorrect?'correct-r':'wrong');
+            const uTxt = r.userAns!==undefined?`${letters[r.userAns]}. ${r.opts[r.userAns]}`:'Not answered';
+            const cTxt = `${letters[r.correctAns]}. ${r.opts[r.correctAns]}`;
+            d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div><div class="rev-ans">Your answer: <span class="your-ans">${uTxt}</span><br>Correct: <span class="correct-ans">${cTxt}</span></div>`;
             sec.appendChild(d);
         });
-        sec.style.display = 'block';
-        sec.scrollIntoView({behavior:'smooth'});
+        sec.style.display='block'; sec.scrollIntoView({behavior:'smooth'});
     }
 
     function restartQuiz() {
-        clearState();
-        saveState();
-        document.getElementById('reviewSection').style.display = 'none';
-        document.getElementById('reviewSection').innerHTML = '';
-        window._review = null;
-        switchScreen('startScreen');
-        document.getElementById('resumeSection').style.display = 'none';
-        updateResumeBtn();
+        clearState(); saveState();
+        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+        window._review = null; switchScreen('startScreen');
+        document.getElementById('resumeSection').style.display='none'; updateResumeBtn();
     }
 
     function updateResumeBtn() {
         const s = document.getElementById('resumeSection');
-        if(loadState() && state.indices.length && !state.submitted) {
-            s.style.display = 'block';
-        } else {
-            s.style.display = 'none';
-            clearState();
-            saveState();
-        }
+        if(loadState() && state.indices.length && !state.submitted){ s.style.display='block'; }
+        else { s.style.display='none'; clearState(); saveState(); }
     }
 
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown',(e)=>{
         if(state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
-        const bankIndex = state.indices[state.current];
-        const opts = state.shuffledOptions[bankIndex] || questionBank[bankIndex].opts;
         switch(e.key.toLowerCase()){
-            case 'a': if(opts[0]) selectOption(opts[0]); break;
-            case 'b': if(opts[1]) selectOption(opts[1]); break;
-            case 'c': if(opts[2]) selectOption(opts[2]); break;
-            case 'd': if(opts[3]) selectOption(opts[3]); break;
+            case 'a': selectOption(0); break;
+            case 'b': selectOption(1); break;
+            case 'c': selectOption(2); break;
+            case 'd': selectOption(3); break;
             case 'arrowleft': e.preventDefault(); navigate(-1); break;
             case 'arrowright': e.preventDefault(); navigate(1); break;
-            case 's': if(!e.ctrlKey && !e.metaKey){ e.preventDefault(); skipQuestion(); } break;
-            case 'enter': e.preventDefault(); if(Object.keys(state.answers).length === state.total) submitQuiz(); break;
+            case 's': if(!e.ctrlKey&&!e.metaKey){ e.preventDefault(); skipQuestion(); } break;
+            case 'enter': e.preventDefault(); if(Object.keys(state.answers).length===state.total) submitQuiz(); break;
         }
     });
 
