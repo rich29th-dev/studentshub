@@ -165,7 +165,47 @@
     // Replace the dummy questions below with your own. Just copy and paste new objects.
 
     const questionBank = [
-    	{ q: "Are you gay?", opts: ["Yes I am", "No I am", "Maybe", "All Of The Above"], ans: 0 }
+    	{ q: "Are you gay?", opts: ["Yes I am", "No I am", "Maybe", "I'll skip but i'm gay"], ans: 0 }
+		{ q: "An ebonite rod rubbed with fur becomes negatively charged because, the:", opts: ["Rod has gained electrons from the fur", "Rod has gained some protons from the fur", "Fur has gained electrons from the rod", "None of the above"], ans: 0 },
+	    { q: "The resistance, R, of a conductor carrying a current, I, through a given potential difference, V,", opts: ["V ÷ I = R", "V x I = R", "I ÷ V = R", "None of the above"], ans: 0 },
+	    { q: "A glass becomes positively charged when rubbed with silk. This is because the glass rod", opts: ["Gains protons", "Gains electrons", "Loses electrons", "None of the above"], ans: 2 },
+	    { q: "The equivalent capacitance for two capacitances 3.0μF and 6.0μF joined in parallel is", opts: ["9.0μF", "12.0μF", "18.0μF", "2.0μF"], ans: 0 },
+	    { q: "The impedance of a direct current circuit is said to be matched when the:", opts: ["Internal resistance r of the source is equal to the external load R (r = R)", "r < R", "When (R > r)", "internal resistance lend to zero"], ans: 0 },
+	    { q: "The S. I. unit of Capacitance F is", opts: ["Volt", "Ampere", "Coulomb/Volt", "Coulomb"], ans: 2 },
+	    { q: "The S. I. unit for Electric Charge is", opts: ["Ampere", "Volt", "Coulomb", "Ohm"], ans: 2 },
+	    { q: "The conductance G of a device that draws 0.55A of current from a 120V source supply is", opts: ["218.2 Siemens", "4.85 x 10^-3", "59.66 Siemens", "None of the above"], ans: 1 },
+	    { q: "The S. I. unit of the total flux from a Gaussian surface is", opts: ["N^2 m^2 C^{-2}", "N m^2 C^{-2}", "N m^2 C^{-1}", "None of the above"], ans: 2 },
+	    { q: "A material that can be used to generate very high current at a very low temperature is called a _______", opts: ["Semiconductor", "Superconductor", "Superconductivity", "Ohmic material"], ans: 1 },
+	    { q: "The resistance of a piece of platinum is 11 ohms at 20°C. What will be the resistance of the metal at 80°C? (α = 3.6 x 10^{-3} °C^{-1})", opts: ["13.38 ohm", "24.8 ohm", "440 ohm", "None of the above"], ans: 0 },
+	    { q: "Calculate the capacitance of a parallel-metal plate capacitor separated by a distance, d, 1.0mm. The area of the plate is 1.0m^2.", opts: ["8.85 x 10^{-7} F", "8.85 x 10^{-9} F", "8.85 x 10^{-8} F", "None of the above"], ans: 1 },
+	    { q: "Three charges q1, q2 and q3 having values of 7.0C; 6.0C and 4.0C respectively, are enclosed in a surface. Find the total flux enclosed by the surface.", opts: ["1.82 x 10^{12} Nm^2 C^{-1}", "1.92 x 10^{12} Nm^2 C^{-1}", "1.72 x 10^{12} Nm^2 C^{-1}", "None of the above"], ans: 1 },
+	    { q: "Pith balls, M, N, O and P behave as follows when brought close together: (i) M repels N (ii) M attracts O (iii) O repels P. If the ball P is positively charged, then", opts: ["N must be positively charged", "N must be negatively charged", "M must be positively charged", "None of the above"], ans: 1 },
+	    { q: "The quantity of charge that passes a given point in a circuit when a current of I Ampere flows for one second is", opts: ["Newton", "1. Volt", "1. Coulomb", "1. Farad"], ans: 2 },
+	    { q: "The equivalent resistance of two equal resistances joined in parallel is 15 ohms. What will be the equivalent resistance if the same two resistances are joined in series?", opts: ["15 ohms", "30 ohms", "60 ohms", "7.5 ohms"], ans: 2 },
+	    { q: "What is the effective capacitance of 4 equal capacitors connected as in the Fig. shown: C1 C2 C3 C4 are equal", opts: ["C/4", "5C/2", "4C", "None of the above"], ans: 1 },
+	    { q: "A region where a force is experienced by a charged body is _______", opts: ["Dialectic field", "Electric field", "Gaussian field", "None of the above"], ans: 1 },
+	    { q: "What resistance can be connected in parallel with a resistance of 15 ohms to yield an equivalent resistance of 5 ohms?", opts: ["7.5 ohms", "3 ohms", "10 ohms", "None of the above"], ans: 0 },
+	    { q: "The electron mobility μ_e of a material is the", opts: ["Velocity of an electron per unit electric field", "Drift velocity of an electron per unit electric field", "Electric field x Drift velocity of the electric field", "None of the above"], ans: 1 },
+	    { q: "The electrical conductivity of copper is 5.8 x 10^8 (Ohm)^{-1}. What is the current density of the metal when placed in an electric field of 25V m^{-1}?", opts: ["145 x 10^6 A m^{-2}", "4.31 x 10^6 A m^{-2}", "4.25 x 10^6 A m^{-2}", "None of the above"], ans: 0 },
+	    { q: "The microscopic statement of Ohm's law is _______ (Symbols have usual meanings)", opts: ["J = SE A m^{-2}", "J = E/S A m^{-2}", "J = S/E A m^{-2}", "None of the above"], ans: 1 },
+	    { q: "The force experienced by two charges q1, q2 separated by a distance √~m~ apart is expressed as", opts: ["F = K q1 q2 / r^2", "K q1 q2 / r = F", "q1 q2 / (K r^2) = F", "q1 q2 r^2 / K = F"], ans: 0 },
+	    { q: "A series combination of two capacitors C1 = 2μF and C2 = 3μF, is connected in parallel with a third capacitor C3 = 5μF. The equivalent capacitance of the three combined capacitors is", opts: ["5.2μF", "6.2μF", "7.2μF", "None of the above"], ans: 1 },
+	    { q: "The electric potential energy between two protons separated by a distance r apart is", opts: ["Kq/r^2", "-Kq/r^2", "Kq^2/r^2", "+Kq/r"], ans: 3 },
+	    { q: "The power of an electrical device is 1050W. It operates from a source supply of 220V. What is the resistance of the device?", opts: ["4.77 ohm", "46.1 ohm", "2.1 ohm", "None of the above"], ans: 1 },
+	    { q: "Two 5.0 ohm resistances are joined in series. The equivalent resistance of these two is then joined in parallel to another 5.ohm resistor. What is the final resultant of the combination?", opts: ["3.33 ohm", "7.5 ohm", "0.30 ohm", "1.67 ohm"], ans: 0 },
+	    { q: "Three resistors A, B, C are joined in series and then to a source supply.", opts: ["The current in A is less than the current flow through C", "The current in B is greater than the current flowing past A and C", "Equal current flows past A, B, and C", "The currents in A and B add to two thirds (2/3) of the current from the source"], ans: 2 },
+	    { q: "Materials in which electric charges move freely?", opts: ["Dialectics", "Insulators", "Conductors", "Semiconductors"], ans: 2 },
+	    { q: "Capacitors C1 = 5μF; C2 = 3μF are connected in series across a 9.0V source supply (battery). How much energy is stored in the capacitors?", opts: ["1.25 x 10^{-3} J", "1.25 x 10^{-4} J", "1.25 x 10^{-5} J", "None of the above"], ans: 1 },
+	    { q: "The S. I. unit for electric potential is", opts: ["J.C", "J.C^{-1}", "J", "None of the above"], ans: 1 },
+	    { q: "How much power is developed by an electric device which draws a current of 4.0A, and operated at 240V?", opts: ["60W", "960W", "15W", "None of the above"], ans: 1 },
+	    { q: "The second Kirchhoff's law for a network of resistors is a statement of the conservation of _______", opts: ["Charge", "Energy", "Current", "Electric field intensity"], ans: 1 },
+	    { q: "Two charges repel each other with a force of 10^{-5} N when they are 20cm apart. What is the force on each of them when they are 5.0cm apart?", opts: ["4.0 x 10^{-5} N", "1.6 x 10^{-4} N", "2.5 x 10^{-6} N", "None of the above"], ans: 1 },
+	    { q: "A potential difference of 20V is applied across two parallel plates and an electric field, E, of 500V m^{-1} is produced. How far apart are the plates?", opts: ["4 x 10^{-2} m", "4.0m", "25m", "None of the above"], ans: 0 },
+	    { q: "Two electrons (-e) repel each other with a force of 10^{-8} N. How far apart are they? (K = 9.0 x 10^9 N m^2 C^{-2})", opts: ["1.5 x 10^{-10} m", "1.5m", "4.8 x 10^{-10} m", "None of the above"], ans: 0 },
+	    { q: "Electric power is expressed as P = IV; an equivalent expression for power is _______", opts: ["R V^2", "V^2/R", "(R/V)^2", "None of the above"], ans: 1 },
+	    { q: "30J of work is done to transfer 5μC of charge from a point B to a point A in an electric field. The potential difference between the points B and A is", opts: ["6.0 x 10^3 V", "6.0 x 10^4 V", "6.0 x 10^2 V", "None of the above"], ans: 3 },
+	    { q: "A device supplies a current of 1.5A across a copper wire of length 1.2m. If the resistance of the wire is 10 ohm, what is the voltage of the source?", opts: ["15V", "6.67V", "12V", "None of the above"], ans: 0 },
+	    { q: "A source supply is said to be on open circuit when", opts: ["Current is drawn from the source", "No current is drawn from the source", "The impedance is matched", "None of the above"], ans: 1 }
 	];
     // ========== END OF QUESTION BANK ==========
 
