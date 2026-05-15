@@ -3,117 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GET 102 · Engineering Graphics & Solid Modeling Quiz</title>
+    <title>GET 102 · Design Thinking & Engineering Graphics Quiz</title>
     <style>
         :root {
             --bg: #f5f6fa;
             --card-bg: #ffffff;
-            --primary: #1e3a5f;
-            --primary-dark: #0f2440;
-            --accent: #c0392b;
+            --primary: #2c3e50;
+            --primary-dark: #1a252f;
+            --accent: #1a1a2e;
             --text: #2d3436;
             --text-light: #636e72;
             --border: #dfe6e9;
             --correct: #00b894;
             --incorrect: #e17055;
             --warning: #fdcb6e;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
             --radius: 16px;
             --transition: 0.3s ease;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
-            background: var(--bg);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            line-height: 1.6;
-            color: var(--text);
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Segoe UI',Inter,system-ui,sans-serif;
+            background:var(--bg);min-height:100vh;
+            display:flex;align-items:center;justify-content:center;
+            padding:20px;line-height:1.6;color:var(--text);
         }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 32px 28px;
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition);
+        .container{
+            width:100%;max-width:850px;background:var(--card-bg);
+            border-radius:var(--radius);box-shadow:var(--shadow);
+            padding:32px 28px;position:relative;overflow:hidden;transition:var(--transition);
         }
-        .quiz-header { text-align: center; margin-bottom: 20px; }
-        .quiz-header .gear-icon {
-            font-size: 2rem;
-            display: inline-block;
-            animation: spin 10s linear infinite;
+        .quiz-header{text-align:center;margin-bottom:20px;}
+        .quiz-header .eng-icon{font-size:2.2rem;display:block;margin-bottom:4px;}
+        .quiz-header h1{font-size:1.5rem;color:var(--primary-dark);font-weight:700;}
+        .subtitle{font-size:0.85rem;color:var(--text-light);margin-top:4px;}
+        .screen{display:none;animation:fadeIn 0.4s;}
+        .screen.active{display:block;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+        .start-options{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:24px 0 18px;}
+        .start-btn{
+            flex:1;min-width:150px;padding:22px 16px;border:2px solid var(--border);
+            border-radius:var(--radius);background:var(--card-bg);cursor:pointer;
+            text-align:center;font-weight:600;transition:var(--transition);color:var(--text);
         }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .quiz-header h1 { font-size: 1.5rem; color: var(--primary); font-weight: 700; }
-        .subtitle { font-size: 0.85rem; color: var(--text-light); margin-top: 4px; }
-        .screen { display: none; animation: fadeIn 0.4s; }
-        .screen.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-        .start-options { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 24px 0 18px; }
-        .start-btn {
-            flex: 1; min-width: 150px; padding: 22px 16px; border: 2px solid var(--border);
-            border-radius: var(--radius); background: var(--card-bg); cursor: pointer;
-            text-align: center; font-weight: 600; transition: var(--transition); color: var(--text);
+        .start-btn:hover{border-color:var(--primary);box-shadow:0 8px 20px rgba(44,62,80,0.12);transform:translateY(-2px);}
+        .start-btn .icon{font-size:2.2rem;display:block;margin-bottom:4px;}
+        .start-btn .badge{background:var(--primary);color:#fff;font-size:0.75rem;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px;}
+        .start-info{font-size:0.8rem;color:var(--text-light);text-align:center;}
+        .progress-wrap{margin-bottom:16px;}
+        .progress-stats{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-light);margin-bottom:4px;}
+        .progress-bar{height:8px;background:var(--border);border-radius:10px;overflow:hidden;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#5d7b93);border-radius:10px;transition:width 0.4s;}
+        .question-dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+        .dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:var(--transition);}
+        .dot.answered{background:var(--primary);opacity:0.6;}
+        .dot.current{background:var(--primary);transform:scale(1.5);box-shadow:0 0 0 4px rgba(44,62,80,0.2);}
+        .dot.skipped{background:var(--warning);}
+        .question-card{background:#fafbfc;border-radius:12px;padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+        .question-number{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);font-weight:700;margin-bottom:6px;}
+        .question-text{font-size:1.05rem;font-weight:600;color:var(--text);}
+        .options-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+        .option-item{
+            padding:14px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;background:#fff;
+            display:flex;align-items:center;gap:10px;transition:var(--transition);font-size:0.95rem;user-select:none;
         }
-        .start-btn:hover { border-color: var(--primary); box-shadow: 0 8px 20px rgba(30,58,95,0.12); transform: translateY(-2px); }
-        .start-btn .icon { font-size: 2.2rem; display: block; margin-bottom: 4px; }
-        .start-btn .badge { background: var(--primary); color: #fff; font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-top: 6px; }
-        .start-info { font-size: 0.8rem; color: var(--text-light); text-align: center; }
-        .progress-wrap { margin-bottom: 16px; }
-        .progress-stats { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px; }
-        .progress-bar { height: 8px; background: var(--border); border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #2e5a8a); border-radius: 10px; transition: width 0.4s; }
-        .question-dots { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; transition: var(--transition); }
-        .dot.answered { background: var(--primary); opacity: 0.6; }
-        .dot.current { background: var(--primary); transform: scale(1.5); box-shadow: 0 0 0 4px rgba(30,58,95,0.2); }
-        .dot.skipped { background: var(--warning); }
-        .question-card { background: #fafbfc; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--border); }
-        .question-number { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); font-weight: 700; margin-bottom: 6px; }
-        .question-text { font-size: 1.05rem; font-weight: 600; color: var(--text); }
-        .options-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
-        .option-item { padding: 14px 16px; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; background: #fff; display: flex; align-items: center; gap: 10px; transition: var(--transition); font-size: 0.95rem; user-select: none; }
-        .option-item:hover { border-color: #b2bec3; background: #f8f9fa; }
-        .option-item.selected { border-color: var(--primary); background: #e8f0fe; font-weight: 600; }
-        .option-item .radio-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
-        .option-item.selected .radio-dot { border-color: var(--primary); background: var(--primary); }
-        .option-item.selected .radio-dot::after { content: ''; width: 6px; height: 6px; background: #fff; border-radius: 50%; }
-        .option-item .opt-letter { font-weight: 700; color: var(--primary); width: 24px; }
-        .nav-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-top: 18px; }
-        .btn { padding: 11px 20px; border-radius: 25px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: var(--transition); display: inline-flex; align-items: center; gap: 6px; }
-        .btn-outline { background: #fff; border: 2px solid var(--border); color: var(--text); }
-        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-        .btn-primary { background: var(--primary); color: #fff; border: 2px solid var(--primary); }
-        .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
-        .btn-submit { background: var(--accent); color: #fff; border: 2px solid var(--accent); font-size: 1rem; padding: 13px 32px; }
-        .btn-submit:hover { background: #a93226; }
-        .btn:disabled { opacity: 0.5; pointer-events: none; }
-        .results-card { text-align: center; }
-        .score-circle { width: 130px; height: 130px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; flex-direction: column; border: 6px solid var(--primary); font-weight: 700; }
-        .score-circle .big-score { font-size: 2.8rem; color: var(--primary); }
-        .score-circle .total { font-size: 0.9rem; color: var(--text-light); }
-        .result-message { font-size: 1.1rem; margin-bottom: 20px; font-weight: 500; }
-        .review-section { text-align: left; margin-top: 24px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
-        .review-item { background: #fafbfc; border-radius: 10px; padding: 14px; margin-bottom: 10px; border-left: 4px solid var(--border); font-size: 0.9rem; }
-        .review-item.wrong { border-left-color: var(--incorrect); background: #fffaf9; }
-        .review-item.correct-r { border-left-color: var(--correct); background: #f9fffb; }
-        .review-item .rev-q { font-weight: 600; margin-bottom: 4px; }
-        .review-item .rev-ans { font-size: 0.82rem; color: var(--text-light); }
-        .correct-ans { color: var(--correct); font-weight: 600; }
-        .your-ans { color: var(--incorrect); font-weight: 600; text-decoration: line-through; }
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--primary-dark); color: #fff; padding: 10px 22px; border-radius: 25px; font-size: 0.85rem; font-weight: 600; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .toast.show { opacity: 1; }
-        @media (max-width: 600px) {
-            .container { padding: 20px 14px; }
-            .start-btn { min-width: 120px; padding: 16px 12px; }
-            .question-text { font-size: 0.95rem; }
+        .option-item:hover{border-color:#b2bec3;background:#f8f9fa;}
+        .option-item.selected{border-color:var(--primary);background:#e9ecef;font-weight:600;}
+        .option-item .radio-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;
+            display:flex;align-items:center;justify-content:center;transition:var(--transition);}
+        .option-item.selected .radio-dot{border-color:var(--primary);background:var(--primary);}
+        .option-item.selected .radio-dot::after{content:'';width:6px;height:6px;background:#fff;border-radius:50%;}
+        .option-item .opt-letter{font-weight:700;color:var(--primary);width:24px;}
+        .nav-buttons{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:18px;}
+        .btn{padding:11px 20px;border-radius:25px;border:none;cursor:pointer;font-weight:600;font-size:0.9rem;
+            transition:var(--transition);display:inline-flex;align-items:center;gap:6px;}
+        .btn-outline{background:#fff;border:2px solid var(--border);color:var(--text);}
+        .btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+        .btn-primary{background:var(--primary);color:#fff;border:2px solid var(--primary);}
+        .btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark);}
+        .btn-submit{background:var(--accent);color:#fff;border:2px solid var(--accent);font-size:1rem;padding:13px 32px;}
+        .btn-submit:hover{background:#2d2d4e;}
+        .btn:disabled{opacity:0.5;pointer-events:none;}
+        .results-card{text-align:center;}
+        .score-circle{width:130px;height:130px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;
+            justify-content:center;flex-direction:column;border:6px solid var(--primary);font-weight:700;}
+        .score-circle .big-score{font-size:2.8rem;color:var(--primary);}
+        .score-circle .total{font-size:0.9rem;color:var(--text-light);}
+        .result-message{font-size:1.1rem;margin-bottom:20px;font-weight:500;}
+        .review-section{text-align:left;margin-top:24px;max-height:400px;overflow-y:auto;padding-right:8px;}
+        .review-item{background:#fafbfc;border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid var(--border);font-size:0.9rem;}
+        .review-item.wrong{border-left-color:var(--incorrect);background:#fffaf9;}
+        .review-item.correct-r{border-left-color:var(--correct);background:#f9fffb;}
+        .review-item .rev-q{font-weight:600;margin-bottom:4px;}
+        .review-item .rev-ans{font-size:0.82rem;color:var(--text-light);}
+        .correct-ans{color:var(--correct);font-weight:600;}
+        .your-ans{color:var(--incorrect);font-weight:600;text-decoration:line-through;}
+        .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--primary-dark);color:#fff;
+            padding:10px 22px;border-radius:25px;font-size:0.85rem;font-weight:600;z-index:999;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+        .toast.show{opacity:1;}
+        @media(max-width:600px){
+            .container{padding:20px 14px;}
+            .start-btn{min-width:120px;padding:16px 12px;}
+            .question-text{font-size:0.95rem;}
         }
     </style>
 </head>
@@ -124,17 +115,16 @@
     <!-- START SCREEN -->
     <div class="screen active" id="startScreen">
         <div class="quiz-header">
-            <div class="gear-icon">⚙️</div>
-            <h1>GET 102 · Engineering Graphics & Solid Modeling</h1>
-            <p class="subtitle">200 most likely questions – Design Thinking to Solid Modeling</p>
+            <span class="eng-icon">✏️</span>
+            <h1>GET 102 · Design Thinking & Engineering Graphics</h1>
+            <p class="subtitle">200 Medium to Hard Questions — Design Thinking, Graphics & AutoCAD</p>
         </div>
         <p style="text-align:center;font-weight:500;">Select quiz length:</p>
         <div class="start-options">
-            <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📝</span>30 Questions<span class="badge">~25 min</span></button>
-            <button class="start-btn" onclick="startQuiz(60)"><span class="icon">📚</span>60 Questions<span class="badge">~50 min</span></button>
+            <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📝</span>30 Questions<span class="badge">~30 min</span></button>
+            <button class="start-btn" onclick="startQuiz(60)"><span class="icon">📚</span>60 Questions<span class="badge">~60 min</span></button>
         </div>
-        <p class="start-info">📋 200‑question bank · randomly drawn · no repeats</p>
-        <p class="start-info">💾 Progress saved locally · resume if you close accidentally</p>
+        <p class="start-info">🎲 Questions randomly selected · No timer · Resume supported</p>
         <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
             <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
             <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#e17055;">🗑 Clear saved</button>
@@ -178,342 +168,341 @@
 </div>
 
 <script>
-    // ========== 200-QUESTION BANK ==========
+    // ========== 200 QUESTION BANK ==========
     const questionBank = [
-        // Unit 1: Design Thinking (25 questions)
-        { q: "Design thinking is best described as:", opts: ["A linear problem-solving method", "A human-centred, collaborative approach to finding new solutions", "An engineering-only design process", "A computer-aided drafting technique"], ans: 1 },
-        { q: "Which of the following is NOT a core element of design thinking?", opts: ["People", "Place", "Process", "Profit"], ans: 3 },
-        { q: "In design thinking, the term 'T-shaped person' refers to someone with:", opts: ["Only broad interdisciplinary knowledge", "Deep expertise in one area and the ability to collaborate across disciplines", "A specific technical skill without teamwork", "Only managerial capabilities"], ans: 1 },
-        { q: "The main focus of the empathy stage in design thinking is:", opts: ["Generating many ideas", "Understanding the user's needs and context", "Building prototypes", "Testing the final product"], ans: 1 },
-        { q: "According to the course material, design thinking teams should ideally be:", opts: ["Homogeneous in background", "Multidisciplinary and diverse", "Composed only of engineers", "Led by a single expert"], ans: 1 },
-        { q: "Which of the following best defines the 'Define' mode in design thinking?", opts: ["Creating a detailed prototype", "Crafting a meaningful and actionable problem statement", "Brainstorming solutions", "Testing the solution with users"], ans: 1 },
-        { q: "In the design thinking process, 'How might we...?' questions are typically used in the transition from:", opts: ["Empathize to Define", "Define to Ideate", "Ideate to Prototype", "Prototype to Test"], ans: 1 },
-        { q: "Which of these is a primary reason for empathy in design thinking?", opts: ["To speed up the process", "To understand the user's physical and emotional needs", "To reduce costs", "To eliminate the need for testing"], ans: 1 },
-        { q: "The term 'human-centred design' is often used synonymously with:", opts: ["Graphic design", "Design thinking", "Computer-aided design", "Engineering drawing"], ans: 1 },
-        { q: "During the 'Prototype' phase, the recommended approach is to:", opts: ["Build only one perfect prototype", "Carry multiple ideas forward to maintain innovation potential", "Skip prototyping and go to testing", "Only use digital prototypes"], ans: 1 },
-        { q: "In design thinking, collaboration is preferred over cooperation because:", opts: ["Cooperation is too slow", "Collaboration ensures all team members are involved in all steps", "Cooperation involves only one expert", "Collaboration is cheaper"], ans: 1 },
-        { q: "What does the 'Test' mode primarily involve?", opts: ["Finalizing the design", "Gathering feedback on prototypes from users", "Writing the project report", "Selecting the best idea"], ans: 1 },
-        { q: "According to the text, the design thinker's workspace should be:", opts: ["Fixed and formal", "Flexible and inspiring", "Completely digital", "Isolated from the team"], ans: 1 },
-        { q: "Empathizing involves all of the following EXCEPT:", opts: ["Observing users in context", "Engaging in conversations", "Ignoring user feedback", "Watching and listening"], ans: 2 },
-        { q: "A good problem statement in design thinking is also called a:", opts: ["Design brief", "Point of view", "Project charter", "Mission statement"], ans: 1 },
-        { q: "The transition from Ideate to Prototype often uses a process of:", opts: ["Random selection", "Considered selection with voting criteria", "Only choosing the cheapest idea", "Managerial decree"], ans: 1 },
-        { q: "Which of the following is NOT one of the core elements of design thinking mentioned in the text?", opts: ["Team and their experience", "Audience and their context", "Budget and timeline", "Mindfulness of process"], ans: 2 },
-        { q: "The text suggests that design thinking is particularly useful when:", opts: ["The solution is obvious", "Challenges are complex and can be solved in many ways", "Only one discipline is involved", "Time is not a constraint"], ans: 1 },
-        { q: "In the context of design thinking, 'unpacking' refers to:", opts: ["Removing packaging from products", "Processing empathy findings to discover insights", "Disassembling a prototype", "Writing a report"], ans: 1 },
-        { q: "Which statement about the design thinking process is true?", opts: ["It is strictly linear", "The final outcome is known from the beginning", "It involves iterative loops and transitions between modes", "It does not involve user interaction"], ans: 2 },
-        { q: "The 'Ideate' mode focuses on:", opts: ["Defining the problem", "Generating a wide range of possible solutions", "Building the final product", "Testing with users"], ans: 1 },
-        { q: "Which of these is a method to empathize according to the text?", opts: ["Conducting surveys only", "Observe, engage, watch and listen", "Only reading books", "Using CAD software"], ans: 1 },
-        { q: "Design thinking originally evolved from:", opts: ["Traditional design practice", "Software engineering", "Electrical engineering", "Mathematics"], ans: 0 },
-        { q: "The 'audience' in design thinking refers to:", opts: ["Only paying customers", "The people the solution ultimately serves", "The project sponsors", "The design team only"], ans: 1 },
-        { q: "In the Empathize mode, a common technique is to:", opts: ["Start coding immediately", "Ask 'Why?' repeatedly to uncover deeper meaning", "Avoid talking to users", "Finalize the budget"], ans: 1 },
+        // Design Thinking (Q1-Q122)
+        { q: "According to the text, design thinking has evolved from a profession into a novel approach that helps people solve challenges in a more creative, human-centred, collaborative, iterative and _____ way.", opts: ["Linear", "Visual", "Theoretical", "Isolated"], ans: 1 },
+        { q: "What is the biggest difference between design thinking and classical design, according to the text?", opts: ["The use of digital tools", "The focus on profit", "The collaborative and multidisciplinary approach", "The length of the project timeline"], ans: 2 },
+        { q: "How does the text distinguish 'cooperation' from 'collaboration' in a team setting?", opts: ["Cooperation is faster; collaboration is slower.", "Cooperation involves shared goals; collaboration does not.", "In cooperation, members are not necessarily involved in all steps; in collaboration, they ideally work and decide together on all steps.", "Cooperation is for small teams; collaboration is for large teams."], ans: 2 },
+        { q: "The three core elements of design thinking, as mentioned in the text, are: people, process, and _____.", opts: ["Profit", "Place", "Prototype", "Product"], ans: 1 },
+        { q: "The term that can be used almost synonymously with design thinking is:", opts: ["User-led design", "Human-centred design", "Agile development", "Systems thinking"], ans: 1 },
+        { q: "The concept of the 'T-shaped person' describes a team member who has:", opts: ["Deep expertise in many fields (the top of the T) and no specific specialization.", "Deep expertise in one field (vertical line) and the ability to collaborate across disciplines (horizontal line).", "A managerial role overseeing both technical and creative staff.", "An equal balance of theory and practical skills."], ans: 1 },
+        { q: "In the 'T-shaped person' model, the horizontal line symbolizes:", opts: ["The depth of expertise in a single domain", "The number of years of experience", "The ability and willingness to reach out to others and bridge disciplinary gaps", "The breadth of the project scope"], ans: 2 },
+        { q: "According to the text, what attitude is generally required of design thinking team members?", opts: ["Authoritative and decisive", "Risk-averse and cautious", "Open, curious, and empathetic", "Competitive and individualistic"], ans: 2 },
+        { q: "If an organization lacks diversity in expertise, what does the text suggest doing?", opts: ["Abandon the design thinking approach", "Only hire new, diverse staff", "Embrace diversity on other levels, such as character or working style, and bring in other perspectives during the project", "Focus only on the experts available within the team"], ans: 2 },
+        { q: "Besides the target audience, who else does a design thinker try to understand?", opts: ["Only direct competitors", "Other important stakeholders (e.g., fathers who might oppose girls' education)", "Government regulators only", "Future employees of the organization"], ans: 1 },
+        { q: "What type of research does the text recommend to understand the system in which a design team is operating?", opts: ["Quantitative survey research", "Ethnographic research", "Desk research of existing reports", "A/B testing"], ans: 1 },
+        { q: "For a design thinking workspace, the text advocates for:", opts: ["Fixed, heavy furniture to maintain order", "A flexible space where the team can move furniture as needed", "Individual cubicles to minimize distraction", "A traditional conference room with a large, fixed table"], ans: 1 },
+        { q: "Why might an organization look for an approach like design thinking?", opts: ["To reduce costs by 10%", "To follow a new management fad", "The need for innovation", "To eliminate the need for user research"], ans: 2 },
+        { q: "What challenge do teams new to design thinking face, regarding the process?", opts: ["They want to spend too much time on prototyping.", "They feel uncomfortable not knowing where the process will lead them.", "They find it too structured and rigid.", "They prefer to work individually rather than in teams."], ans: 1 },
+        { q: "An experienced design thinker will 'trust the process' because:", opts: ["It guarantees a profitable outcome.", "It is a very short and simple process.", "They have seen it work many times before.", "They are required to by the project sponsor."], ans: 2 },
+        { q: "The text defines the 'Empathize mode' as the work you do to:", opts: ["Brainstorm as many ideas as possible", "Build and test your solutions", "Understand people within the context of your design challenge", "Define the technical specifications of a product"], ans: 2 },
+        { q: "According to the text, why is empathy crucial for a design thinker?", opts: ["It is the cheapest part of the design process.", "The problems are rarely your own; they belong to a particular group of people you need to understand.", "It is the only way to secure funding for a project.", "It replaces the need for prototyping."], ans: 1 },
+        { q: "Observing what people do and how they interact with their environment helps you learn about:", opts: ["Their exact budget for a solution", "What they think, feel, and need", "Their political affiliations", "Their preferred brand of technology"], ans: 1 },
+        { q: "The text states that the best solutions come from:", opts: ["The most advanced technology", "The largest budget", "The best insights into human behavior", "The strictest project deadlines"], ans: 2 },
+        { q: "Why is learning to recognize insights difficult?", opts: ["Insights are always obvious to everyone.", "Our minds automatically filter out a lot of information without us realizing it.", "There is too much data available.", "Users always lie about their experiences."], ans: 1 },
+        { q: "Engaging with people directly reveals a tremendous amount about:", opts: ["The most efficient manufacturing process", "Their financial status", "The way they think and the values they hold", "The exact solution they want"], ans: 2 },
+        { q: "What can a good conversation reveal that might surprise both the designer and the subject?", opts: ["The subject's salary", "Unanticipated insights", "The designer's personal opinions", "The exact timeline for a project"], ans: 1 },
+        { q: "The stories people tell, even if different from what they actually do, are strong indicators of:", opts: ["Their level of intelligence", "Their deeply held beliefs about the way the world is", "Their education level", "Their preferred social media platform"], ans: 1 },
+        { q: "What is a powerful realization that can come from observing users?", opts: ["How much money they have", "A disconnect between what someone says and what he does", "Their favorite color", "The brand of their clothing"], ans: 1 },
+        { q: "When engaging or interviewing users, what should you always ask to uncover deeper meaning?", opts: ["\"How much would you pay?\"", "\"Why?\"", "\"Who told you that?\"", "\"Is this the best solution?\""], ans: 1 },
+        { q: "The 'Unpack' transition from Empathize to Define is a chance to:", opts: ["Discard all the data that doesn't make sense", "Write the final report", "Share findings, capture important parts visually, and start making connections", "Move directly to prototyping"], ans: 2 },
+        { q: "The goal of the 'Define' mode is to craft a meaningful and actionable:", opts: ["Prototype", "Budget", "Problem statement (point-of-view)", "Marketing plan"], ans: 2 },
+        { q: "In one word, the text describes the 'Define' mode as:", opts: ["Brainstorming", "Prototyping", "Sensemaking", "Testing"], ans: 2 },
+        { q: "A well-scoped point-of-view (POV) should naturally lead into which mode?", opts: ["Empathize", "Define", "Ideate", "Test"], ans: 2 },
+        { q: "What is a great litmus test for your point-of-view?", opts: ["A financial projection", "Whether brainstorming topics (How-Might-We questions) fall out of it", "A user's initial reaction", "A manager's approval"], ans: 1 },
+        { q: "What type of brainstorming topics flow from a problem statement?", opts: ["\"What if we...\"", "\"We should definitely...\"", "\"How-Might-We...?\"", "\"Why don't they...?\""], ans: 2 },
+        { q: "You ideate in order to transition from identifying problems to:", opts: ["Securing funding", "Creating solutions for your users", "Hiring a design team", "Writing a report"], ans: 1 },
+        { q: "Early in a design project, ideation is about:", opts: ["Finding a single, best solution quickly", "Pushing for the widest possible range of ideas", "Validating an existing idea", "Creating a detailed project plan"], ans: 1 },
+        { q: "How is the best solution determined in the design thinking process?", opts: ["By the team leader's vote", "By the client's initial preference", "Later, through user testing and feedback", "It is determined during the ideation phase"], ans: 2 },
+        { q: "To avoid losing innovation potential, the text recommends a process of:", opts: ["Selecting only the cheapest idea", "Considered selection, bringing multiple ideas forward into prototyping", "Voting on a single idea to develop", "Discarding all but one concept"], ans: 1 },
+        { q: "What three voting criteria does the text suggest for selecting ideas to prototype?", opts: ["The cheapest, the fastest, the easiest", "The most likely to delight, the rational choice, the most unexpected", "The most complex, the most simple, the most colorful", "The safest, the most popular, the most technical"], ans: 1 },
+        { q: "Why is it a good idea to carry two or three ideas forward into prototyping?", opts: ["To confuse the users", "To increase the budget", "To preserve innovation potential", "To make the team work harder"], ans: 2 },
+        { q: "Which two modes should be considered in tandem more than as a simple transition?", opts: ["Empathize and Define", "Define and Ideate", "Ideate and Prototype", "Prototype and Test"], ans: 3 },
+        { q: "What is critically important to consider before you create a prototype?", opts: ["What you are trying to test and how you will test it", "The color scheme of the prototype", "The exact manufacturing cost", "The patent status of the idea"], ans: 0 },
+        { q: "Planning and executing a successful testing scenario is often:", opts: ["A trivial and quick step", "Unnecessary if the prototype is good", "A considerable additional step after creating a prototype", "The same as creating the prototype"], ans: 2 },
+        { q: "In the Test mode, what should you focus on besides whether people like your solution?", opts: ["How to sell the solution", "What you can learn about the person, the problem, and your potential solutions", "How to defend your solution", "The manufacturing timeline"], ans: 1 },
+        { q: "The text suggests that a design-thinking team should ideally be diverse in terms of:", opts: ["Age only", "Gender, backgrounds, and skills", "Political opinions only", "Height and weight"], ans: 1 },
+        { q: "An example of a diverse design thinking team given in the text includes an engineer, a social worker, a designer, a philosopher, and:", opts: ["A lawyer", "A business expert", "A doctor", "A politician"], ans: 1 },
+        { q: "Maintaining a good team spirit in design thinking involves:", opts: ["Strict performance reviews", "Exchanging constantly about behavior, feelings, and emotions, and playing games", "Avoiding any social interaction outside of work", "Focusing solely on the task at hand"], ans: 1 },
+        { q: "Instead of 'users' in the context of social activism, the text suggests terms like:", opts: ["Consumers or buyers", "Audience or just person/human being", "Subjects or test cases", "Clients or patients"], ans: 1 },
+        { q: "Ethnographic research involves:", opts: ["Analyzing large datasets from surveys", "Constant interaction with people affected by or causing the problem", "Conducting laboratory experiments", "Reading academic papers on the topic"], ans: 1 },
+        { q: "According to the text, traditional offices with heavy furniture and strict policies are problematic because they:", opts: ["Are too expensive", "Constrain the team and destroy flexibility", "Are too large for small teams", "Have poor lighting"], ans: 1 },
+        { q: "The little word 'new' in the definition of design thinking carries importance because:", opts: ["Old solutions are always bad", "The need for innovation is the reason many organizations use design thinking", "New solutions are always more expensive", "It is a legal requirement"], ans: 1 },
+        { q: "Why is it that a team cannot know the exact outcome at the outset of a design thinking project?", opts: ["The team is not smart enough", "That is the whole point of the exercise – to discover the solution", "The project sponsor hides the goal", "Technology is not advanced enough"], ans: 1 },
+        { q: "According to the text, design thinking is especially helpful when challenges are:", opts: ["Very simple and have one clear solution", "Rather complex in nature and could be solved in many different ways", "Already solved by a competitor", "Purely mathematical in nature"], ans: 1 },
+        { q: "What do many process visualizations of design thinking on the internet help teams with?", opts: ["Avoiding any form of research", "Being mindful of the process to ensure proper collaboration and avoid getting lost", "Skipping the prototyping phase", "Working individually instead of in teams"], ans: 1 },
+        { q: "At the beginning of a design thinking project, the team might feel lost, but through broad research they will eventually:", opts: ["Give up on the project", "Find patterns, reach insights, and develop ideas", "Realize they need more budget", "Decide to copy a competitor's product"], ans: 1 },
+        { q: "Empathy is described as the _____ of a human-centered design process.", opts: ["Final step", "Most expensive part", "Centerpiece", "Least important part"], ans: 2 },
+        { q: "By watching people, you can capture physical manifestations of their experiences, which allows you to:", opts: ["Judge their character", "Infer the intangible meaning of those experiences to uncover insights", "Predict their future behavior perfectly", "Determine their income level"], ans: 1 },
+        { q: "To empathize, you must observe users in the context of their lives. According to the text, why is this important?", opts: ["It is easier for the researcher", "Some of the most powerful realizations come from noticing a disconnect between what someone says and does", "It requires less equipment", "Users are more comfortable in their homes"], ans: 1 },
+        { q: "What is a 'work-around' that a user has created, according to the text?", opts: ["A deliberate attempt to mislead the designer", "An efficient solution to a problem that the user might not even think to mention", "A feature of the product being tested", "A sign that the user is uncooperative"], ans: 1 },
+        { q: "The suggested 'engagement' technique is described as feeling more like a conversation. What should you do with your prepared questions?", opts: ["Never deviate from them", "Read them out loud exactly as written", "Expect to let the conversation deviate from them", "Only ask yes/no questions"], ans: 2 },
+        { q: "In addition to asking 'Why?', what should you elicit from the people you talk to?", opts: ["Their exact age", "Stories", "Their employment history", "Their future plans"], ans: 1 },
+        { q: "What does the text suggest you do when someone shows you how they complete a task?", opts: ["Remain silent and take notes", "Have them vocalize what's going through their mind as they perform the task", "Take over and do it yourself", "Suggest a better way to do it immediately"], ans: 1 },
+        { q: "During the 'Unpack' phase, what should you do with the information you've gathered?", opts: ["Keep it in your head to avoid bias", "File it away in a secure folder", "Get it out of your head and onto a wall (e.g., using post-its, pictures) to make connections", "Summarize it in a one-page memo"], ans: 2 },
+        { q: "The transition from Empathize to Define involves a synthesis process, which leads to:", opts: ["A final product", "A 'Define' mode", "User testing", "Project completion"], ans: 1 },
+        { q: "The 'Define' mode is about crafting a problem statement. This statement is also called a:", opts: ["Mission statement", "Value proposition", "Point-of-view", "Business case"], ans: 2 },
+        { q: "According to the text, insights don't often just jump in your lap; rather, they emerge from:", opts: ["A sudden flash of genius", "A process of synthesizing information to discover connections and patterns", "Reading a book on creativity", "Copying what competitors are doing"], ans: 1 },
+        { q: "A well-articulated point-of-view will lead you into the Ideate mode in a very natural way. What does this mean?", opts: ["The POV acts as a strict constraint.", "The POV should be so clear that brainstorming topics flow from it organically.", "The POV replaces the need for ideation.", "The POV is the final idea."], ans: 1 },
+        { q: "'How-Might-We' (HMW) questions are created during the transition from:", opts: ["Test to Empathize", "Prototype to Test", "Define to Ideate", "Ideate to Prototype"], ans: 2 },
+        { q: "The ideation phase is your chance to combine your understanding of the problem space with your _____ to generate solution concepts.", opts: ["Budget", "Imagination", "Manager's preferences", "Time constraints"], ans: 1 },
+        { q: "What is the danger of settling on a single idea too early, according to the text?", opts: ["It might be too expensive.", "It might be the wrong idea, and you lose innovation potential.", "It will definitely fail.", "It takes too long to develop."], ans: 1 },
+        { q: "The text suggests using voting criteria like 'the most likely to delight' to select ideas for prototyping. This is because:", opts: ["Delight is the only thing that matters.", "It helps preserve a range of innovation potential, including emotional and unexpected aspects.", "It is the easiest criterion to measure.", "It is required by the design thinking process."], ans: 1 },
+        { q: "When transitioning from Ideate to Prototype, what is a 'radically different approach' compared to traditional methods?", opts: ["Carrying multiple ideas forward into prototyping instead of settling on a single idea", "Spending as little time as possible on prototyping", "Letting the client choose the prototype", "Using only digital prototypes"], ans: 0 },
+        { q: "What should you consider before creating a prototype?", opts: ["The aesthetic appeal of the prototype", "What you are trying to test and how you are going to test it", "The brand name of the product", "The marketing strategy for the final product"], ans: 1 },
+        { q: "The text warns against assuming that you can simply:", opts: ["Talk to users", "Put a prototype in front of a user to test it without careful planning", "Brainstorm effectively", "Use post-it notes"], ans: 1 },
+        { q: "The most informative testing results often come from:", opts: ["Large sample sizes", "Careful thinking about how to test in a way that lets users give natural and honest feedback", "Using a focus group format", "Asking leading questions"], ans: 1 },
+        { q: "The Test mode is another opportunity to understand your user. What is different about this mode compared to the initial Empathize mode?", opts: ["You have likely done more framing of the problem and created prototypes to test.", "You no longer need to ask 'Why?'.", "You only focus on whether the user likes the solution.", "You do not need to observe the user."], ans: 0 },
+        { q: "In the Test mode, you should focus on what you can learn about the person and the problem, as well as:", opts: ["Your potential solutions", "The project's budget", "The timeline for production", "The competition"], ans: 0 },
+        { q: "True collaboration in a design-thinking team means:", opts: ["Dividing tasks and working separately", "One person makes all the decisions", "Each team member is involved in all steps of the process", "Only the experts speak during meetings"], ans: 2 },
+        { q: "According to the text, which of the following is NOT a recommended way to empathize?", opts: ["Observe users in their context", "Engage in loosely bounded conversations", "Ask leading questions that confirm your assumptions", "Watch and listen while a user performs a task"], ans: 2 },
+        { q: "The text mentions that design thinkers take an 'innocent perspective'. This likely means:", opts: ["They are naive about the world.", "They approach problems without preconceived notions, open to learning.", "They have no expertise in any field.", "They rely only on data and not intuition."], ans: 1 },
+        { q: "The '360° view' mentioned in the context of the research phase refers to:", opts: ["A virtual reality simulation", "Broad and comprehensive research from all angles", "A type of camera used in user observation", "A meeting room layout"], ans: 1 },
+        { q: "What role does 'place' play in a design thinking project, according to the text?", opts: ["It is irrelevant as long as the team has computers.", "The space should support the team's flexibility and inspire creativity.", "The space should be a formal boardroom to encourage professionalism.", "The team should always work in a coffee shop."], ans: 1 },
+        { q: "Why should a design thinker be mindful of the process?", opts: ["To ensure the project stays under budget and on time", "To properly collaborate and avoid getting lost in the openness of the endeavour", "To limit creativity and focus on one solution", "To write a detailed report for management"], ans: 1 },
+        { q: "The text suggests that some powerful realizations come from noticing a 'work-around' someone has created. What does this indicate?", opts: ["The user is not using the product correctly.", "The user has found an innovative solution to a problem that the designed system may have missed.", "The user is trying to break the product.", "The user is lazy."], ans: 1 },
+        { q: "When the text says to 'keep the conversation only loosely bounded' during an interview, it means:", opts: ["Have a strict script to follow.", "Allow the conversation to go in unexpected but relevant directions.", "Set a timer for the interview.", "Only talk about the specific product features."], ans: 1 },
+        { q: "The text mentions using the environment to 'prompt deeper questions'. This is a technique best used when:", opts: ["Interviewing in a sterile lab setting", "Having a conversation in the context of someone's home or workplace", "Analyzing survey data", "Brainstorming in a conference room"], ans: 1 },
+        { q: "What does 'unpacking' primarily help with?", opts: ["Physically packing up research equipment", "Processing all the things heard and seen to understand the big picture", "Deciding which user data to discard", "Creating a final presentation"], ans: 1 },
+        { q: "The text describes a point-of-view as a 'guiding statement'. What should it focus on?", opts: ["The technical specifications of the solution", "The insights and needs of a particular user or composite character", "The project timeline and budget", "The company's mission statement"], ans: 1 },
+        { q: "The text advises that the determination of the best solution will be discovered later, through:", opts: ["A team vote", "User testing and feedback", "A cost-benefit analysis by the finance department", "The intuition of the project lead"], ans: 1 },
+        { q: "What is the risk of simply settling on a single idea that the majority of the team can agree upon?", opts: ["It is the fastest approach.", "It is guaranteed to be the best approach.", "It reduces innovation potential by not exploring multiple possibilities.", "It is the most expensive approach."], ans: 2 },
+        { q: "The text suggests using three different criteria to vote on ideas. What is the purpose of using multiple criteria?", opts: ["To make the voting process more complicated", "To ensure that a variety of different types of ideas (e.g., delightful, rational, unexpected) can be selected", "To guarantee that the cheapest idea wins", "To eliminate the need for user testing"], ans: 1 },
+        { q: "'Prototype and Test are modes that you consider in tandem.' What does 'in tandem' imply in this context?", opts: ["One follows the other in a strict sequence.", "They are completely independent of each other.", "They are closely linked and influence each other, rather than being a simple one-way transition.", "Prototyping should always be completed before thinking about testing."], ans: 2 },
+        { q: "Good designs, according to the text, are built on:", opts: ["The latest technology", "A solid understanding of users' beliefs and values", "A large marketing budget", "A strict adherence to industry standards"], ans: 1 },
+        { q: "The text states that 'Our minds automatically filter out a lot of information.' What is the design thinking response to this problem?", opts: ["Relying only on quantitative data.", "Learning to see things 'with a fresh set of eyes' through empathizing.", "Hiring more people to look at the data.", "Using computer algorithms to analyze user behavior."], ans: 1 },
+        { q: "What is the purpose of asking someone to 'vocalize what's going through their mind' as they perform a task?", opts: ["To annoy them", "To capture their internal thought process and decision-making in real-time", "To test their verbal skills", "To distract them from the task"], ans: 1 },
+        { q: "The text says that 'a good conversation can surprise both the designer and the subject'. This implies that the design process is:", opts: ["Purely objective", "A one-way transfer of information from user to designer", "A learning journey for both parties", "A form of therapy for the user"], ans: 2 },
+        { q: "The 'Empathize' mode requires you to infer the intangible meaning of experiences. What does 'intangible meaning' refer to?", opts: ["The physical dimensions of an object", "The cost of a solution", "The feelings, values, and unspoken needs behind what people do and say", "The number of steps in a process"], ans: 2 },
+        { q: "Why does the text suggest using the term 'audience' or 'person' instead of 'user' in social activism contexts?", opts: ["Because 'user' is a longer word.", "Because 'user' implies a commercial or technological relationship, which may not fit the human-centered focus of social work.", "Because 'audience' is a more scientific term.", "Because the text is for a marketing class."], ans: 1 },
+        { q: "The statement 'the team should be able to mutually understand where they are in the process' addresses what need?", opts: ["The need for a powerful project manager", "The need for comfort and clarity in an otherwise open-ended process", "The need to finish the project quickly", "The need to generate a large number of ideas"], ans: 1 },
+        { q: "What does the text mean by 'the imagined omniscience of some domain experts'?", opts: ["That domain experts are always correct.", "That domain experts know everything about every field.", "That some experts may act as if they know everything, which is contrary to the open, curious attitude of design thinking.", "That domain experts are not useful in a design thinking team."], ans: 2 },
+        { q: "The text states that design thinking has evolved from a profession into a novel approach. What is the implication of this?", opts: ["Only professional designers can use it.", "Its tools and mindsets can be used by other professionals, not just designers.", "It is no longer a valid profession.", "It has become less creative."], ans: 1 },
+        { q: "According to the text, why is it important that a team can 'decide what space they need at any given moment'?", opts: ["To make the janitor's job easier.", "To avoid being constrained by the built environment and to support the team's dynamic workflow.", "To justify a larger office budget.", "To have a variety of backgrounds for video calls."], ans: 1 },
+        { q: "The text says that design thinkers 'take responsibility for maintaining a good team spirit'. What is one method suggested for doing this?", opts: ["Ignoring personal conflicts", "Exchanging constantly about their behaviour, feelings and emotions, and playing games", "Focusing only on work-related topics", "Having weekly performance reviews"], ans: 1 },
+        { q: "Why is user focus a very important element of design thinking?", opts: ["Because it is a legal requirement.", "Because the project has at its core the needs, wishes, and context of the people it ultimately serves.", "Because it is the easiest part of the process.", "Because it guarantees a successful product."], ans: 1 },
+        { q: "What does the text suggest regarding the ideal team composition?", opts: ["A team of people with identical backgrounds to avoid conflict.", "A team with a strong, directive leader.", "A diverse team with different genders, backgrounds, and skills.", "A team composed only of engineers and business experts."], ans: 2 },
+        { q: "A design thinker will not only try to understand the target audience but also:", opts: ["Their competitors", "Other stakeholders who are important in the situation", "The legal system", "The global economy"], ans: 1 },
+        { q: "The text mentions the challenge of 'openness' in the design thinking process. What does 'openness' refer to?", opts: ["An open-plan office", "The fact that the final outcome is not known at the beginning of the project", "A transparent communication policy", "Free access to all project files"], ans: 1 },
+        { q: "What is the function of 'patterns' in the design thinking research phase?", opts: ["They are design errors to be avoided.", "They are repetitive behaviours that help the team reach insights.", "They are aesthetic preferences of the users.", "They are statistical anomalies."], ans: 1 },
+        { q: "The text states that 'Empathy is the centerpiece of a human-centered design process.' What does 'centerpiece' imply?", opts: ["It is an optional decorative element.", "It is the core, most important, and central activity around which everything else revolves.", "It is the final deliverable.", "It is the cheapest part of the process."], ans: 1 },
+        { q: "The text mentions that 'insights give you direction to create innovative solutions'. What is the source of these insights?", opts: ["Gut feelings", "A deep understanding of human behavior gained through empathy work", "Market reports", "Technical manuals"], ans: 1 },
+        { q: "The text advises to 'expect to let the conversation deviate from' your prepared questions. Why?", opts: ["Because your questions are not important.", "Because you don't have time to ask them all.", "Because the most valuable insights often come from unexpected directions in a conversation.", "Because users prefer to talk about themselves."], ans: 2 },
+        { q: "What is the purpose of the 'unpacking' phase's visual approach (post-its, pictures on a wall)?", opts: ["To decorate the office", "To make the information tangible and allow for pattern recognition and connection-making", "To create a public display for management", "To save paper"], ans: 1 },
+        { q: "What is a 'composite character' in the context of the Define mode?", opts: ["A fictional character from a story", "A representation of a user that combines traits and insights from multiple real people", "A member of the design team", "A type of prototype"], ans: 1 },
+        { q: "The litmus test for a point-of-view is to see if it can naturally generate:", opts: ["A project budget", "A list of team members", "'How-Might-We' brainstorming topics", "A patent application"], ans: 2 },
+        { q: "Why is it important to focus on generating a 'wide possible range of ideas' early in a project?", opts: ["To confuse competitors", "To explore the solution space broadly before converging on a specific direction", "To increase the project budget", "To avoid doing user research"], ans: 1 },
+        { q: "The text warns against reducing testing work to asking whether or not people like your solution. What is the risk of this?", opts: ["It is too expensive.", "It takes too long.", "You miss out on deeper learning about the user, the problem, and how to improve your solution.", "Users will always say yes."], ans: 2 },
+        { q: "The best solutions come out of the best insights into human behavior. According to the text, what makes learning to recognize these insights hard?", opts: ["Lack of data", "Our automatic mental filters", "Users are unwilling to share", "The tools are too complex"], ans: 1 },
+        { q: "Engaging with people directly reveals values they hold. Sometimes these values are not obvious even to the people who hold them. This suggests that:", opts: ["People are not self-aware.", "The design process can help both the designer and the user discover and articulate latent needs and values.", "Interviews are a waste of time.", "You should only observe, not talk to users."], ans: 1 },
+        { q: "The text says that design thinking is 'a way of finding human needs and creating new solutions'. What is the key innovation of this definition?", opts: ["It focuses on 'human needs' rather than just 'market demands'.", "It mentions 'creating new solutions' rather than just analyzing existing ones.", "It suggests that the tools and mindsets of design practitioners can be used by other professionals.", "It is the first definition of design thinking ever written."], ans: 2 },
+        { q: "The text explicitly states that in a design-thinking project, the team is based on collaboration, whereas classical design and other disciplines are usually based on cooperation. What is the key practical difference?", opts: ["Collaboration is cheaper.", "In collaboration, everyone is involved in all steps; in cooperation, tasks are divided.", "Cooperation is more creative.", "Collaboration has a leader; cooperation does not."], ans: 1 },
+        { q: "The 'T-shaped person' concept requires a balance between depth of expertise and breadth of collaboration. According to the text, what attitude is necessary for the 'horizontal line'?", opts: ["Assertiveness and dominance", "Openness, curiosity, and empathy towards other disciplines", "A focus on individual achievement", "A deep understanding of a single topic"], ans: 1 },
+        { q: "The text suggests that an ideal design-thinking workspace should be flexible. What is the primary reason for this?", opts: ["To allow for more people to sit in the room.", "So the team can decide what space they need at any moment, rather than being constrained by a fixed layout.", "To make cleaning easier.", "To reduce the cost of furniture."], ans: 1 },
+        { q: "The text states that 'if you think you know exactly what the outcome is, you do not need a design-thinking approach.' This implies that design thinking is best suited for:", opts: ["Problems with a single, known solution", "Well-defined, routine tasks", "Wicked or ill-defined problems where the solution is unknown", "Problems that require no human input"], ans: 2 },
+        { q: "What does the text mean by 'broad research (ideally the attempt to get a 360° view)'?", opts: ["Researching only one aspect of the problem deeply", "Researching from multiple perspectives to get a complete understanding of the challenge", "Using a 360-degree camera to record user sessions", "A research method that takes 360 days"], ans: 1 },
+        { q: "The text mentions that an experienced design thinker will 'just simply trust the process'. What is the foundation of this trust?", opts: ["Blind faith", "A contract with the client", "Having seen the process work successfully many times before", "A lack of creativity"], ans: 2 },
 
-        // Unit 2: Engineering Graphics (20 questions)
-        { q: "Engineering graphics is primarily the language of:", opts: ["Mathematicians", "Engineers", "Artists", "Managers"], ans: 1 },
-        { q: "Which of the following best describes engineering drawing?", opts: ["An artistic representation", "A geometric representation according to standards", "A freehand sketch without rules", "A photograph of an object"], ans: 1 },
-        { q: "Engineering drawings can be understood internationally because they are:", opts: ["Written in English", "Standardized with symbols and practices", "Always in colour", "Only used in one country"], ans: 1 },
-        { q: "One importance of engineering graphics is:", opts: ["To decorate offices", "To communicate technical information without ambiguity", "To replace written reports", "To entertain workers"], ans: 1 },
-        { q: "Machine drawing is concerned with:", opts: ["Architectural buildings", "Machine parts or components", "Electrical circuits", "Landscapes"], ans: 1 },
-        { q: "A working drawing is also called a:", opts: ["Assembly drawing", "Production drawing", "Pictorial drawing", "Isometric drawing"], ans: 1 },
-        { q: "Which drawing type shows the various parts of a machine in their proper working positions?", opts: ["Part drawing", "Assembly drawing", "Sketch", "Schematic"], ans: 1 },
-        { q: "Engineering graphics is technically referred to as:", opts: ["Graphic design", "Engineering drawing", "Technical art", "Blueprint"], ans: 1 },
-        { q: "Which of the following is NOT a classification of drawing mentioned in the text?", opts: ["Machine drawing", "Working drawing", "Architectural drawing", "Part drawing"], ans: 2 },
-        { q: "Part drawing with production details becomes a:", opts: ["Freehand sketch", "Working drawing", "Pictorial view", "Concept drawing"], ans: 1 },
-        { q: "Engineering is defined as the profession that applies knowledge of mathematics and science to develop solutions:", opts: ["Without any standards", "For aesthetic purposes only", "In tandem with codes and standards", "Only for profit"], ans: 2 },
-        { q: "Graphic design differs from engineering graphics because graphic design:", opts: ["Uses only computers", "Combines pictures, words, and decoration for publications", "Is based on strict international standards", "Is always done by engineers"], ans: 1 },
-        { q: "Which of the following is NOT an application of engineering graphics mentioned in the text?", opts: ["Product development", "Assembly guide in industries", "Writing software code", "Facility maintenance"], ans: 2 },
-        { q: "The working drawing contains information about:", opts: ["Only the shape", "Dimensions, limits, surface finish, and material", "Only the colour", "Only the weight"], ans: 1 },
-        { q: "Assembly drawing is a design document showing:", opts: ["Individual parts only", "Full representation of a machine for assembly and production", "Only the exterior view", "Only electrical wiring"], ans: 1 },
-        { q: "Component or part drawing facilitates:", opts: ["Marketing", "Production of the component", "Only design brainstorming", "Customer feedback"], ans: 1 },
-        { q: "Engineering graphics is considered a universal language because:", opts: ["It uses words", "Standardized symbols convey the same idea to trained personnel globally", "It is only used in English-speaking countries", "It requires no training"], ans: 1 },
-        { q: "The term 'drawing as an art' refers to:", opts: ["Engineering graphics", "Pictorial representation of imagination by an artist without standard guidelines", "Technical drawing", "CAD modeling"], ans: 1 },
-        { q: "One reason engineering drawings must be correctly drawn is:", opts: ["To look beautiful", "To ensure they convey the exact picture of an object", "To pass inspection", "To reduce paper usage"], ans: 1 },
-        { q: "Which of the following is a type of drawing that contains all dimensions and finishing processes for manufacturing?", opts: ["Freehand sketch", "Working drawing", "Isometric drawing", "Perspective drawing"], ans: 1 },
+        // Engineering Graphics (Q123-Q182)
+        { q: "Engineering is the profession in which knowledge of mathematics and science is applied to develop a solution that is functional, economical, satisfactory, and in tandem with:", opts: ["Marketing strategies", "Codes and standards", "User preferences", "Management decisions"], ans: 1 },
+        { q: "Graphics are defined in the text as:", opts: ["Only 3D models", "Digital images created by a computer", "Drawings or pictures designed to represent objects or facts", "A form of abstract art"], ans: 2 },
+        { q: "Drawing as an art is different from engineering graphics because art drawings:", opts: ["Are always in color", "Do not have standard guidelines and boundaries", "Are more expensive to produce", "Cannot be reproduced"], ans: 1 },
+        { q: "Engineering graphics is technically referred to as:", opts: ["Fine art", "Graphic design", "Engineering drawing", "Technical illustration"], ans: 2 },
+        { q: "What makes engineering graphics a 'universal language'?", opts: ["It uses words from many languages.", "It is standardized with symbols, standard practice, and codes, so it can be understood by trained personnel across nations.", "It is spoken by all engineers.", "It is taught in every school."], ans: 1 },
+        { q: "Which of the following is NOT listed as an importance of engineering graphics?", opts: ["Communicating technical information without ambiguity", "Guide for assembly of separate parts into a unit", "Determining the market price of a product", "Essential documents for product development and regular production"], ans: 2 },
+        { q: "Machine drawing is usually drawn through a number of _____ views so that the size and shape is fully understood.", opts: ["Isometric", "Perspective", "Orthographic", "Pictorial"], ans: 2 },
+        { q: "Which class of drawing contains component drawings and assembly drawings?", opts: ["Working drawing", "Part drawing", "Machine drawing", "Production drawing"], ans: 2 },
+        { q: "A working drawing (also called a production drawing) contains dimensions, limits, special finishing processes, and also specifies:", opts: ["The name of the designer", "The material used and the number of parts required", "The manufacturing cost", "The patent number"], ans: 1 },
+        { q: "An assembly drawing shows the various parts of a machine:", opts: ["In an exploded view only", "In their proper working position relative to each other", "With all dimensions for manufacturing each part", "As a list of materials"], ans: 1 },
+        { q: "A part drawing that includes production details (like heat treatment, surface finish) is called a:", opts: ["Sketch", "Design drawing", "Production drawing or working drawing", "Assembly drawing"], ans: 2 },
+        { q: "According to the text, the borderline defines the drawing area and should be how far from the edge of the paper?", opts: ["1-2 cm", "8-10 cm", "15-20 cm", "0.5 cm"], ans: 1 },
+        { q: "What is the function of the borderline in an engineering drawing?", opts: ["To decorate the page", "To define the drawing area", "To indicate where to fold the paper", "To show the title block location"], ans: 1 },
+        { q: "The text mentions that you should not draw on the:", opts: ["Title block", "Borderline", "Center of the paper", "Back of the paper"], ans: 1 },
+        { q: "What line type is used to draw the borderline, according to the text?", opts: ["A hidden line", "A center line", "A contour line", "A dimension line"], ans: 2 },
+        { q: "Which type of drawing contains all the information needed for a craftsman on the shop floor to produce a part?", opts: ["Machine drawing", "Assembly drawing", "Working drawing", "Schematic drawing"], ans: 2 },
+        { q: "A detailed drawing of a single component to facilitate its production is known as a:", opts: ["Part drawing", "Layout drawing", "Assembly drawing", "Machine drawing"], ans: 0 },
+        { q: "The text implies that a key characteristic of engineering graphics, unlike artistic drawing, is that it must be:", opts: ["Beautiful", "Correctly drawn and standardized", "Large in size", "Done by hand"], ans: 1 },
+        { q: "Engineering graphics can be read and understood by anyone who has:", opts: ["A college degree", "Knowledge of drawing principles", "Experience in manufacturing", "An artistic eye"], ans: 1 },
+        { q: "Examples of human needs that engineering drawings help solve include food, shelter, transportation, and:", opts: ["Entertainment", "Fashion", "Health care", "Sports"], ans: 2 },
+        { q: "The text states that despite social, economic, or cultural barriers, drawings can be effectively used in other countries. This is because engineering drawing is a:", opts: ["Universal language", "Legal document", "Form of art", "Business contract"], ans: 0 },
+        { q: "Which of the following is NOT a classification of drawing mentioned in the text?", opts: ["Machine drawing", "Working drawing", "Isometric drawing", "Assembly drawing"], ans: 2 },
+        { q: "A working drawing guides the craftsman on the shop floor. What kind of information does it include to do this?", opts: ["The history of the company", "Dimensions, limits, and special finishing processes", "The marketing strategy", "The names of all previous owners"], ans: 1 },
+        { q: "An assembly drawing is described as a design document containing a full representation of a machine and:", opts: ["The cost of each part", "All the data needed for its assembly and production", "The supplier for each component", "The safety regulations"], ans: 1 },
+        { q: "To communicate the details in a part drawing, one must follow all the principles of:", opts: ["Perspective projection", "Orthographic projection", "Isometric projection", "Freehand sketching"], ans: 1 },
+        { q: "What does the 'Zig Zag Line' likely refer to in the context of the provided text snippet?", opts: ["A type of construction line", "A line to indicate a break or a cut-out in a long, uniform section", "The contour line for the border", "A line used for hatching"], ans: 1 },
+        { q: "The primary purpose of engineering graphics as a language is for engineers to:", opts: ["Create beautiful art", "Convey ideas on technical issues to others", "Impress their managers", "Decorate their offices"], ans: 1 },
+        { q: "The text emphasizes that engineering drawings are produced with the purpose of:", opts: ["Making a profit", "Solving specific human needs", "Winning design awards", "Filling a portfolio"], ans: 1 },
+        { q: "Which type of drawing would provide information like 'heat treatment' and 'surface finish'?", opts: ["Assembly drawing", "Machine drawing", "Working drawing", "Pictorial drawing"], ans: 2 },
+        { q: "A document that shows a nut, bolt, and washer in their proper working position on a bracket is an example of a(n):", opts: ["Part drawing", "Assembly drawing", "Working drawing", "Machine drawing"], ans: 1 },
+        { q: "If you have a drawing that shows only one component, like a crankshaft, with all its dimensions and tolerances, this is a:", opts: ["Assembly drawing", "Part drawing", "Schematic diagram", "Layout drawing"], ans: 1 },
+        { q: "The phrase 'in tandem with codes and standards' in the definition of engineering implies that engineering solutions must:", opts: ["Be unique and never follow rules", "Ignore existing practices", "Be developed according to established rules and regulations", "Be the cheapest possible solution"], ans: 2 },
+        { q: "Why is it important that engineering drawings are 'correctly drawn'?", opts: ["So they look professional", "To avoid ambiguity and ensure they can be understood universally", "To save time and materials", "To reduce the number of drawings needed"], ans: 1 },
+        { q: "Engineering graphics is used in industries as a guide for:", opts: ["Hiring new staff", "Assembly of separate parts into a unit", "Calculating profit margins", "Marketing the final product"], ans: 1 },
+        { q: "The text mentions that the knowledge of engineering graphics is significant in:", opts: ["Human resources management", "Innovative design projects", "Financial accounting", "Customer service"], ans: 1 },
+        { q: "A machine drawing differs from a part drawing primarily because a machine drawing:", opts: ["Is less detailed", "Is a broader term that can include drawings of machine parts, while a part drawing focuses on a single component", "Is always three-dimensional", "Uses different line types"], ans: 1 },
+        { q: "What is the purpose of the contour line in the context provided?", opts: ["To draw a 3D object", "To draw the borderline", "To draw hidden features", "To indicate the center of a circle"], ans: 1 },
+        { q: "Based on the text, which of the following sequences best represents the flow from a detailed component to a full machine representation?", opts: ["Working drawing -> Assembly drawing -> Part drawing", "Part drawing -> Assembly drawing -> Machine drawing", "Assembly drawing -> Part drawing -> Working drawing", "Machine drawing -> Part drawing -> Assembly drawing"], ans: 1 },
+        { q: "The text says engineering graphics can be used to communicate to executives, fabricators, customers, and:", opts: ["The general public", "Each other (engineers)", "Government officials", "Lawyers"], ans: 1 },
+        { q: "The term 'graphic design' as defined in the text is different from 'engineering graphics' because graphic design combines pictures, words, and decoration for:", opts: ["Solving engineering problems", "The production of books, magazines, etc.", "Creating machine parts", "Architectural blueprints"], ans: 1 },
+        { q: "A working drawing is also called a production drawing. What does the term 'production' signify in this context?", opts: ["The drawing is produced on a printing press.", "The drawing contains the information needed to produce (manufacture) the part.", "The drawing is a rough, initial sketch.", "The drawing is of a finished product only."], ans: 1 },
+        { q: "According to the text, component or part drawing must follow the technique of graphic representation. What does this refer to?", opts: ["Using random artistic lines", "Using standard symbols and projection methods to communicate details unambiguously", "Drawing only what looks aesthetically pleasing", "Avoiding the use of dimensions"], ans: 1 },
+        { q: "The text implies that a major advantage of standardized engineering graphics is that it overcomes:", opts: ["The need for any training", "Language barriers", "The use of computers", "Hand-drawing skills"], ans: 1 },
+        { q: "Which classification of drawing would be most directly used by a quality control inspector to check a manufactured part?", opts: ["Assembly drawing", "Machine drawing", "Working drawing", "Marketing drawing"], ans: 2 },
+        { q: "What is the primary difference between a machine drawing and an assembly drawing?", opts: ["One is hand-drawn, the other is digital.", "A machine drawing can be of a single part, while an assembly drawing shows multiple parts in position.", "One uses color, the other uses black and white.", "There is no difference."], ans: 1 },
+        { q: "The text states that engineering graphics are 'essential documents for product development'. This is because:", opts: ["They are required by law.", "They provide the visual and dimensional specifications necessary to design, build, and test a product.", "They are used to market the product.", "They are a record of the development team's work."], ans: 1 },
+        { q: "A drawing that includes the material specification (e.g., 'Mild Steel') and 'Number of parts required = 50' is most likely a:", opts: ["Artistic sketch", "Working drawing", "Schematic diagram", "Assembly drawing"], ans: 1 },
+        { q: "The 'borderline' in an engineering drawing serves a similar function to:", opts: ["A picture frame around a painting", "The margins on a printed page, defining the usable area", "A boundary line on a map", "A fence around a property"], ans: 1 },
+        { q: "Why is it important that a part drawing follows 'all the principles of orthographic projection'?", opts: ["To make the drawing look complex", "To ensure that the true shape and size of the object's features are accurately represented from multiple views", "To save drawing space", "To allow for artistic interpretation"], ans: 1 },
+        { q: "If a designer needs to show how a gear, shaft, and bearing fit together inside a gearbox, which type of drawing would be most appropriate?", opts: ["Part drawing of the gear", "Working drawing of the shaft", "Assembly drawing of the gearbox", "Machine drawing of the bearing"], ans: 2 },
+        { q: "The text mentions 'codes and standards' in the definition of engineering. In the context of engineering graphics, these would relate to:", opts: ["The salary of the engineer", "The type of pencil to use", "Standardized line types, paper sizes, projection methods, and symbols", "The office dress code"], ans: 2 },
+        { q: "Which type of drawing is essentially a more detailed version of a part drawing, specifically intended for manufacturing?", opts: ["Assembly drawing", "Production drawing", "Machine drawing", "Sketch"], ans: 1 },
+        { q: "An engineer from Japan and a fabricator from Brazil can understand the same engineering drawing. This is an example of:", opts: ["A trade agreement", "The universal nature of a standardized technical language", "A coincidence", "The use of English on all drawings"], ans: 1 },
+        { q: "The text suggests that engineering graphics is the 'geometric representation' of solutions. What does 'geometric representation' imply?", opts: ["The solutions are always simple shapes.", "The solutions are represented using the rules and figures of geometry (points, lines, planes, solids).", "The solutions are abstract and non-visual.", "The solutions are represented with words only."], ans: 1 },
+        { q: "What is the purpose of including 'limits' on a working drawing?", opts: ["To specify the maximum and minimum acceptable measurements for a feature (tolerance)", "To limit the number of drawings produced", "To limit the cost of the part", "To indicate the legal limits of use"], ans: 0 },
+        { q: "Which type of drawing would be used to show the overall layout of a machine, including all its components, without necessarily detailing how to make each individual screw?", opts: ["Part drawing", "Working drawing", "Assembly drawing", "Production drawing"], ans: 2 },
+        { q: "The text says 'Engineering drawing is the universal language of all engineers.' What is the most important consequence of this?", opts: ["Engineers from different countries can work together effectively.", "Engineers can get higher salaries.", "Engineering is a respected profession.", "Drawings are easy to make."], ans: 0 },
+        { q: "A drawing that shows a single, detailed view of a piston with its dimensions, material, and surface finish specification is a:", opts: ["Part drawing", "Assembly drawing", "Schematic", "Machine drawing"], ans: 0 },
+        { q: "The text says the borderline should be 8-10cm from the edge. This is unusually large for standard drafting (which is often 10mm). What might this indicate?", opts: ["A typographical error in the provided text.", "A specific, non-standard requirement for a certain type of drawing.", "The measurement is for a very large poster-sized drawing.", "It is a rule for a title block."], ans: 0 },
+        { q: "The text defines 'graphics' as drawings or pictures designed to represent objects or facts. How does 'engineering graphics' specifically refine this definition?", opts: ["By focusing only on beautiful objects", "By using geometric representation according to national and international standards to solve human needs", "By excluding any representation of facts", "By using only digital tools"], ans: 1 },
 
-        // Unit 3: Orthographic Projection (30 questions)
-        { q: "Orthographic projection uses projectors that are:", opts: ["Converging", "Parallel and at right angles to the projection plane", "At acute angles", "Curved"], ans: 1 },
-        { q: "In orthographic projection, the object is generally positioned so that its main faces are:", opts: ["At 45° to the planes", "Parallel to the projection planes", "Perpendicular to the ground", "Randomly oriented"], ans: 1 },
-        { q: "The two types of orthographic projection used in engineering practice are:", opts: ["Second and Fourth angle", "First and Third angle", "First and Second angle", "Third and Fourth angle"], ans: 1 },
-        { q: "In first angle projection, the object is placed in which quadrant?", opts: ["Second", "Third", "First", "Fourth"], ans: 2 },
-        { q: "In first angle projection, the view from above is placed:", opts: ["Above the front view", "Underneath the front view", "To the left", "To the right"], ans: 1 },
-        { q: "In third angle projection, the view from above is placed:", opts: ["Underneath the front view", "Above the front view", "To the left", "To the right"], ans: 1 },
-        { q: "The symbol for first angle projection is:", opts: ["Two concentric circles", "A truncated cone with the top view above the front view", "A truncated cone with the top view below the front view", "A square and a circle"], ans: 1 },
-        { q: "Which of the following is an advantage of orthographic projection?", opts: ["It shows true size and shape of faces", "It is always in colour", "It requires only one view", "It eliminates hidden lines"], ans: 0 },
-        { q: "In first angle projection, the object is between the observer and the:", opts: ["Light source", "Plane of projection", "Drawing board", "Horizontal plane"], ans: 1 },
-        { q: "The reference planes used in orthographic projection are:", opts: ["Only one plane", "Horizontal, vertical, and profile planes", "Only the vertical plane", "Inclined planes only"], ans: 1 },
-        { q: "Front view in orthographic projection is projected on the:", opts: ["Horizontal plane", "Vertical plane", "Profile plane", "Auxiliary plane"], ans: 1 },
-        { q: "Top view is projected on the:", opts: ["Vertical plane", "Horizontal plane", "Profile plane", "Inclined plane"], ans: 1 },
-        { q: "In third angle projection, the view from the left is placed on the:", opts: ["Right", "Left", "Above", "Below"], ans: 1 },
-        { q: "The number of views required to describe an object depends on:", opts: ["The colour of the object", "The complexity and symmetry of the object", "The size of the paper", "The drawing instrument"], ans: 1 },
-        { q: "For a highly symmetrical object, the minimum number of views required may be:", opts: ["Four", "Three", "Two", "Five"], ans: 2 },
-        { q: "Spacing between views in orthographic drawing should be enough to:", opts: ["Make it look artistic", "Accommodate dimensions and notes without overcrowding", "Save paper", "Hide details"], ans: 1 },
-        { q: "Hidden detail in orthographic drawing should:", opts: ["Always be shown", "Only be used when essential for complete description", "Never be shown", "Be drawn with thick lines"], ans: 1 },
-        { q: "The projection plane is always __________ to the side of the object being drawn.", opts: ["Parallel", "Perpendicular", "Inclined", "Curved"], ans: 1 },
-        { q: "In third angle projection, the plan comes between the observer and the:", opts: ["Object", "Projection plane", "Light", "Floor"], ans: 0 },
-        { q: "In orthographic projection, the line where the horizontal and vertical planes intersect is called the:", opts: ["Centre line", "Ground line (or reference line)", "Hidden line", "Dimension line"], ans: 1 },
-        { q: "Which view typically shows the most detail and is the basis for other views?", opts: ["Top view", "Side view", "Front view", "Bottom view"], ans: 2 },
-        { q: "The symbol for third angle projection is:", opts: ["A truncated cone with the top view above the front view", "A truncated cone with the top view below the front view", "A rectangle with an X", "Two intersecting circles"], ans: 0 },
-        { q: "In first angle projection, the view from the left is placed on the:", opts: ["Left", "Right", "Above", "Below"], ans: 1 },
-        { q: "Which of the following is a correct arrangement for first angle projection?", opts: ["Top view above front view", "Top view below front view", "Left view on left", "Right view on right"], ans: 1 },
-        { q: "When the object is placed in the third quadrant, the resulting projection is called:", opts: ["First angle", "Second angle", "Third angle", "Fourth angle"], ans: 2 },
-        { q: "The selection of views principle states that you should:", opts: ["Use as many views as possible", "Use the minimum number of views to completely describe the object", "Only use the front view", "Use only pictorial views"], ans: 1 },
-        { q: "In orthographic projection, if a surface is parallel to the projection plane, it appears as:", opts: ["A foreshortened shape", "True shape and size", "An edge view", "A curved line"], ans: 1 },
-        { q: "The term 'ortho' in orthographic means:", opts: ["Curved", "Straight or right", "Oblique", "Circular"], ans: 1 },
-        { q: "In an orthographic projection, the rays of sight are:", opts: ["Diverging", "Parallel to each other", "Converging to a point", "Random"], ans: 1 },
-        { q: "Which of the following is NOT a type of orthographic projection plane?", opts: ["Horizontal", "Vertical", "Profile", "Isometric"], ans: 3 },
-        { q: "When building up views, it is recommended to:", opts: ["Draw each view independently", "Build all views together to maintain alignment", "Only draw the front view first", "Skip hidden lines completely"], ans: 1 },
-
-        // Unit 4: Isometric Drawing (20 questions)
-        { q: "Isometric drawing is a type of:", opts: ["Orthographic projection", "Pictorial drawing", "Perspective drawing", "Freehand sketch only"], ans: 1 },
-        { q: "In isometric drawing, lines are drawn at which angles to the horizontal?", opts: ["45°", "30°", "60°", "90°"], ans: 1 },
-        { q: "Isometric axes are separated by:", opts: ["45°", "30°", "120°", "90°"], ans: 2 },
-        { q: "A circle in an isometric drawing appears as a(n):", opts: ["Circle", "Ellipse", "Parabola", "Hyperbola"], ans: 1 },
-        { q: "Lines that are parallel to the isometric axes are called:", opts: ["Non-isometric lines", "Isometric lines", "Hidden lines", "Dimension lines"], ans: 1 },
-        { q: "Angles cannot be laid off directly in an isometric drawing because:", opts: ["They are too small", "They do not appear as their true sizes", "The paper is not large enough", "Only right angles can be drawn"], ans: 1 },
-        { q: "Non-isometric lines are drawn by:", opts: ["Estimating the angle", "Using protractor directly", "Fixing their ends with ordinates (coordinates)", "Using a compass"], ans: 2 },
-        { q: "In the approximate method for drawing an isometric circle, the ellipse is constructed using:", opts: ["A French curve", "Circular arcs", "Freehand sketching", "A single circle"], ans: 1 },
-        { q: "Which method for an isometric circle uses an enclosing square with corner points?", opts: ["Approximate method", "Method I (using a French curve)", "Tangent method", "Oblong method"], ans: 1 },
-        { q: "Isometric drawing shows how many views of an object?", opts: ["One", "Two", "Three", "All six"], ans: 2 },
-        { q: "All dimensions in an isometric drawing must be measured along:", opts: ["Any convenient direction", "Isometric axes or lines parallel to them", "Only vertical lines", "Only horizontal lines"], ans: 1 },
-        { q: "Objects composed entirely of isometric lines are drawn by:", opts: ["First drawing a box and building up the shape inside", "Using only freehand", "Using a camera", "Only measuring angles"], ans: 0 },
-        { q: "When drawing a non-isometric line, the angle is laid off in the orthographic view and transferred to the isometric view using:", opts: ["A protractor", "Ordinates", "A compass", "A divider"], ans: 1 },
-        { q: "In the isometric square method for a circle, the centre lines intersect at:", opts: ["A corner of the square", "The centre of the square", "A point outside the square", "The midpoint of a side"], ans: 1 },
-        { q: "The long diagonal of the isometric square is used to locate:", opts: ["The centre of the ellipse", "Arc centres for the approximate ellipse", "The major axis", "The minor axis"], ans: 1 },
-        { q: "Isometric drawing is also called:", opts: ["Perspective drawing", "Oblique drawing", "Isometric projection", "Orthographic drawing"], ans: 2 },
-        { q: "An isometric circle drawn with the approximate method is accurate enough for most:", opts: ["Mathematical proofs", "Engineering drawings", "Artistic sketches", "Photographs"], ans: 1 },
-        { q: "Which of the following statements is true about isometric drawing?", opts: ["All lines are true length", "Only isometric lines are true length", "No line is true length", "Dimensions are not important"], ans: 1 },
-        { q: "In isometric drawing, receding lines are drawn at:", opts: ["45° to the horizontal", "30° to the horizontal", "60° to the horizontal", "90° to the horizontal"], ans: 1 },
-        { q: "A French curve is used in isometric drawing to:", opts: ["Draw straight lines", "Draw the isometric ellipse in Method I", "Measure angles", "Erase lines"], ans: 1 },
-
-        // Unit 5: Sectioning & Conventional Practices (25 questions)
-        { q: "A sectional view is obtained by:", opts: ["Removing hidden lines", "Cutting the object with an imaginary cutting plane", "Using only thick lines", "Drawing only the exterior"], ans: 1 },
-        { q: "The cut surface in a sectional view is indicated by:", opts: ["Thick lines", "Cross-hatching (section lining)", "Dotted lines", "Colour shading"], ans: 1 },
-        { q: "Section lines (hatching) are usually drawn at an angle of:", opts: ["30°", "45°", "60°", "90°"], ans: 1 },
-        { q: "If two adjacent cut faces are in a section, the hatching should be:", opts: ["At the same angle and spacing", "At different angles", "Omitted", "Drawn with continuous lines"], ans: 1 },
-        { q: "Which of the following is a type of section?", opts: ["Full section", "Half section", "Offset section", "All of the above"], ans: 3 },
-        { q: "A full section is obtained when the cutting plane:", opts: ["Cuts only a quarter of the object", "Extends through the entire object", "Is broken at the centre", "Is a zigzag line"], ans: 1 },
-        { q: "A half section is particularly useful for:", opts: ["Asymmetrical objects", "Symmetrical objects", "Objects with no interior", "Only cubes"], ans: 1 },
-        { q: "In a half section, how much of the object is imagined to be removed?", opts: ["Half", "One quarter", "Three quarters", "The entire object"], ans: 1 },
-        { q: "An offset section uses a cutting plane that:", opts: ["Is straight", "Changes direction (zigzag)", "Is curved", "Is horizontal only"], ans: 1 },
-        { q: "Which of the following features is usually NOT sectioned (shown in outside view)?", opts: ["Webs and ribs", "Solid blocks", "Cylindrical parts", "Base plates"], ans: 0 },
-        { q: "Bolts, nuts, washers, and screws are typically:", opts: ["Sectioned with cross-hatching", "Shown in outside view within a section", "Never drawn", "Drawn with thick lines only"], ans: 1 },
-        { q: "Conventional breaks are used to:", opts: ["Show true size", "Reduce the length of a long part on a drawing", "Indicate material", "Show hidden detail"], ans: 1 },
-        { q: "The general-purpose section line symbol (for cast iron) is:", opts: ["Thick continuous line", "Thin continuous irregular line", "Hatching at 45°", "Dashed line"], ans: 2 },
-        { q: "In sectioning, the cutting plane is indicated by:", opts: ["A thin continuous line", "A long chain line, thick at ends with arrows", "A dashed line", "A wavy line"], ans: 1 },
-        { q: "If the cutting plane is obviously along the centre line, the cutting plane line:", opts: ["Must always be drawn", "Need not be drawn", "Should be drawn with a different colour", "Is replaced by a solid line"], ans: 1 },
-        { q: "A revolved section is also called a:", opts: ["Removed section", "Superimposed section", "Half section", "Full section"], ans: 1 },
-        { q: "In a removed section, the section is drawn:", opts: ["Directly on the object", "On the extension of the cutting plane line", "Inside the front view", "In a separate note"], ans: 1 },
-        { q: "A partial or broken-out section is used when:", opts: ["A full section is always required", "Only a small portion of interior needs to be shown", "The object is symmetrical", "No hidden detail exists"], ans: 1 },
-        { q: "Conventional section materials are used to:", opts: ["Identify different materials in the drawing", "Save ink", "Simplify the drawing", "Avoid drawing"], ans: 0 },
-        { q: "In a half section, the line separating the sectioned half from the unsectioned half is the:", opts: ["Hidden line", "Centre line", "Thick continuous line", "Phantom line"], ans: 1 },
-        { q: "Which of the following is NOT a rule of sectioning?", opts: ["Cut face should be hatched", "Adjacent faces should have different hatching angles", "All hidden lines must be shown within the section", "The cutting plane should be shown in the relevant view"], ans: 2 },
-        { q: "When a cutting plane passes through a web, the web is:", opts: ["Always hatched", "Not hatched (treated as outside)", "Drawn with a different colour", "Removed entirely"], ans: 1 },
-        { q: "The main purpose of sectioning is to:", opts: ["Make drawing look complex", "Show interior details clearly", "Reduce the number of views", "Eliminate the need for dimensions"], ans: 1 },
-        { q: "A cutting plane line is typically a:", opts: ["Thick continuous line", "Chain line thick at ends and at changes of direction", "Thin continuous line", "Dotted line"], ans: 1 },
-        { q: "Conventional section lines for different materials are standardized by:", opts: ["Individual companies only", "National and international standards", "The artist's preference", "No standards exist"], ans: 1 },
-
-        // Unit 6: Conic Sections & Development (35 questions)
-        { q: "A cone is formed by rotating a __________ about its altitude.", opts: ["Circle", "Right-angled triangle", "Rectangle", "Square"], ans: 1 },
-        { q: "When a cone is cut by a plane at 90° to its axis, the section obtained is a:", opts: ["Ellipse", "Parabola", "Circle", "Hyperbola"], ans: 2 },
-        { q: "A section plane cutting a cone at an angle greater than half the apex angle but less than 90° produces a:", opts: ["Circle", "Ellipse", "Parabola", "Hyperbola"], ans: 1 },
-        { q: "When the cutting plane is parallel to the slant side of the cone, the curve obtained is a:", opts: ["Circle", "Ellipse", "Parabola", "Hyperbola"], ans: 2 },
-        { q: "If the cutting plane angle is less than the semi-vertical angle, the section is a:", opts: ["Circle", "Ellipse", "Parabola", "Hyperbola"], ans: 3 },
-        { q: "Eccentricity of a parabola is always:", opts: ["Less than 1", "Equal to 1", "Greater than 1", "Zero"], ans: 1 },
-        { q: "Eccentricity of an ellipse is:", opts: ["Equal to 1", "Greater than 1", "Less than 1", "Zero"], ans: 2 },
-        { q: "The fixed point in a conic is called the:", opts: ["Directrix", "Focus", "Vertex", "Eccentricity"], ans: 1 },
-        { q: "The fixed straight line in a conic is called the:", opts: ["Axis", "Focus", "Directrix", "Vertex"], ans: 2 },
-        { q: "In an ellipse, the sum of distances from any point on the curve to the two foci is equal to the:", opts: ["Minor axis", "Major axis", "Latus rectum", "Eccentricity"], ans: 1 },
-        { q: "Which method for generating an ellipse uses the major and minor axes as diameters of circles?", opts: ["Focus-directrix method", "Concentric circle method", "Oblong method", "Tangent method"], ans: 1 },
-        { q: "The oblong method for ellipse construction uses a:", opts: ["Circle", "Rectangle", "Triangle", "Square only"], ans: 1 },
-        { q: "A parabola can be generated by the rectangle method when:", opts: ["The focus and directrix are given", "The abscissa and double ordinate are known", "Only the axis is known", "The eccentricity is greater than 1"], ans: 1 },
-        { q: "In the tangent method for a parabola, the base and the __________ are known.", opts: ["Focus", "Directrix", "Inclination of tangents at open ends", "Eccentricity"], ans: 2 },
-        { q: "The double ordinate passing through the focus of a parabola is called the:", opts: ["Vertex", "Latus rectum", "Abscissa", "Directrix"], ans: 1 },
-        { q: "Development of surfaces is a technique used mainly in:", opts: ["Casting", "Sheet metal work", "Forging", "Machining"], ans: 1 },
-        { q: "The development of a cylinder is a:", opts: ["Circle", "Rectangle", "Triangle", "Trapezoid"], ans: 1 },
-        { q: "The development of a prism consists of:", opts: ["Triangles only", "Rectangles equal to the number of sides", "A single circle", "An ellipse"], ans: 1 },
-        { q: "The development of a pyramid consists of:", opts: ["A rectangle", "A series of triangles in contact", "A circle", "An irregular shape"], ans: 1 },
-        { q: "In the focus-directrix method, the distance of the focus from the directrix and the __________ must be known.", opts: ["Abscissa", "Eccentricity", "Major axis", "Minor axis"], ans: 1 },
-        { q: "The line passing through the focus and perpendicular to the directrix is called the:", opts: ["Vertex", "Axis", "Latus rectum", "Ordinate"], ans: 1 },
-        { q: "When drawing an ellipse by the concentric circle method, both circles are divided into:", opts: ["6 equal parts", "12 equal parts", "8 equal parts", "4 equal parts"], ans: 1 },
-        { q: "In an ellipse, the distance from any end of the minor axis to any focus is equal to:", opts: ["Half the minor axis", "Half the major axis", "The full major axis", "The eccentricity"], ans: 1 },
-        { q: "A parabola has eccentricity equal to 1. This means that for any point on the parabola, the distance to the focus is __________ the distance to the directrix.", opts: ["Less than", "Equal to", "Greater than", "Double"], ans: 1 },
-        { q: "The profile of a conic section is determined by:", opts: ["The angle of the cutting plane relative to the cone's axis", "The colour of the cone", "The size of the paper", "The drawing instrument"], ans: 0 },
-        { q: "In a hyperbola, the section plane cuts the cone such that the angle is:", opts: ["90°", "Greater than the apex half-angle", "Less than the apex half-angle", "Equal to 0°"], ans: 2 },
-        { q: "If the section plane passes through the apex of the cone, the section is a:", opts: ["Circle", "Ellipse", "Parabola", "Triangle"], ans: 3 },
-        { q: "The ratio of the distance from a point on the conic to its focus, divided by its distance to the directrix, is called:", opts: ["Apex angle", "Eccentricity", "Latus rectum", "Vertex"], ans: 1 },
-        { q: "In the concentric circle method, points on the ellipse are found at intersections of:", opts: ["Radial lines", "Lines parallel to the major and minor axes", "Arcs from foci", "Diagonal lines"], ans: 1 },
-        { q: "For development of a truncated cylinder, the true length of the cut surface is found from the:", opts: ["Plan view", "Front view and development layout", "Isometric view", "Perspective"], ans: 1 },
-        { q: "Which of these is NOT a conic section?", opts: ["Circle", "Ellipse", "Spiral", "Hyperbola"], ans: 2 },
-        { q: "The tangent and normal to a point on a parabola can be drawn if the __________ is known.", opts: ["Focus only", "Axis and vertex", "Ordinate and abscissa", "Directrix only"], ans: 2 },
-        { q: "In the oblong method, the major and minor axes are used to construct a:", opts: ["Square", "Rhombus", "Rectangle", "Circle"], ans: 2 },
-        { q: "The focus-directrix method is also known as the __________ method.", opts: ["Concentric", "Eccentricity", "Rectangle", "Tangent"], ans: 1 },
-        { q: "The development of a surface is the process of:", opts: ["Drawing its isometric view", "Unfolding the surface onto a flat plane", "Creating a 3D model", "Making an orthographic projection"], ans: 1 },
-
-        // Unit 7: Freehand and Guided Sketching (20 questions)
-        { q: "Freehand sketching is done:", opts: ["With drafting instruments only", "Without the aid of drafting equipment", "Using CAD software", "Only with a compass"], ans: 1 },
-        { q: "The main goal of a freehand sketch is to:", opts: ["Produce a perfect mechanical drawing", "Illustrate proportions and general concept", "Replace AutoCAD", "Create a final working drawing"], ans: 1 },
-        { q: "Multiview sketching uses which projection system?", opts: ["Perspective", "Orthographic projection", "Oblique", "Isometric"], ans: 1 },
-        { q: "True shape (TS) in a multiview sketch means:", opts: ["The view is distorted", "The view shows exact angles, circles, and lengths", "The view is foreshortened", "The view shows only edges"], ans: 1 },
-        { q: "Foreshortened shape (FS) occurs when a surface is:", opts: ["Parallel to the projection plane", "Perpendicular to the projection plane", "Sloped or at an angle to the projection plane", "Circular"], ans: 2 },
-        { q: "An edge view (EV) is when a surface appears as:", opts: ["A true shape", "A line", "A foreshortened area", "An ellipse"], ans: 1 },
-        { q: "Visualization in sketching is the ability to:", opts: ["Draw quickly", "Envision an object in three dimensions", "Use a computer", "Read a drawing"], ans: 1 },
-        { q: "Which of the following is NOT a common skill in drawing/sketching?", opts: ["Accuracy", "Speed", "Legibility", "Randomness"], ans: 3 },
-        { q: "In multiview sketching, the front view typically shows the:", opts: ["Width and depth", "Width and height", "Depth and height", "Only the top"], ans: 1 },
-        { q: "The top view in a multiview sketch shows:", opts: ["Width and height", "Height and depth", "Width and depth", "Only the front"], ans: 2 },
-        { q: "The standard side view in a multiview drawing is usually the:", opts: ["Left side", "Right side", "Bottom", "Back"], ans: 1 },
-        { q: "Projection lines in multiview sketching are typically:", opts: ["Thick and dark", "Light and thin", "Dashed", "Coloured"], ans: 1 },
-        { q: "When sketching multiviews, it is important to:", opts: ["Draw each view independently", "Align the views using projection lines", "Only draw one view", "Use only isometric projection"], ans: 1 },
-        { q: "Freehand sketching is used to:", opts: ["Create final production drawings", "Capture ideas quickly before a final drawing", "Replace written documentation", "Only design electronics"], ans: 1 },
-        { q: "Grid paper is useful for multiview sketching because it helps with:", opts: ["Colouring", "Layout, alignment, and proportion", "Erasing", "Rendering"], ans: 1 },
-        { q: "A surface parallel to the projection plane will appear as:", opts: ["Foreshortened", "True shape", "An edge", "A curve"], ans: 1 },
-        { q: "In multiview sketching, the minimum number of views required to fully describe an object is usually:", opts: ["One", "Two", "Three", "Six"], ans: 2 },
-        { q: "The term 'orthographic projection' in sketching refers to:", opts: ["Drawing 3D views", "Using perpendicular projectors to a plane", "Freehand drawing only", "Isometric drawing"], ans: 1 },
-        { q: "Which of the following is a rule for selection of views in a sketch?", opts: ["Show as many hidden lines as possible", "Use the views that show the shape most clearly", "Include all six views", "Avoid alignment"], ans: 1 },
-        { q: "Freedom from drafting equipment in freehand sketching does NOT mean:", opts: ["The drawing should be sloppy", "It is done quickly", "It can be done with pencil only", "It must be to scale"], ans: 0 },
-
-        // Unit 8: Visualization and Solid Modeling (25 questions)
-        { q: "3D solid modeling is the process of constructing:", opts: ["Only surface data", "Complete geometric forms with interior and exterior properties", "2D line drawings", "Hand sketches"], ans: 1 },
-        { q: "Which of the following is a primitive geometry?", opts: ["Freeform surface", "Sphere", "NURBS curve", "Text"], ans: 1 },
-        { q: "A Boolean operation in solid modeling can produce a:", opts: ["Union", "Difference", "Intersection", "All of the above"], ans: 3 },
-        { q: "Extrusion in 3D modeling is the process of:", opts: ["Rotating a 2D shape", "Pushing or pulling a 2D geometry along a third axis", "Subtracting volumes", "Creating a 2D drawing"], ans: 1 },
-        { q: "Which Boolean operation removes overlapping volume from one solid using another?", opts: ["Union", "Difference (subtraction)", "Intersection", "Sweep"], ans: 1 },
-        { q: "Sweeping in 3D modeling is:", opts: ["Extruding along a straight line only", "Running a 2D geometry along a path to create a 3D volume", "Creating a sphere", "A Boolean operation"], ans: 1 },
-        { q: "The advantage of a solid model over a surface model is that solid models:", opts: ["Are easier to render", "Contain internal properties (mass/volume)", "Are always lighter", "Can only be used for simple shapes"], ans: 1 },
-        { q: "Rendering in 3D modeling refers to:", opts: ["Building the wireframe", "Generating a realistic image with lighting and materials", "Adding dimensions", "Doing Boolean operations"], ans: 1 },
-        { q: "A texture map is used to:", opts: ["Scale the model", "Apply visual/surface quality to a model", "Create new geometry", "Measure dimensions"], ans: 1 },
-        { q: "Which of the following is NOT a typical Boolean operation?", opts: ["Union", "Subtract", "Intersect", "Rotate"], ans: 3 },
-        { q: "Direct input entry in 3D modeling means:", opts: ["Using a mouse only", "Applying dimensions through numeric input", "Drawing freehand", "Importing a photograph"], ans: 1 },
-        { q: "2D line drawings used for extrusion are usually imported at:", opts: ["Any random scale", "1:1 scale", "Half scale", "Double scale"], ans: 1 },
-        { q: "Primitive geometries include all EXCEPT:", opts: ["Sphere", "Cylinder", "Cone", "Text label"], ans: 3 },
-        { q: "The main purpose of solid modeling in manufacturing is to:", opts: ["Create artistic images", "Visualize, test, and fabricate designs accurately", "Replace all 2D drawings", "Only for entertainment"], ans: 1 },
-        { q: "Which software capability allows you to rotate a solid model to view from any angle?", opts: ["2D sketching", "3D orbit/rotate", "Sectioning", "Dimensioning"], ans: 1 },
-        { q: "Rapid prototyping directly benefits from:", opts: ["2D paper drawings", "3D solid model data", "Hand sketches", "Written descriptions"], ans: 1 },
-        { q: "In 3D modeling, 'difference' operation is also called:", opts: ["Union", "Subtraction", "Intersection", "Extrusion"], ans: 1 },
-        { q: "Which of the following can be used to generate a 3D model from a sketch?", opts: ["Scan the sketch and extrude/apply dimensions", "Only redraw in CAD", "Ignore the sketch", "Only use verbal description"], ans: 0 },
-        { q: "A digital platform in solid modeling refers to:", opts: ["The computer hardware only", "Electronic media, software, and interface for exchanging digital info", "The paper size", "The drawing board"], ans: 1 },
-        { q: "Which statement about rendering is FALSE?", opts: ["It calculates lighting and shadows", "It generates an image of the model", "It is always instantaneous with no time required", "More realism requires more rendering time"], ans: 2 },
-        { q: "The process of intersecting multiple 3D forms to create a new shape is called:", opts: ["Extrusion", "Sweeping", "Boolean operation", "Rendering"], ans: 2 },
-        { q: "Solid models are necessary for machining because:", opts: ["They look nice", "They contain internal properties and can be used for toolpath calculations", "They are lighter", "They replace the need for materials"], ans: 1 },
-        { q: "Which of the following is an example of primitive geometry?", opts: ["A machine part", "A cylinder", "A text label", "A freeform loft"], ans: 1 },
-        { q: "When a 2D sketch is scanned and imported into 3D software, the next step is often to:", opts: ["Immediately print", "Trace the geometry and extrude", "Delete the scan", "Add colour only"], ans: 1 },
-        { q: "The primary difference between 3D solid modeling and 2D drawing is:", opts: ["3D models can be rotated and contain volume data", "2D drawings are more accurate", "3D models are only for animation", "There is no difference"], ans: 0 }
+        // AutoCAD & Basic Line Questions (Q183-Q200)
+        { q: "In AutoCAD, what is the default keyboard shortcut for the basic LINE command?", opts: ["L", "LI", "LN", "LT"], ans: 0 },
+        { q: "Which AutoCAD command would you use to create a series of connected line and arc segments as a single object?", opts: ["POLYLINE (or PL)", "LINE", "ARC", "MLINE"], ans: 0 },
+        { q: "In AutoCAD, to draw a line that is exactly 50 units long at an angle of 45 degrees from the endpoint of an existing line, you could use which input method most efficiently?", opts: ["@50<45", "50,45", "<50@45", "45<50"], ans: 0 },
+        { q: "Which of the following is NOT a standard line type used in engineering drawings, but is commonly managed in AutoCAD's Layer Properties Manager?", opts: ["Continuous", "Hidden", "Center", "Rainbow"], ans: 3 },
+        { q: "What is the function of the ORTHO mode (F8 key) in AutoCAD?", opts: ["It restricts cursor movement to 45-degree increments.", "It restricts cursor movement to horizontal and vertical directions.", "It activates the object snap tracking.", "It turns on the grid display."], ans: 1 },
+        { q: "To create a line that is perfectly tangent to two circles in AutoCAD, which command or object snap combination would be most direct?", opts: ["LINE command with TAN object snap to both circles", "XLINE command", "RAY command", "MLINE command with a tangency property"], ans: 0 },
+        { q: "In AutoCAD, the TRIM command can be used to cut a line precisely at an intersection with another line. What is the first thing you must select when using the TRIM command?", opts: ["The object(s) to be trimmed", "The cutting edge(s)", "An empty space to select all", "The undo option"], ans: 1 },
+        { q: "Which AutoCAD command would you use to join two collinear lines that have a small gap between them into a single line segment?", opts: ["JOIN (or J)", "MERGE", "UNITE", "CONNECT"], ans: 0 },
+        { q: "What does the AutoCAD system variable LINETYPE control?", opts: ["The color of the line", "The pattern of the line (e.g., dashed, dotted, center)", "The width of the line", "The layer of the line"], ans: 1 },
+        { q: "In AutoCAD, the OFFSET command is used to create a parallel copy of a line. What is required to use this command successfully?", opts: ["A distance value", "A scale factor", "A rotation angle", "A mirror axis"], ans: 0 },
+        { q: "Which object snap override (OSNAP) would you use to draw a line starting exactly at the midpoint of another line?", opts: ["END", "INT", "MID", "CEN"], ans: 2 },
+        { q: "If you need to draw a construction line that extends infinitely in both directions, which command would you use?", opts: ["LINE", "RAY", "XLINE", "PLINE"], ans: 2 },
+        { q: "In the context of basic line commands, what is the primary difference between a RAY and an XLINE in AutoCAD?", opts: ["A RAY extends infinitely in one direction from a point; an XLINE extends infinitely in both directions.", "An XLINE can be trimmed; a RAY cannot.", "A RAY is a type of polyline; an XLINE is not.", "There is no difference."], ans: 0 },
+        { q: "When drawing a line in AutoCAD using the LINE command, how can you undo the very last segment you drew without canceling the entire command?", opts: ["Press Ctrl+Z", "Type U and press Enter", "Press the Esc key", "Type UNDO and press Enter twice"], ans: 1 },
+        { q: "In an engineering drawing, a dashed/dotted line typically represents a feature that is:", opts: ["Visible", "Hidden or behind another surface", "A center of a circle", "A cutting plane"], ans: 1 },
+        { q: "What is the name of the standard line type used to indicate the center of a circle or arc in both manual drafting and AutoCAD?", opts: ["Hidden line", "Phantom line", "Center line", "Section line"], ans: 2 },
+        { q: "In AutoCAD, the FILLET command with a radius of 0 is often used to:", opts: ["Create a smooth curved corner", "Sharpen a corner to a point", "Join two lines that intersect or would intersect, making a sharp corner and trimming the excess", "Create a chamfer"], ans: 2 },
+        { q: "To accurately draw a line from the endpoint of one line perpendicular to another existing line, you would use the LINE command and which combination of object snaps?", opts: ["END then PER", "NEA then INT", "MID then QUA", "CEN then TAN"], ans: 0 }
     ];
 
     // ========== STATE MANAGEMENT ==========
-    const STORAGE_KEY = 'get102_quiz_state';
+    const STATE_KEY = 'get102_quiz_state';
     let state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false };
 
-    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    function load() { const r = localStorage.getItem(STORAGE_KEY); if (r) { try { state = JSON.parse(r); return true; } catch (e) {} } return false; }
-    function clearAll() { state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false }; localStorage.removeItem(STORAGE_KEY); }
+    function saveState() { localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
+    function loadState() { const r = localStorage.getItem(STATE_KEY); if(r){try{state=JSON.parse(r);return true;}catch(e){}} return false; }
+    function clearState() { state = { total:30,indices:[],current:0,answers:{},skipped:[],submitted:false}; localStorage.removeItem(STATE_KEY); }
 
-    function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } return a; }
-    function getQ() { if (!state.indices.length) return null; const bi = state.indices[state.current]; return { ...questionBank[bi], bankIndex: bi }; }
+    function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+    function getQ() { if(!state.indices.length) return null; const bi = state.indices[state.current]; return {...questionBank[bi], bankIndex:bi}; }
 
-    function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2200); }
-    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); }
+    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
     function startQuiz(n) {
-        const all = shuffle(Array.from({ length: questionBank.length }, (_, i) => i));
-        state = { total: n, indices: all.slice(0, n), current: 0, answers: {}, skipped: [], submitted: false };
-        save(); renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav();
+        clearState();
+        const allIndices = shuffle(Array.from({length: questionBank.length}, (_,i)=>i));
+        const selected = allIndices.slice(0, Math.min(n, questionBank.length));
+        state = { total: selected.length, indices: selected, current: 0, answers: {}, skipped: [], submitted: false };
+        saveState(); renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav();
     }
 
     function resumeQuiz() {
-        if (!load() || !state.indices.length || state.submitted) { toast('No saved quiz. Start a new one.'); return; }
+        if(!loadState() || !state.indices.length || state.submitted){ toast('No saved quiz. Start a new one.'); return; }
         renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav(); toast('Quiz resumed.');
     }
 
-    function clearStorage() { clearAll(); save(); document.getElementById('resumeSection').style.display = 'none'; toast('Saved data cleared.'); }
+    function clearStorage() { clearState(); saveState(); document.getElementById('resumeSection').style.display='none'; toast('Saved progress cleared.'); }
 
     function renderQuiz() {
         const dots = document.getElementById('questionDots'); dots.innerHTML = '';
-        for (let i = 0; i < state.total; i++) { const d = document.createElement('span'); d.className = 'dot'; d.title = `Q${i + 1}`; d.onclick = () => { state.current = i; save(); renderQuestion(); updateProgress(); updateNav(); }; dots.appendChild(d); }
+        for(let i=0;i<state.total;i++){ const d=document.createElement('span'); d.className='dot'; d.title=`Q${i+1}`; d.onclick=()=>{state.current=i;saveState();renderQuestion();updateProgress();updateNav();}; dots.appendChild(d); }
     }
 
     function renderQuestion() {
-        const q = getQ(); if (!q) return;
-        document.getElementById('questionNumber').textContent = `QUESTION ${state.current + 1}`;
+        const q = getQ(); if(!q) return;
+        document.getElementById('questionNumber').textContent = `QUESTION ${state.current+1}`;
         document.getElementById('questionText').textContent = q.q;
-        document.getElementById('progressLabel').textContent = `Question ${state.current + 1} of ${state.total}`;
+        document.getElementById('progressLabel').textContent = `Question ${state.current+1} of ${state.total}`;
         const opts = document.getElementById('optionsList'); opts.innerHTML = '';
-        const letters = ['A', 'B', 'C', 'D'];
-        q.opts.forEach((opt, i) => {
-            const li = document.createElement('li'); li.className = 'option-item';
-            if (state.answers[state.current] === i) li.classList.add('selected');
+        const letters = ['A','B','C','D'];
+        q.opts.forEach((opt,i)=>{
+            const li = document.createElement('li'); li.className='option-item';
+            if(state.answers[state.current]===i) li.classList.add('selected');
             li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
-            li.onclick = () => selectOption(i);
+            li.onclick = ()=> selectOption(i);
             opts.appendChild(li);
         });
         const dots = document.querySelectorAll('#questionDots .dot');
-        dots.forEach((d, i) => { d.classList.remove('current', 'answered', 'skipped'); if (i === state.current) d.classList.add('current'); if (state.answers[i] !== undefined) d.classList.add('answered'); if (state.skipped.includes(i) && state.answers[i] === undefined) d.classList.add('skipped'); });
-        document.getElementById('quizScreen').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        dots.forEach((d,i)=>{ d.classList.remove('current','answered','skipped'); if(i===state.current) d.classList.add('current'); if(state.answers[i]!==undefined) d.classList.add('answered'); if(state.skipped.includes(i) && state.answers[i]===undefined) d.classList.add('skipped'); });
+        document.getElementById('quizScreen').scrollIntoView({behavior:'smooth',block:'start'});
     }
 
-    function selectOption(i) { if (state.submitted) return; state.answers[state.current] = i; state.skipped = state.skipped.filter(s => s !== state.current); save(); renderQuestion(); updateProgress(); updateNav(); }
-
+    function selectOption(i) { if(state.submitted) return; state.answers[state.current]=i; state.skipped = state.skipped.filter(s=>s!==state.current); saveState(); renderQuestion(); updateProgress(); updateNav(); }
     function skipQuestion() {
-        if (state.submitted) return;
-        if (state.answers[state.current] === undefined && !state.skipped.includes(state.current)) state.skipped.push(state.current);
-        if (state.current < state.total - 1) { state.current++; save(); renderQuestion(); updateProgress(); updateNav(); } else { updateProgress(); updateNav(); renderQuestion(); }
+        if(state.submitted) return;
+        if(state.answers[state.current]===undefined && !state.skipped.includes(state.current)) state.skipped.push(state.current);
+        if(state.current < state.total-1){ state.current++; saveState(); renderQuestion(); updateProgress(); updateNav(); }
+        else { updateProgress(); updateNav(); renderQuestion(); }
     }
-
-    function navigate(dir) { if (state.submitted) return; const nxt = state.current + dir; if (nxt >= 0 && nxt < state.total) { state.current = nxt; save(); renderQuestion(); updateProgress(); updateNav(); } }
-
-    function updateProgress() { const a = Object.keys(state.answers).length; document.getElementById('answeredCount').textContent = `${a} answered`; document.getElementById('progressFill').style.width = Math.round((a / state.total) * 100) + '%'; }
-
-    function updateNav() { document.getElementById('btnPrev').disabled = state.current === 0; document.getElementById('btnNext').disabled = state.current === state.total - 1; }
+    function navigate(dir) { if(state.submitted) return; const nxt = state.current+dir; if(nxt>=0 && nxt<state.total){ state.current=nxt; saveState(); renderQuestion(); updateProgress(); updateNav(); } }
+    function updateProgress() { const a = Object.keys(state.answers).length; document.getElementById('answeredCount').textContent = `${a} answered`; document.getElementById('progressFill').style.width = Math.round((a/state.total)*100)+'%'; }
+    function updateNav() { document.getElementById('btnPrev').disabled = state.current===0; document.getElementById('btnNext').disabled = state.current===state.total-1; }
 
     function submitQuiz() {
         const skipped = state.total - Object.keys(state.answers).length;
-        if (skipped > 0 && !confirm(`You have ${skipped} unanswered question(s). Submit anyway?`)) return;
-        state.submitted = true; save(); showResults(); switchScreen('resultsScreen');
+        if(skipped>0 && !confirm(`You have ${skipped} unanswered. Submit anyway?`)) return;
+        state.submitted = true; saveState(); showResults(); switchScreen('resultsScreen');
     }
 
     function showResults() {
         let correct = 0; const review = [];
-        state.indices.forEach((bi, i) => { const q = questionBank[bi]; const ua = state.answers[i]; const ok = ua === q.ans; if (ok) correct++; review.push({ q: q.q, opts: q.opts, correctAns: q.ans, userAns: ua, isCorrect: ok, idx: i + 1 }); });
-        const pct = Math.round((correct / state.total) * 100);
-        document.getElementById('scorePercent').textContent = pct + '%';
+        state.indices.forEach((bi,i)=>{ const q = questionBank[bi]; const ua = state.answers[i]; const ok = ua===q.ans; if(ok) correct++; review.push({ q:q.q, opts:q.opts, correctAns:q.ans, userAns:ua, isCorrect:ok, idx:i+1 }); });
+        const pct = Math.round((correct/state.total)*100);
+        document.getElementById('scorePercent').textContent = pct+'%';
         document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
-        document.getElementById('resultMessage').textContent = pct >= 90 ? '🏆 Outstanding!' : pct >= 70 ? '👏 Great job!' : pct >= 50 ? '📖 Good effort — keep practising.' : '💪 Keep studying and try again.';
+        document.getElementById('resultMessage').textContent = pct>=90?'🏆 Outstanding!':pct>=70?'👏 Great job!':pct>=50?'📖 Good effort.':'💪 Keep studying.';
         window._review = review;
-        document.getElementById('reviewSection').style.display = 'none'; document.getElementById('reviewSection').innerHTML = '';
+        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
     }
 
     function reviewAnswers() {
         const sec = document.getElementById('reviewSection');
-        if (sec.style.display === 'block') { sec.style.display = 'none'; sec.innerHTML = ''; return; }
-        if (!window._review) return;
+        if(sec.style.display==='block'){ sec.style.display='none'; sec.innerHTML=''; return; }
+        if(!window._review) return;
         sec.innerHTML = '<h3>📋 Detailed Review</h3>';
-        window._review.forEach(r => {
-            const d = document.createElement('div'); d.className = 'review-item ' + (r.isCorrect ? 'correct-r' : 'wrong');
-            const uTxt = r.userAns !== undefined ? `${'ABCD'[r.userAns]}. ${r.opts[r.userAns]}` : 'Not answered';
-            const cTxt = `${'ABCD'[r.correctAns]}. ${r.opts[r.correctAns]}`;
+        const letters = ['A','B','C','D'];
+        window._review.forEach(r=>{
+            const d = document.createElement('div'); d.className = 'review-item '+(r.isCorrect?'correct-r':'wrong');
+            const uTxt = r.userAns!==undefined?`${letters[r.userAns]}. ${r.opts[r.userAns]}`:'Not answered';
+            const cTxt = `${letters[r.correctAns]}. ${r.opts[r.correctAns]}`;
             d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div><div class="rev-ans">Your answer: <span class="your-ans">${uTxt}</span><br>Correct: <span class="correct-ans">${cTxt}</span></div>`;
             sec.appendChild(d);
         });
-        sec.style.display = 'block'; sec.scrollIntoView({ behavior: 'smooth' });
+        sec.style.display='block'; sec.scrollIntoView({behavior:'smooth'});
     }
 
-    function restartQuiz() { clearAll(); save(); document.getElementById('reviewSection').style.display = 'none'; document.getElementById('reviewSection').innerHTML = ''; window._review = null; switchScreen('startScreen'); document.getElementById('resumeSection').style.display = 'none'; updateResumeBtn(); }
+    function restartQuiz() {
+        clearState(); saveState();
+        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+        window._review = null; switchScreen('startScreen');
+        document.getElementById('resumeSection').style.display='none'; updateResumeBtn();
+    }
 
-    function updateResumeBtn() { const s = document.getElementById('resumeSection'); if (load() && state.indices.length && !state.submitted) { s.style.display = 'block'; } else { s.style.display = 'none'; clearAll(); save(); } }
+    function updateResumeBtn() {
+        const s = document.getElementById('resumeSection');
+        if(loadState() && state.indices.length && !state.submitted){ s.style.display='block'; }
+        else { s.style.display='none'; clearState(); saveState(); }
+    }
 
-    document.addEventListener('keydown', (e) => {
-        if (state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
-        switch (e.key.toLowerCase()) {
+    document.addEventListener('keydown',(e)=>{
+        if(state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
+        switch(e.key.toLowerCase()){
             case 'a': selectOption(0); break;
             case 'b': selectOption(1); break;
             case 'c': selectOption(2); break;
             case 'd': selectOption(3); break;
             case 'arrowleft': e.preventDefault(); navigate(-1); break;
             case 'arrowright': e.preventDefault(); navigate(1); break;
-            case 's': if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); skipQuestion(); } break;
-            case 'enter': e.preventDefault(); if (Object.keys(state.answers).length === state.total) submitQuiz(); break;
+            case 's': if(!e.ctrlKey&&!e.metaKey){ e.preventDefault(); skipQuestion(); } break;
+            case 'enter': e.preventDefault(); if(Object.keys(state.answers).length===state.total) submitQuiz(); break;
         }
     });
 
-    if (load() && state.indices.length && !state.submitted) { document.getElementById('resumeSection').style.display = 'block'; switchScreen('startScreen'); } else { clearAll(); save(); document.getElementById('resumeSection').style.display = 'none'; switchScreen('startScreen'); }
+    updateResumeBtn();
+    switchScreen('startScreen');
 </script>
 </body>
 </html>
