@@ -3,96 +3,376 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GET 102 · Design Thinking & Engineering Graphics</title>
+    <title>GET 102 · Engineering Graphics & Solid Modeling Exam</title>
     <style>
         :root {
-            --bg: #f5f6fa; --card-bg: #ffffff; --primary: #2c3e50; --primary-dark: #1a252f;
-            --accent: #1a1a2e; --text: #2d3436; --text-light: #636e72; --border: #dfe6e9;
-            --correct: #00b894; --incorrect: #e17055; --warning: #fdcb6e;
-            --shadow: 0 4px 20px rgba(0,0,0,0.08); --radius: 16px; --transition: 0.3s ease;
+            --moodle-bg: #f5f5f5;
+            --moodle-white: #ffffff;
+            --moodle-primary: #0f6cbf;
+            --moodle-primary-dark: #0a4f8a;
+            --moodle-success: #1e8e3e;
+            --moodle-danger: #d93025;
+            --moodle-warning: #f9ab00;
+            --moodle-text: #212529;
+            --moodle-muted: #5f6368;
+            --moodle-border: #dadce0;
+            --moodle-light-bg: #e8f0fe;
+            --moodle-correct-bg: #e6f4ea;
+            --moodle-incorrect-bg: #fce8e6;
+            --moodle-correct-border: #1e8e3e;
+            --moodle-incorrect-border: #d93025;
+            --moodle-card-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
+            --moodle-radius: 4px;
+            --moodle-transition: 0.2s ease;
         }
         *{margin:0;padding:0;box-sizing:border-box;}
         body{
-            font-family:'Segoe UI',Inter,system-ui,sans-serif;background:var(--bg);
-            min-height:100vh;display:flex;align-items:center;justify-content:center;
-            padding:20px;line-height:1.6;color:var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--moodle-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.5;
+            color: var(--moodle-text);
         }
         .container{
-            width:100%;max-width:850px;background:var(--card-bg);
-            border-radius:var(--radius);box-shadow:var(--shadow);
-            padding:32px 28px;position:relative;overflow:hidden;transition:var(--transition);
+            width: 100%;
+            max-width: 800px;
+            background: var(--moodle-white);
+            border-radius: 8px;
+            box-shadow: var(--moodle-card-shadow);
+            padding: 0;
+            overflow: hidden;
         }
-        .quiz-header{text-align:center;margin-bottom:20px;}
-        .quiz-header .eng-icon{font-size:2.2rem;display:block;margin-bottom:4px;}
-        .quiz-header h1{font-size:1.5rem;color:var(--primary-dark);font-weight:700;}
-        .subtitle{font-size:0.85rem;color:var(--text-light);margin-top:4px;}
-        .screen{display:none;animation:fadeIn 0.4s;}
+        /* Moodle Header Bar */
+        .moodle-header{
+            background: var(--moodle-primary);
+            color: #fff;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+        .moodle-header .course-name{
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .moodle-header .quiz-badge{
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        /* Content Area */
+        .content-area{
+            padding: 20px 24px;
+        }
+        .screen{display:none;animation:fadeIn 0.3s;}
         .screen.active{display:block;}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-        .start-options{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:24px 0 18px;}
-        .start-btn{
-            flex:1;min-width:150px;padding:22px 16px;border:2px solid var(--border);
-            border-radius:var(--radius);background:var(--card-bg);cursor:pointer;
-            text-align:center;font-weight:600;transition:var(--transition);color:var(--text);
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+        /* Start Screen */
+        .quiz-info-box{
+            background: var(--moodle-light-bg);
+            border-left: 4px solid var(--moodle-primary);
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: var(--moodle-radius);
         }
-        .start-btn:hover{border-color:var(--primary);box-shadow:0 8px 20px rgba(44,62,80,0.12);transform:translateY(-2px);}
-        .start-btn .icon{font-size:2.2rem;display:block;margin-bottom:4px;}
-        .start-btn .badge{background:var(--primary);color:#fff;font-size:0.75rem;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px;}
-        .start-info{font-size:0.8rem;color:var(--text-light);text-align:center;}
-        .progress-wrap{margin-bottom:16px;}
-        .progress-stats{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-light);margin-bottom:4px;}
-        .progress-bar{height:8px;background:var(--border);border-radius:10px;overflow:hidden;}
-        .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#5d7b93);border-radius:10px;transition:width 0.4s;}
-        .question-dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
-        .dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:var(--transition);}
-        .dot.answered{background:var(--primary);opacity:0.6;}
-        .dot.current{background:var(--primary);transform:scale(1.5);box-shadow:0 0 0 4px rgba(44,62,80,0.2);}
-        .dot.skipped{background:var(--warning);}
-        .question-card{background:#fafbfc;border-radius:12px;padding:18px;margin-bottom:12px;border:1px solid var(--border);}
-        .question-number{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);font-weight:700;margin-bottom:6px;}
-        .question-text{font-size:1.05rem;font-weight:600;color:var(--text);}
-        .options-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+        .quiz-info-box h3{
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--moodle-primary);
+        }
+        .quiz-info-box ul{
+            list-style: none;
+            font-size: 0.9rem;
+            color: var(--moodle-muted);
+        }
+        .quiz-info-box ul li{
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .quiz-info-box ul li::before{
+            content: '▸';
+            color: var(--moodle-primary);
+            font-weight: bold;
+        }
+        .warning-note{
+            background: #fff8e1;
+            border: 1px solid #f9ab00;
+            padding: 12px 16px;
+            border-radius: var(--moodle-radius);
+            margin: 12px 0;
+            font-size: 0.85rem;
+            color: #5f4b00;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .warning-note .warn-icon{
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .moodle-btn{
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 24px;
+            border-radius: var(--moodle-radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--moodle-transition);
+            text-decoration: none;
+        }
+        .moodle-btn-primary{
+            background: var(--moodle-primary);
+            color: #fff;
+        }
+        .moodle-btn-primary:hover{
+            background: var(--moodle-primary-dark);
+        }
+        .moodle-btn-outline{
+            background: #fff;
+            border: 1px solid var(--moodle-border);
+            color: var(--moodle-text);
+        }
+        .moodle-btn-outline:hover{
+            background: #f8f9fa;
+        }
+        .moodle-btn-danger{
+            background: #fff;
+            border: 1px solid var(--moodle-danger);
+            color: var(--moodle-danger);
+        }
+        .moodle-btn-danger:hover{
+            background: #fce8e6;
+        }
+
+        /* Timer */
+        .timer-bar{
+            background: #fff;
+            border: 1px solid var(--moodle-border);
+            padding: 8px 16px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--moodle-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            border-radius: var(--moodle-radius);
+        }
+        .timer-bar.warning{
+            background: #fce8e6;
+            border-color: var(--moodle-danger);
+            color: var(--moodle-danger);
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+
+        /* Progress */
+        .progress-wrap{margin-bottom: 16px;}
+        .progress-stats{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--moodle-muted);margin-bottom:4px;}
+        .progress-bar{height:6px;background:var(--moodle-border);border-radius:3px;overflow:hidden;}
+        .progress-fill{height:100%;background:var(--moodle-primary);border-radius:3px;transition:width 0.4s;}
+
+        /* Question Card */
+        .question-card{
+            background: var(--moodle-white);
+            border: 1px solid var(--moodle-border);
+            border-radius: var(--moodle-radius);
+            padding: 20px;
+            margin-bottom: 12px;
+        }
+        .question-number{
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--moodle-muted);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .question-text{
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--moodle-text);
+            line-height: 1.6;
+        }
+
+        /* Options */
+        .options-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:6px;}
         .option-item{
-            padding:14px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;background:#fff;
-            display:flex;align-items:center;gap:10px;transition:var(--transition);font-size:0.95rem;user-select:none;
+            padding: 12px 16px;
+            border: 1px solid var(--moodle-border);
+            border-radius: var(--moodle-radius);
+            cursor: pointer;
+            background: var(--moodle-white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--moodle-transition);
+            font-size: 0.9rem;
+            user-select: none;
         }
-        .option-item:hover{border-color:#b2bec3;background:#f8f9fa;}
-        .option-item.selected{border-color:var(--primary);background:#e9ecef;font-weight:600;}
-        .option-item .radio-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;
-            display:flex;align-items:center;justify-content:center;transition:var(--transition);}
-        .option-item.selected .radio-dot{border-color:var(--primary);background:var(--primary);}
-        .option-item.selected .radio-dot::after{content:'';width:6px;height:6px;background:#fff;border-radius:50%;}
-        .option-item .opt-letter{font-weight:700;color:var(--primary);width:24px;}
-        .nav-buttons{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:18px;}
-        .btn{padding:11px 20px;border-radius:25px;border:none;cursor:pointer;font-weight:600;font-size:0.9rem;
-            transition:var(--transition);display:inline-flex;align-items:center;gap:6px;}
-        .btn-outline{background:#fff;border:2px solid var(--border);color:var(--text);}
-        .btn-outline:hover{border-color:var(--primary);color:var(--primary);}
-        .btn-primary{background:var(--primary);color:#fff;border:2px solid var(--primary);}
-        .btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark);}
-        .btn-submit{background:var(--accent);color:#fff;border:2px solid var(--accent);font-size:1rem;padding:13px 32px;}
-        .btn-submit:hover{background:#2d2d4e;}
-        .btn:disabled{opacity:0.5;pointer-events:none;}
-        .results-card{text-align:center;}
-        .score-circle{width:130px;height:130px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;
-            justify-content:center;flex-direction:column;border:6px solid var(--primary);font-weight:700;}
-        .score-circle .big-score{font-size:2.8rem;color:var(--primary);}
-        .score-circle .total{font-size:0.9rem;color:var(--text-light);}
-        .result-message{font-size:1.1rem;margin-bottom:20px;font-weight:500;}
-        .review-section{text-align:left;margin-top:24px;max-height:400px;overflow-y:auto;padding-right:8px;}
-        .review-item{background:#fafbfc;border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid var(--border);font-size:0.9rem;}
-        .review-item.wrong{border-left-color:var(--incorrect);background:#fffaf9;}
-        .review-item.correct-r{border-left-color:var(--correct);background:#f9fffb;}
-        .review-item .rev-q{font-weight:600;margin-bottom:4px;}
-        .review-item .rev-ans{font-size:0.82rem;color:var(--text-light);}
-        .correct-ans{color:var(--correct);font-weight:600;}
-        .your-ans{color:var(--incorrect);font-weight:600;text-decoration:line-through;}
-        .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--primary-dark);color:#fff;
-            padding:10px 22px;border-radius:25px;font-size:0.85rem;font-weight:600;z-index:999;opacity:0;pointer-events:none;transition:opacity 0.3s;}
-        .toast.show{opacity:1;}
-        .shuffle-badge{display:inline-block;background:#e8f5e9;color:#2e7d32;font-size:0.7rem;padding:2px 8px;border-radius:10px;margin-left:6px;font-weight:600;}
+        .option-item:hover{background: #f8f9fa;border-color: #bdc1c6;}
+        .option-item.selected{
+            background: var(--moodle-light-bg);
+            border-color: var(--moodle-primary);
+            font-weight: 500;
+        }
+        .option-item .radio-dot{
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--moodle-border);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--moodle-transition);
+        }
+        .option-item.selected .radio-dot{
+            border-color: var(--moodle-primary);
+            background: var(--moodle-primary);
+        }
+        .option-item.selected .radio-dot::after{
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        .option-item .opt-letter{
+            font-weight: 600;
+            color: var(--moodle-primary);
+            width: 22px;
+            font-size: 0.85rem;
+        }
+
+        /* Navigation */
+        .nav-buttons{
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+        .nav-center{display:flex;gap:8px;}
+
+        /* Moodle Quiz Navigation (dots like Moodle) */
+        .moodle-nav{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin: 12px 0;
+        }
+        .moodle-nav .nav-dot{
+            width: 28px;
+            height: 28px;
+            border-radius: var(--moodle-radius);
+            border: 1px solid var(--moodle-border);
+            background: var(--moodle-white);
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--moodle-transition);
+            color: var(--moodle-text);
+        }
+        .nav-dot.answered{background: #d2e3fc;border-color: var(--moodle-primary);color: var(--moodle-primary);}
+        .nav-dot.current{background: var(--moodle-primary);color: #fff;border-color: var(--moodle-primary);}
+        .nav-dot.skipped{background: #fef7e0;border-color: var(--moodle-warning);color: #5f4b00;}
+
+        /* Results Screen */
+        .results-table{
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+        .results-table th{
+            background: #f8f9fa;
+            border-bottom: 2px solid var(--moodle-border);
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--moodle-muted);
+        }
+        .results-table td{
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--moodle-border);
+        }
+        .results-table .correct-row td{
+            background: var(--moodle-correct-bg);
+        }
+        .results-table .incorrect-row td{
+            background: var(--moodle-incorrect-bg);
+        }
+        .status-badge{
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-correct{background: #e6f4ea;color: var(--moodle-success);}
+        .status-incorrect{background: #fce8e6;color: var(--moodle-danger);}
+        .status-partial{background: #fef7e0;color: #5f4b00;}
+
+        .grade-summary{
+            background: var(--moodle-light-bg);
+            border: 1px solid var(--moodle-primary);
+            border-radius: var(--moodle-radius);
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .grade-summary .grade-number{
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--moodle-primary);
+        }
+        .grade-summary .grade-label{
+            font-size: 0.9rem;
+            color: var(--moodle-muted);
+        }
+
+        .toast{
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #323232;
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .toast.show{opacity: 1;}
+
         @media(max-width:600px){
-            .container{padding:20px 14px;}.start-btn{min-width:120px;padding:16px 12px;}.question-text{font-size:0.95rem;}
+            .content-area{padding: 14px;}
+            .question-card{padding: 14px;}
+            .nav-dot{width: 24px;height: 24px;font-size: 0.65rem;}
         }
     </style>
 </head>
@@ -100,433 +380,314 @@
 <div class="container" id="mainContainer">
     <div class="toast" id="toast"></div>
 
-    <!-- START SCREEN -->
-    <div class="screen active" id="startScreen">
-        <div class="quiz-header">
-            <span class="eng-icon">✏️</span>
-            <h1>GET 102 · Design Thinking & Engineering Graphics</h1>
-            <p class="subtitle">200 Questions — Design Thinking, Graphics, Lines & AutoCAD <span class="shuffle-badge">🔀 Options Shuffled</span></p>
-        </div>
-        <p style="text-align:center;font-weight:500;">Select quiz length:</p>
-        <div class="start-options">
-            <button class="start-btn" onclick="startQuiz(30)"><span class="icon">📝</span>30 Questions<span class="badge">~30 min</span></button>
-            <button class="start-btn" onclick="startQuiz(60)"><span class="icon">📚</span>60 Questions<span class="badge">~60 min</span></button>
-        </div>
-        <p class="start-info">🎲 Questions randomly selected · 🔀 Options rearranged each time · Resume supported</p>
-        <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
-            <button class="btn btn-outline" onclick="resumeQuiz()">🔄 Resume previous quiz</button>
-            <button class="btn btn-outline" onclick="clearStorage()" style="margin-left:8px;color:#e17055;">🗑 Clear saved</button>
-        </div>
+    <!-- Moodle Header -->
+    <div class="moodle-header">
+        <span class="course-name">GET 102 · Engineering Graphics & Solid Modeling</span>
+        <span class="quiz-badge">Timed Exam</span>
     </div>
 
-    <!-- QUIZ SCREEN -->
-    <div class="screen" id="quizScreen">
-        <div class="quiz-header"><span style="font-size:1.8rem;">📐</span></div>
-        <div class="progress-wrap">
-            <div class="progress-stats"><span id="progressLabel">Question 1 of 30</span><span id="answeredCount">0 answered</span></div>
-            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
-            <div class="question-dots" id="questionDots"></div>
-        </div>
-        <div class="question-card">
-            <div class="question-number" id="questionNumber">QUESTION 1</div>
-            <div class="question-text" id="questionText"></div>
-        </div>
-        <ul class="options-list" id="optionsList"></ul>
-        <div class="nav-buttons">
-            <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Prev</button>
-            <div class="nav-center">
-                <button class="btn btn-outline" id="btnSkip" onclick="skipQuestion()">⏭ Skip</button>
-                <button class="btn btn-submit" id="btnSubmit" onclick="submitQuiz()">✅ Submit</button>
+    <div class="content-area">
+        <!-- START SCREEN -->
+        <div class="screen active" id="startScreen">
+            <h2 style="font-size:1.3rem;margin-bottom:4px;">📝 70‑Question Exam</h2>
+            <p style="color:var(--moodle-muted);font-size:0.9rem;">Attempts allowed: 1 &nbsp;|&nbsp; Time limit: 50 minutes</p>
+
+            <div class="quiz-info-box">
+                <h3>Exam Instructions</h3>
+                <ul>
+                    <li>You have <strong>50 minutes</strong> to complete 70 questions.</li>
+                    <li>Questions are randomly selected from a bank of over 300.</li>
+                    <li>Do not leave or switch tabs — the exam will terminate.</li>
+                    <li>Once started, the timer cannot be paused.</li>
+                </ul>
             </div>
-            <button class="btn btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
-        </div>
-    </div>
 
-    <!-- RESULTS SCREEN -->
-    <div class="screen" id="resultsScreen">
-        <div class="results-card">
-            <div class="quiz-header"><h1>📊 Quiz Results</h1></div>
-            <div class="score-circle"><span class="big-score" id="scorePercent">0%</span><span class="total" id="scoreFraction">0/30</span></div>
-            <div class="result-message" id="resultMessage"></div>
-            <button class="btn btn-primary" onclick="restartQuiz()">🔄 New Quiz</button>
-            <button class="btn btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">🔍 Review</button>
+            <div class="warning-note">
+                <span class="warn-icon">⚠️</span>
+                <span>This exam uses tab‑switch detection. Leaving this tab will automatically end your attempt.</span>
+            </div>
+
+            <div style="text-align:center;margin-top:20px;">
+                <button class="moodle-btn moodle-btn-primary" onclick="startExam()" style="font-size:1rem;padding:12px 32px;">
+                    🚀 Start Attempt
+                </button>
+            </div>
+
+            <div id="resumeSection" style="text-align:center;margin-top:14px;display:none;">
+                <button class="moodle-btn moodle-btn-outline" onclick="resumeQuiz()">🔄 Resume previous attempt</button>
+                <button class="moodle-btn moodle-btn-danger" onclick="clearStorage()" style="margin-left:8px;">🗑 Clear saved</button>
+            </div>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div class="screen" id="quizScreen">
+            <div class="timer-bar" id="timerDisplay">⏱️ 50:00</div>
+            <div class="progress-wrap">
+                <div class="progress-stats"><span id="progressLabel">Question 1 of 70</span><span id="answeredCount">0 answered</span></div>
+                <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+            </div>
+            <!-- Moodle-style question navigation dots -->
+            <div class="moodle-nav" id="questionDots"></div>
+
+            <div class="question-card">
+                <div class="question-number" id="questionNumber">QUESTION 1</div>
+                <div class="question-text" id="questionText"></div>
+            </div>
+            <ul class="options-list" id="optionsList"></ul>
+            <div class="nav-buttons">
+                <button class="moodle-btn moodle-btn-outline" id="btnPrev" onclick="navigate(-1)">◀ Previous</button>
+                <div class="nav-center">
+                    <button class="moodle-btn moodle-btn-outline" id="btnSkip" onclick="skipQuestion()">Flag for later</button>
+                    <button class="moodle-btn moodle-btn-primary" id="btnSubmit" onclick="submitExam()">✅ Submit all and finish</button>
+                </div>
+                <button class="moodle-btn moodle-btn-outline" id="btnNext" onclick="navigate(1)">Next ▶</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div class="screen" id="resultsScreen">
+            <h2 style="font-size:1.3rem;margin-bottom:4px;">📊 Exam Results</h2>
+            <p style="color:var(--moodle-muted);font-size:0.9rem;">Attempt finished · Your answers have been submitted</p>
+
+            <div class="grade-summary">
+                <div class="grade-label">Your Grade</div>
+                <div class="grade-number" id="scorePercent">0%</div>
+                <div style="color:var(--moodle-muted);margin-top:4px;" id="scoreFraction">0 out of 70</div>
+            </div>
+            <div class="result-message" id="resultMessage" style="text-align:center;font-weight:500;margin-bottom:16px;"></div>
+
+            <div style="text-align:center;margin-bottom:20px;">
+                <button class="moodle-btn moodle-btn-primary" onclick="restartExam()">🔄 Re‑attempt (New Questions)</button>
+                <button class="moodle-btn moodle-btn-outline" onclick="reviewAnswers()" style="margin-left:8px;">📋 Review Questions</button>
+            </div>
+
             <div class="review-section" id="reviewSection" style="display:none;"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // ========== 200 QUESTION BANK (with option shuffling) ==========
-    // Each question stores the correct answer TEXT (not index), so shuffling doesn't break it.
+    // ========== 300+ QUESTION BANK ==========
     const questionBank = [
-        // SECTION A: DESIGN THINKING & ENGINEERING GRAPHICS (1-100)
-        { q: "What is the primary focus of design thinking?", opts: ["Finding technological breakthroughs", "Finding human needs and creating new solutions", "Reducing production costs", "Following strict corporate rules"], correct: "Finding human needs and creating new solutions" },
-        { q: "Design thinking has evolved from a profession into a novel approach that is all of the following EXCEPT:", opts: ["Human-centred", "Collaborative", "Isolated and secretive", "Iterative and visual"], correct: "Isolated and secretive" },
-        { q: "What is the biggest difference between design thinking and classical design?", opts: ["Use of computers", "Collaborative and multidisciplinary approach", "Focus on profit", "Individual work"], correct: "Collaborative and multidisciplinary approach" },
-        { q: "In traditional corporate projects, people work together but are not necessarily involved in all steps. This is called:", opts: ["Collaboration", "Co-creation", "Cooperation", "Competition"], correct: "Cooperation" },
-        { q: "In design thinking, team members ideally work and decide together in all steps. This is called:", opts: ["Cooperation", "Collaboration", "Delegation", "Supervision"], correct: "Collaboration" },
-        { q: "Which of the following is NOT one of the three core elements of design thinking?", opts: ["People", "Place", "Profit", "Process"], correct: "Profit" },
-        { q: "The term that can be used almost synonymously with design thinking is:", opts: ["Profit-centred design", "Human-centred design", "Technology-centred design", "Machine-centred design"], correct: "Human-centred design" },
-        { q: "A design thinking team should ideally be diverse in terms of:", opts: ["Gender, backgrounds, and skills", "Only technical skills", "Only age", "Only educational level"], correct: "Gender, backgrounds, and skills" },
-        { q: "The concept of the 'T-shaped person' consists of:", opts: ["Depth of expertise (vertical) and ability to collaborate (horizontal)", "Height and weight", "Technical and non-technical skills only", "Management and labour skills"], correct: "Depth of expertise (vertical) and ability to collaborate (horizontal)" },
-        { q: "The horizontal line of the 'T' in a T-shaped person symbolizes:", opts: ["Depth of expertise", "Years of experience", "Ability to reach out to others and bridge disciplines", "Number of projects completed"], correct: "Ability to reach out to others and bridge disciplines" },
-        { q: "In design thinking, team members should take an _____ perspective to learn something new.", opts: ["Expert", "Innocent", "Authoritative", "Judgemental"], correct: "Innocent" },
-        { q: "What should a design-thinking team do if they lack diversity in expertise?", opts: ["Cancel the project", "Embrace diversity in character or working style", "Copy other teams", "Ignore the problem"], correct: "Embrace diversity in character or working style" },
-        { q: "Design-thinking teams maintain good team spirit by:", opts: ["Avoiding emotions", "Exchanging constantly about behaviour, feelings, and emotions", "Working in isolation", "Competing with each other"], correct: "Exchanging constantly about behaviour, feelings, and emotions" },
-        { q: "At the core of a design-thinking project is:", opts: ["The profit margin", "The needs, wishes, and context of the people it serves", "The latest technology", "The manager's opinion"], correct: "The needs, wishes, and context of the people it serves" },
-        { q: "In social activism or social work, which term is more suitable than 'users'?", opts: ["Customers", "Clients", "Audience or human being", "Subjects"], correct: "Audience or human being" },
-        { q: "Design thinkers try to understand the target audience and other important people through:", opts: ["Guesswork", "Thorough ethnographic research", "Reading only", "Online surveys only"], correct: "Thorough ethnographic research" },
-        { q: "In an ideal design thinking workspace, the room should:", opts: ["Have heavy, fixed furniture", "Be flexible and inspire creativity", "Have strict policies against moving furniture", "Be a traditional conference room"], correct: "Be flexible and inspire creativity" },
-        { q: "According to David and Tom Kelley, design thinking is a way of finding human needs and creating:", opts: ["Expensive solutions", "Old solutions", "New solutions", "Complex solutions"], correct: "New solutions" },
-        { q: "Why do many organizations look at design thinking?", opts: ["To reduce staff", "The need for innovation", "To follow trends", "To increase paperwork"], correct: "The need for innovation" },
-        { q: "At the beginning of a design thinking project, the team might feel lost because:", opts: ["They are not smart enough", "They cannot know the exact outcome at the outset", "The process is linear", "There is no research involved"], correct: "They cannot know the exact outcome at the outset" },
-        { q: "An experienced design thinker will trust the process because:", opts: ["It never changes", "They have seen it work many times", "It is cheap", "It requires no effort"], correct: "They have seen it work many times" },
-        { q: "Empathy is the centerpiece of a:", opts: ["Profit-centred design process", "Human-centred design process", "Technology-centred design process", "Random design process"], correct: "Human-centred design process" },
-        { q: "The Empathize mode involves understanding:", opts: ["Only the physical needs of people", "How people do things, why, their emotions, and what is meaningful to them", "Only the budget", "Only the timeline"], correct: "How people do things, why, their emotions, and what is meaningful to them" },
-        { q: "As a design thinker, the problems you solve are:", opts: ["Always your own", "Rarely your own; they belong to a particular group of people", "Always technical", "Always financial"], correct: "Rarely your own; they belong to a particular group of people" },
-        { q: "Observing what people do helps you learn about:", opts: ["Their salary", "What they need", "Their home address", "Their age"], correct: "What they need" },
-        { q: "The best solutions come from:", opts: ["The most expensive technology", "The best insights into human behaviour", "The largest team", "The longest timeline"], correct: "The best insights into human behaviour" },
-        { q: "Why is recognizing insights difficult?", opts: ["Because insights are not important", "Because our minds automatically filter out information", "Because there are too many insights", "Because insights are always wrong"], correct: "Because our minds automatically filter out information" },
-        { q: "Engaging with people directly reveals:", opts: ["Only their job title", "How they think and the values they hold", "Only their age", "Only their location"], correct: "How they think and the values they hold" },
-        { q: "One of the most powerful realizations from observation comes from:", opts: ["Reading reports", "Noticing a disconnect between what someone says and what they do", "Looking at photographs", "Measuring distances"], correct: "Noticing a disconnect between what someone says and what they do" },
-        { q: "During engagement, you should always ask 'Why?' to:", opts: ["Annoy the person", "Uncover deeper meaning", "End the conversation quickly", "Change the subject"], correct: "Uncover deeper meaning" },
-        { q: "The process of sharing what you found with fellow designers and capturing important parts visually is called:", opts: ["Hiding", "Unpacking", "Deleting", "Ignoring"], correct: "Unpacking" },
-        { q: "The goal of the Define mode is to craft a:", opts: ["Long report", "Meaningful and actionable problem statement (point-of-view)", "Complex diagram", "Financial budget"], correct: "Meaningful and actionable problem statement (point-of-view)" },
-        { q: "The Define mode is essentially about:", opts: ["Confusion", "Sensemaking", "Brainstorming", "Prototyping"], correct: "Sensemaking" },
-        { q: "A great transition step from Define to Ideate is to create a list of:", opts: ["'How-Might-We...?' questions", "Final products", "Budget items", "Employee names"], correct: "'How-Might-We...?' questions" },
-        { q: "Ideation is about pushing for:", opts: ["A single best solution", "The widest possible range of ideas", "Only profitable ideas", "Only easy ideas"], correct: "The widest possible range of ideas" },
-        { q: "The determination of the best solution is discovered through:", opts: ["Manager's decision", "User testing and feedback", "Guesswork", "Copying competitors"], correct: "User testing and feedback" },
-        { q: "To avoid losing innovation potential, the text recommends a process of:", opts: ["Random selection", "Considered selection with voting criteria", "Only one idea", "No selection"], correct: "Considered selection with voting criteria" },
-        { q: "One suggested voting criterion for selecting ideas is:", opts: ["The cheapest", "The most likely to delight", "The fastest to make", "The most common"], correct: "The most likely to delight" },
-        { q: "Engineering graphics is the geometric representation of solutions according to:", opts: ["Personal preferences", "Required national and international standards", "Artist's imagination", "Local traditions only"], correct: "Required national and international standards" },
-        { q: "Engineering graphics is primarily the language of:", opts: ["Doctors", "Lawyers", "Engineers", "Artists"], correct: "Engineers" },
-        { q: "Engineering drawing is considered the _____ language of all engineers.", opts: ["Difficult", "Universal", "Optional", "Secret"], correct: "Universal" },
-        { q: "Despite social, economic, or cultural barriers, drawings can be effectively used:", opts: ["Only in one country", "Only in developed countries", "In other countries as well", "Only in English-speaking countries"], correct: "In other countries as well" },
-        { q: "Which of the following is an importance of engineering graphics?", opts: ["To create art", "To communicate technical information without ambiguity", "To entertain people", "To write poems"], correct: "To communicate technical information without ambiguity" },
-        { q: "Engineering graphics are essential documents for:", opts: ["Product development and regular production", "Cooking", "Music composition", "Sports training"], correct: "Product development and regular production" },
-        { q: "Machine drawing is concerned with drawing of:", opts: ["Buildings", "Landscapes", "Machine parts or components", "Human figures"], correct: "Machine parts or components" },
-        { q: "Machine drawing is usually drawn through a number of _____ views.", opts: ["Isometric", "Perspective", "Orthographic", "Pictorial"], correct: "Orthographic" },
-        { q: "Working drawing is also called:", opts: ["Artistic drawing", "Production drawing", "Sketch", "Painting"], correct: "Production drawing" },
-        { q: "A working drawing contains all the following EXCEPT:", opts: ["Dimensions", "Limits", "Surface finish specifications", "The artist's signature"], correct: "The artist's signature" },
-        { q: "An assembly drawing shows:", opts: ["Only one part", "The various parts of a machine in their proper working position", "A landscape", "A portrait"], correct: "The various parts of a machine in their proper working position" },
-        { q: "A part drawing that includes production details is called a:", opts: ["Sketch", "Production drawing or working drawing", "Artistic drawing", "Freehand drawing"], correct: "Production drawing or working drawing" },
-        { q: "The borderline defines the drawing area and should be ____ from the edge.", opts: ["1-2 cm", "8-10 cm", "15-20 cm", "0.5 cm"], correct: "8-10 cm" },
-        { q: "Design thinking requires an attitude that is mindful of people on at least two sides:", opts: ["The team and the target audience", "The manager and the shareholders", "The suppliers and the distributors", "The government and the public"], correct: "The team and the target audience" },
-        { q: "In design thinking, 'cooperation' means:", opts: ["Everyone does everything together", "People work together but not necessarily in all steps", "People work alone", "No one works"], correct: "People work together but not necessarily in all steps" },
-        { q: "A design thinker will bring on other perspectives through:", opts: ["Isolation", "Interaction or co-creation with the target audience", "Ignoring feedback", "Working only with experts"], correct: "Interaction or co-creation with the target audience" },
-        { q: "Games and fun team activities help team members to:", opts: ["Waste time", "Get to know each other in a richer way", "Avoid work", "Create conflicts"], correct: "Get to know each other in a richer way" },
-        { q: "Design thinkers try to understand stakeholders like fathers who might oppose girls' education because:", opts: ["They are unimportant", "They are part of the system in which the team operates", "They are always right", "They are easy to ignore"], correct: "They are part of the system in which the team operates" },
-        { q: "Traditional offices with heavy furniture are problematic for design thinking because:", opts: ["They are expensive", "They reduce flexibility", "They are beautiful", "They are modern"], correct: "They reduce flexibility" },
-        { q: "The little word 'new' in the definition of design thinking carries importance because of the need for:", opts: ["Old solutions", "Innovation", "Tradition", "Repetition"], correct: "Innovation" },
-        { q: "If you know exactly what the outcome of a project will be, you:", opts: ["Still need design thinking", "Do not need a design-thinking approach", "Need more empathy", "Need more prototyping"], correct: "Do not need a design-thinking approach" },
-        { q: "Design thinking is especially helpful when challenges are:", opts: ["Simple with one solution", "Complex and can be solved in many ways", "Already solved", "Not important"], correct: "Complex and can be solved in many ways" },
-        { q: "Being mindful of the process helps the team to:", opts: ["Get lost", "Avoid getting lost in the openness of the endeavour", "Work faster without thinking", "Ignore the user"], correct: "Avoid getting lost in the openness of the endeavour" },
-        { q: "In the research phase, the team tries to get a _____ view.", opts: ["90-degree", "180-degree", "360-degree", "45-degree"], correct: "360-degree" },
-        { q: "Empathy gives us 'a fresh set of eyes' to:", opts: ["See things as we always have", "See things with new perspective", "Ignore user needs", "Focus only on technology"], correct: "See things with new perspective" },
-        { q: "Good designs are built on a solid understanding of people's:", opts: ["Income only", "Beliefs and values", "Addresses", "Hobbies only"], correct: "Beliefs and values" },
-        { q: "To empathize, you should do all the following EXCEPT:", opts: ["Observe", "Engage", "Judge immediately", "Watch and listen"], correct: "Judge immediately" },
-        { q: "Asking someone to show you how they complete a task combines:", opts: ["Observation and engagement", "Profit and loss", "Design and manufacturing", "Theory and practice only"], correct: "Observation and engagement" },
-        { q: "Having a conversation in someone's home or workplace can prompt deeper questions because:", opts: ["Homes are comfortable", "Stories are embodied in artifacts", "It is cheaper", "It is faster"], correct: "Stories are embodied in artifacts" },
-        { q: "The transition from Empathize to Define involves:", opts: ["Deleting all data", "Unpacking and synthesizing information", "Starting to build immediately", "Ignoring observations"], correct: "Unpacking and synthesizing information" },
-        { q: "In the Ideate mode, you focus on:", opts: ["Defining the problem", "Generating solutions", "Testing final products", "Empathizing more"], correct: "Generating solutions" },
-        { q: "A well-articulated point-of-view leads into ideation in a _____ way.", opts: ["Difficult", "Natural", "Unrelated", "Random"], correct: "Natural" },
-        { q: "Prototyping is recommended after:", opts: ["Selling the product", "Ideation and considered selection", "Final production", "User complaints"], correct: "Ideation and considered selection" },
-        { q: "Engineering graphics can be read and understood by all who have knowledge of:", opts: ["Art history", "Drawing principles", "Music theory", "Biology"], correct: "Drawing principles" },
-        { q: "Examples of human needs that engineering graphics solves include all EXCEPT:", opts: ["Shelter", "Transportation", "Making personal paintings", "Health care"], correct: "Making personal paintings" },
-        { q: "Engineering graphics is technically referred to as:", opts: ["Art", "Engineering drawing", "Sketching", "Painting"], correct: "Engineering drawing" },
-        { q: "Engineering drawings must be _____ drawn.", opts: ["Quickly", "Cheaply", "Correctly", "Beautifully (only)"], correct: "Correctly" },
-        { q: "Engineers use graphics to communicate to all the following EXCEPT:", opts: ["Executives", "Fabricators", "Customers", "Animals"], correct: "Animals" },
-        { q: "Engineering graphics are used as a guide for:", opts: ["Cooking", "Assembly of separate parts into a unit", "Gardening", "Writing novels"], correct: "Assembly of separate parts into a unit" },
-        { q: "Component drawings and assembly drawings belong to which class?", opts: ["Artistic drawing", "Machine drawing", "Landscape drawing", "Portrait drawing"], correct: "Machine drawing" },
-        { q: "A working drawing guides the craftsman on the _____ floor.", opts: ["Shop", "Dance", "Forest", "Kitchen"], correct: "Shop" },
-        { q: "The material used for the product and number of parts required are typically specified in a:", opts: ["Sketch", "Working drawing", "Poster", "Painting"], correct: "Working drawing" },
-        { q: "An assembly drawing is a design document containing:", opts: ["Only one part", "Full representation of a machine and data for assembly", "Only dimensions", "Only material specifications"], correct: "Full representation of a machine and data for assembly" },
-        { q: "A part drawing must follow the principles of:", opts: ["Perspective projection only", "Orthographic projection", "Freehand sketching only", "Isometric projection only"], correct: "Orthographic projection" },
-        { q: "The contour line is used to draw the:", opts: ["Centre line", "Hidden line", "Borderline", "Dimension line"], correct: "Borderline" },
-        { q: "According to the text, design thinking tools and mindsets can be used by:", opts: ["Only designers", "Design practitioners and other professionals", "Only engineers", "Only managers"], correct: "Design practitioners and other professionals" },
-        { q: "A design-thinking team ideally works together and decides together, meaning each member is involved in:", opts: ["Only the final step", "Only the first step", "All steps of the process", "Only the brainstorming step"], correct: "All steps of the process" },
-        { q: "The vertical line of the T-shaped person describes:", opts: ["Willingness to collaborate", "Depth of a given expertise", "Number of languages spoken", "Height of the person"], correct: "Depth of a given expertise" },
-        { q: "A true design thinker would always bring on other perspectives during a project through:", opts: ["Isolation", "Co-creation with the target audience", "Working alone", "Secrecy"], correct: "Co-creation with the target audience" },
-        { q: "The term 'user focus' in design thinking refers to:", opts: ["Focusing only on the product", "Focusing on the needs and context of the people served", "Focusing only on technology", "Focusing only on profit"], correct: "Focusing on the needs and context of the people served" },
-        { q: "In an ideal design thinking setup, the team should be able to:", opts: ["Never move furniture", "Decide what space they need at any moment", "Work only in fixed rooms", "Avoid changing anything"], correct: "Decide what space they need at any moment" },
-        { q: "The challenge for teams new to design thinking is to:", opts: ["Feel comfortable with knowing the exact outcome", "Feel comfortable with not knowing where the process will lead", "Avoid all research", "Skip prototyping"], correct: "Feel comfortable with not knowing where the process will lead" },
-        { q: "Observing physical manifestations of experiences allows you to infer:", opts: ["The cost of the product", "The intangible meaning of those experiences", "The weight of the object", "The colour preference"], correct: "The intangible meaning of those experiences" },
-        { q: "A good conversation in the empathize mode can surprise both designer and subject by:", opts: ["Being too long", "Unanticipated insights", "Being boring", "Having no questions"], correct: "Unanticipated insights" },
-        { q: "What people say they do, even if different from what they actually do, indicates:", opts: ["Their lying habits", "Their deeply held beliefs about the way the world is", "Their lack of intelligence", "Their memory problems"], correct: "Their deeply held beliefs about the way the world is" },
-        { q: "The Define mode crafts a problem statement that is:", opts: ["Vague and general", "Meaningful and actionable", "Impossible to understand", "Unrelated to the user"], correct: "Meaningful and actionable" },
-        { q: "Brainstorming topics that flow from your problem statement are often phrased as:", opts: ["'We will...'", "'How-Might-We...?'", "'It is impossible to...'", "'Never...'"], correct: "'How-Might-We...?'" },
-        { q: "Early in a design project, ideation is about:", opts: ["Finding a single best solution", "Pushing for a wide range of ideas", "Final production", "Deleting ideas"], correct: "Pushing for a wide range of ideas" },
-        { q: "To maintain innovation potential, the team should bring _____ ideas forward into prototyping.", opts: ["Only one", "Multiple", "No", "Only the cheapest"], correct: "Multiple" },
-        { q: "Engineering drawing is universal because:", opts: ["It uses only English words", "It is standardized with symbols and standard practice", "It is easy to copy", "It is always digital"], correct: "It is standardized with symbols and standard practice" },
-        { q: "The knowledge of engineering graphics is significant in:", opts: ["Cooking only", "Innovative design projects", "Music performance", "Sports coaching"], correct: "Innovative design projects" },
-        { q: "A production drawing contains all the following EXCEPT:", opts: ["Heat treatment instructions", "Surface finish specifications", "The artist's personal signature", "Dimensions and limits"], correct: "The artist's personal signature" },
-
-        // SECTION B: LINES IN ENGINEERING DRAWING (101-150)
-        { q: "Which line type is used to represent visible edges and outlines?", opts: ["Hidden line", "Continuous thick line", "Centre line", "Phantom line"], correct: "Continuous thick line" },
-        { q: "Hidden lines are typically drawn as:", opts: ["Continuous thick lines", "Dashed lines (medium thickness)", "Chain thin lines", "Wavy lines"], correct: "Dashed lines (medium thickness)" },
-        { q: "Centre lines are used to indicate:", opts: ["The outline of an object", "The axis of symmetry or holes", "Hidden features", "Cutting planes"], correct: "The axis of symmetry or holes" },
-        { q: "Centre lines are typically drawn as:", opts: ["Continuous thick lines", "Long-short-long thin chain lines", "Dashed lines", "Wavy lines"], correct: "Long-short-long thin chain lines" },
-        { q: "Which line type is used to show where a surface has been cut in a sectional view?", opts: ["Hidden line", "Cutting plane line", "Dimension line", "Extension line"], correct: "Cutting plane line" },
-        { q: "Dimension lines are usually terminated with:", opts: ["Circles", "Arrowheads or slashes", "Dots", "Squares"], correct: "Arrowheads or slashes" },
-        { q: "Extension lines are used to:", opts: ["Show hidden features", "Indicate the extent of a dimension", "Show centre lines", "Outline the object"], correct: "Indicate the extent of a dimension" },
-        { q: "A phantom line is used to show:", opts: ["Visible edges", "Alternate positions of moving parts", "Hidden edges", "Centre points"], correct: "Alternate positions of moving parts" },
-        { q: "Break lines (long break) are typically drawn as:", opts: ["Continuous thin lines", "Zigzag or ruled lines with breaks", "Dashed lines", "Chain lines"], correct: "Zigzag or ruled lines with breaks" },
-        { q: "Which line type has the highest priority (appears on top) when lines overlap?", opts: ["Hidden line", "Visible (continuous thick) line", "Centre line", "Dimension line"], correct: "Visible (continuous thick) line" },
-        { q: "The recommended thickness for a visible outline is typically:", opts: ["0.1 mm", "0.5 - 0.6 mm (thick)", "0.2 mm", "1.5 mm"], correct: "0.5 - 0.6 mm (thick)" },
-        { q: "Thin lines (e.g., dimension, extension, hatching) are typically:", opts: ["0.5 - 0.6 mm", "0.2 - 0.3 mm", "1.0 mm", "2.0 mm"], correct: "0.2 - 0.3 mm" },
-        { q: "Which line type is used to indicate hatching (section lining)?", opts: ["Continuous thick line", "Continuous thin line (often at 45°)", "Dashed thick line", "Chain line"], correct: "Continuous thin line (often at 45°)" },
-        { q: "A short break line (for a broken-out section) is usually:", opts: ["A straight thick line", "A freehand wavy line", "A chain line", "A dotted line"], correct: "A freehand wavy line" },
-        { q: "Which line type indicates that a feature is not visible from the current view?", opts: ["Visible line", "Hidden line (dashed)", "Centre line", "Stitch line"], correct: "Hidden line (dashed)" },
-        { q: "The gap between a dimension line and the object outline should be approximately:", opts: ["0 mm (touching)", "1-2 mm", "5-10 mm", "15 mm"], correct: "1-2 mm" },
-        { q: "Which line is used to show the path of a moving part in different positions?", opts: ["Hidden line", "Phantom line", "Centre line", "Visible line"], correct: "Phantom line" },
-        { q: "Cutting plane lines are drawn as:", opts: ["Continuous thin lines", "Thick chain lines with arrows or letters", "Dashed lines", "Wavy lines"], correct: "Thick chain lines with arrows or letters" },
-        { q: "The arrowhead on a dimension line should be:", opts: ["Open and large", "Closed, sharp, and proportional (3:1 ratio approx.)", "Circular", "Square"], correct: "Closed, sharp, and proportional (3:1 ratio approx.)" },
-        { q: "Leader lines are used to:", opts: ["Outline the object", "Connect a note or dimension to a feature", "Show hidden edges", "Show centre lines"], correct: "Connect a note or dimension to a feature" },
-        { q: "A leader line should typically end with:", opts: ["An arrowhead or a dot", "A square", "A circle", "No termination"], correct: "An arrowhead or a dot" },
-        { q: "Which line type is used to indicate the boundaries of a detail view?", opts: ["Hidden line", "Phantom line", "Chain line (thick) with arrows or letters", "Visible line"], correct: "Chain line (thick) with arrows or letters" },
-        { q: "Stitch lines (for sewing or stitching) are typically:", opts: ["Continuous thick", "Dashed (short dashes)", "Chain thin with short dashes", "Zigzag"], correct: "Chain thin with short dashes" },
-        { q: "When two hidden lines cross, they should:", opts: ["Both be visible with no break", "One should break", "Both should break", "Become visible"], correct: "Both be visible with no break" },
-        { q: "When a hidden line meets a visible line, the hidden line should:", opts: ["Touch the visible line", "Leave a gap", "Cross over", "Become thicker"], correct: "Touch the visible line" },
-        { q: "Dimension lines should not be drawn:", opts: ["In between views", "Through the object (unless unavoidable)", "Outside the views", "Horizontally"], correct: "Through the object (unless unavoidable)" },
-        { q: "Extension lines should have a small gap (about 1-2 mm) from the:", opts: ["Dimension line", "Object outline", "Arrowhead", "Centre line"], correct: "Object outline" },
-        { q: "Which line type is used to show screw threads?", opts: ["Visible line", "Chain line (thin) and continuous thin (for thread roots)", "Hidden line only", "Phantom line only"], correct: "Chain line (thin) and continuous thin (for thread roots)" },
-        { q: "The 'chain line' can be used for:", opts: ["Centre lines, pitch circles, and cutting planes", "Visible outlines", "Hidden features only", "Break lines only"], correct: "Centre lines, pitch circles, and cutting planes" },
-        { q: "A wavy continuous line is typically used as a:", opts: ["Centre line", "Long break line", "Dimension line", "Cutting plane line"], correct: "Long break line" },
-        { q: "The main function of a border line is to:", opts: ["Look decorative", "Define the drawing area", "Show hidden features", "Indicate dimensions"], correct: "Define the drawing area" },
-        { q: "Border lines are typically:", opts: ["Thin and continuous", "Thick and continuous", "Dashed", "Chain thin"], correct: "Thick and continuous" },
-        { q: "Which line type takes precedence if a centre line and a hidden line overlap?", opts: ["Centre line", "Hidden line", "Visible line", "Dimension line"], correct: "Hidden line" },
-        { q: "The minimum space between parallel dimension lines is typically:", opts: ["1 mm", "5-8 mm", "15 mm", "20 mm"], correct: "5-8 mm" },
-        { q: "A 'pitch circle' is typically indicated by a:", opts: ["Visible line", "Chain thin line (same as centre line)", "Hidden line", "Wavy line"], correct: "Chain thin line (same as centre line)" },
-        { q: "The line type used to indicate a 'virtual' intersection is:", opts: ["Hidden line", "Chain thin line with double dots", "Continuous thick line", "Zigzag line"], correct: "Chain thin line with double dots" },
-        { q: "Hatching lines in a section view are usually drawn at ____ degrees.", opts: ["0", "30 or 45", "90", "Any angle without preference"], correct: "30 or 45" },
-        { q: "The spacing between hatching lines should be:", opts: ["Random", "Uniform and even", "Increasing", "Decreasing"], correct: "Uniform and even" },
-        { q: "A 'datum line' (reference line) is typically:", opts: ["Continuous thick", "Continuous thin with a triangle or specific marking", "Dashed", "Wavy"], correct: "Continuous thin with a triangle or specific marking" },
-        { q: "When a visible line overlaps a hidden line, you should draw:", opts: ["Only the hidden line", "Only the visible line", "Both lines side by side", "A new line type"], correct: "Only the visible line" },
-        { q: "Which line type is used for the outlines of adjacent (related) parts?", opts: ["Hidden line", "Phantom line (or chain thin with double dots)", "Visible line", "Break line"], correct: "Phantom line (or chain thin with double dots)" },
-        { q: "The thickness ratio between thick and thin lines is typically:", opts: ["1:1", "2:1", "5:1", "10:1"], correct: "2:1" },
-        { q: "Centre lines should extend beyond the feature by a small amount (e.g., 2-5 mm). This is called:", opts: ["Overhang", "Overshoot", "Extension", "Protrusion"], correct: "Overshoot" },
-        { q: "Which line type is NOT used in standard orthographic projection?", opts: ["Visible line", "Hidden line", "Colour gradient line", "Centre line"], correct: "Colour gradient line" },
-        { q: "A 'chain thin line with thick ends' is used for:", opts: ["Hidden edges", "Cutting planes", "Dimension lines", "Break lines"], correct: "Cutting planes" },
-        { q: "The purpose of a 'break line' is to:", opts: ["Stop the drawing", "Shorten a long object without changing scale", "Show hidden details", "Indicate centre"], correct: "Shorten a long object without changing scale" },
-        { q: "For a cylindrical object, the centre line indicates:", opts: ["The outer diameter", "The axis of rotation", "The hidden edges", "The material"], correct: "The axis of rotation" },
-        { q: "Which line type is used to indicate the limits of a partial or broken view?", opts: ["Phantom line", "Break line (wavy or zigzag)", "Hidden line", "Cutting plane line"], correct: "Break line (wavy or zigzag)" },
-        { q: "When dimensioning, the dimension line should be _____ the extension lines.", opts: ["Parallel to", "Perpendicular to", "At 45° to", "Not touching"], correct: "Perpendicular to" },
-        { q: "The term 'line weight' refers to:", opts: ["The colour of the line", "The thickness of the line", "The length of the line", "The shape of the line"], correct: "The thickness of the line" },
-
-        // SECTION C: BASIC AUTOCAD COMMANDS/SHORTCUTS (151-200)
-        { q: "What is the keyboard shortcut for the LINE command in AutoCAD?", opts: ["L", "LN", "LI", "LT"], correct: "L" },
-        { q: "What is the shortcut for the CIRCLE command?", opts: ["C", "CI", "CR", "CC"], correct: "C" },
-        { q: "The shortcut for the ERASE command is:", opts: ["E", "ER", "DEL", "RM"], correct: "E" },
-        { q: "To undo the last action in AutoCAD, you can type:", opts: ["U", "RE", "X", "Z"], correct: "U" },
-        { q: "The COPY command shortcut is:", opts: ["CP", "CO", "Both CP and CO", "CR"], correct: "Both CP and CO" },
-        { q: "The MOVE command shortcut is:", opts: ["M", "MV", "MO", "V"], correct: "M" },
-        { q: "To trim objects to a cutting edge, use:", opts: ["TR", "TM", "EX", "RM"], correct: "TR" },
-        { q: "To extend a line to meet another object, use:", opts: ["TR", "EX", "EN", "XT"], correct: "EX" },
-        { q: "The OFFSET command shortcut is:", opts: ["O", "OF", "FF", "OS"], correct: "O" },
-        { q: "The FILLET command (to create rounded corners) is:", opts: ["F", "R", "C", "FL"], correct: "F" },
-        { q: "To create parallel lines or concentric circles, use:", opts: ["COPY", "ARRAY", "OFFSET", "MIRROR"], correct: "OFFSET" },
-        { q: "The MIRROR command shortcut is:", opts: ["MR", "MI", "MM", "ML"], correct: "MI" },
-        { q: "The ARRAY command (rectangular or polar) shortcut is:", opts: ["AR", "AY", "RR", "RY"], correct: "AR" },
-        { q: "To scale an object up or down, use:", opts: ["SC", "S", "SL", "FA"], correct: "SC" },
-        { q: "The ROTATE command shortcut is:", opts: ["RO", "RT", "R", "RA"], correct: "RO" },
-        { q: "To draw a rectangle, use:", opts: ["R", "REC", "RECT", "RA"], correct: "REC" },
-        { q: "The POLYGON command shortcut is:", opts: ["POL", "PG", "PO", "PL"], correct: "POL" },
-        { q: "To create a multiline text object, use:", opts: ["T or MT", "TX", "TT", "TXT"], correct: "T or MT" },
-        { q: "The DIMLINEAR command (for linear dimensions) shortcut is:", opts: ["DLI", "D", "DL", "DIM"], correct: "DLI" },
-        { q: "To change the properties of an object (like layer, colour), use:", opts: ["PR (or CH, MO)", "PP", "CP", "OP"], correct: "PR (or CH, MO)" },
-        { q: "The LAYER command (to open layer manager) is:", opts: ["LA", "LY", "LR", "LM"], correct: "LA" },
-        { q: "To zoom in and out in real-time, you can type:", opts: ["Z (then options)", "ZO", "ZM", "ZOOM"], correct: "Z (then options)" },
-        { q: "The ZOOM EXTENTS command (to view all objects) is:", opts: ["Z + A", "Z + E", "Z + O", "Z + P"], correct: "Z + E" },
-        { q: "To pan the view without changing zoom, type:", opts: ["P", "PAN", "PA", "V"], correct: "P" },
-        { q: "The HATCH command shortcut is:", opts: ["H", "HA", "HT", "CH"], correct: "H" },
-        { q: "To explode a block or polyline into its components, use:", opts: ["X", "EX", "XP", "PL"], correct: "X" },
-        { q: "The MATCHPROP command (match properties) is:", opts: ["MA", "MP", "MC", "PA"], correct: "MA" },
-        { q: "To create a block (group objects into one), use:", opts: ["B", "BL", "BK", "BM"], correct: "B" },
-        { q: "To insert a block into the drawing, use:", opts: ["I", "IN", "IM", "II"], correct: "I" },
-        { q: "The STRETCH command shortcut is:", opts: ["S", "ST", "SR", "SC"], correct: "S" },
-        { q: "The LENGTHEN command (to change length of an object) is:", opts: ["LEN", "LTH", "LN", "LE"], correct: "LEN" },
-        { q: "The ALIGN command (to move and rotate in one operation) is:", opts: ["AL", "AG", "AN", "A"], correct: "AL" },
-        { q: "The DIVIDE command (to place points along an object) is:", opts: ["DIV", "D", "DV", "DI"], correct: "DIV" },
-        { q: "The MEASURE command (to place points at intervals) is:", opts: ["M", "ME", "MS", "MR"], correct: "ME" },
-        { q: "To create a single-line text, use:", opts: ["DT", "ST", "TX", "TT"], correct: "DT" },
-        { q: "The POLYLINE command (creates a single connected line) is:", opts: ["PL", "P", "POL", "PLY"], correct: "PL" },
-        { q: "The PEDIT command (edit polylines) is:", opts: ["PE", "PD", "PL", "PT"], correct: "PE" },
-        { q: "To draw an arc, use:", opts: ["A", "AR", "AC", "RC"], correct: "A" },
-        { q: "The ELLIPSE command shortcut is:", opts: ["EL", "E", "EC", "L"], correct: "EL" },
-        { q: "To create a point object, use:", opts: ["PO", "P", "PT", "PN"], correct: "PO" },
-        { q: "The REGEN command (regenerate drawing) is:", opts: ["RE", "RG", "RN", "R"], correct: "RE" },
-        { q: "The REDRAW command (refresh screen) is:", opts: ["R", "RD", "RW", "RE"], correct: "R" },
-        { q: "To cancel a command, you press:", opts: ["Esc", "Enter", "Spacebar", "Tab"], correct: "Esc" },
-        { q: "The OBJECT SNAP (OSNAP) settings dialog can be opened by typing:", opts: ["OS", "O", "DS", "SE"], correct: "OS" },
-        { q: "To turn Ortho mode (horizontal/vertical locking) on/off, you can type:", opts: ["ORTHO", "O", "OR", "OT"], correct: "ORTHO" },
-        { q: "The DIST command (to measure distance between two points) is:", opts: ["DI", "D", "DS", "DA"], correct: "DI" },
-        { q: "The AREA command (to calculate area) is:", opts: ["AA", "AR", "AE", "AS"], correct: "AA" },
-        { q: "The LIST command (to show object properties in text) is:", opts: ["LI", "LS", "LT", "L"], correct: "LI" },
-        { q: "The PURGE command (to remove unused items) is:", opts: ["PU", "PR", "PG", "PE"], correct: "PU" },
-        { q: "The SAVE command (to save drawing) is:", opts: ["SAVE", "SV", "SA", "QSAVE"], correct: "SAVE" }
+        { q: "What is the primary focus of design thinking?", opts: ["Technical specifications", "Human-centered problem solving", "Cost reduction", "Material selection"], ans: "Human-centered problem solving" },
+        { q: "Which of the following is NOT a stage of design thinking?", opts: ["Empathize", "Define", "Prototype", "Sympathize"], ans: "Sympathize" },
+        { q: "The empathize mode in design thinking involves:", opts: ["Creating prototypes", "Understanding users' needs and context", "Finalizing designs", "Analyzing financial data"], ans: "Understanding users' needs and context" },
+        { q: "What is the purpose of the Define mode in design thinking?", opts: ["Generating ideas", "Crafting a meaningful problem statement", "Testing prototypes", "Sketching final designs"], ans: "Crafting a meaningful problem statement" },
+        { q: "Which core element of design thinking emphasizes diverse team collaboration?", opts: ["Process", "Place", "People", "Product"], ans: "People" },
+        { q: "The transition from Ideate to Prototype involves:", opts: ["Creating a problem statement", "Selecting multiple ideas for prototyping", "Conducting user interviews", "Finalizing the design"], ans: "Selecting multiple ideas for prototyping" },
+        { q: "What is the role of empathy in design thinking?", opts: ["To finalize the design", "To understand the user's needs and motivations", "To reduce project costs", "To select materials"], ans: "To understand the user's needs and motivations" },
+        { q: "In design thinking, prototyping is primarily used to:", opts: ["Finalize the product", "Test and refine ideas", "Create technical drawings", "Analyze data"], ans: "Test and refine ideas" },
+        { q: "Which of the following best describes the 'T-shaped person' in design thinking?", opts: ["A person with deep expertise in one area and broad collaboration skills", "A person with limited technical knowledge", "A person focused only on design", "A person with no team collaboration skills"], ans: "A person with deep expertise in one area and broad collaboration skills" },
+        { q: "What does the Test mode in design thinking focus on?", opts: ["Generating new ideas", "Soliciting feedback from users", "Creating initial sketches", "Defining the problem"], ans: "Soliciting feedback from users" },
+        { q: "Engineering graphics is primarily used by engineers to:", opts: ["Communicate technical information clearly", "Create artistic designs", "Perform mathematical calculations", "Write reports"], ans: "Communicate technical information clearly" },
+        { q: "Which of the following is NOT a purpose of engineering graphics?", opts: ["Conveying technical ideas universally", "Supporting product development", "Creating decorative artwork", "Guiding assembly of parts"], ans: "Creating decorative artwork" },
+        { q: "The universal language of engineering graphics is standardized by:", opts: ["Artistic conventions", "National and international standards", "Local design preferences", "Company policies"], ans: "National and international standards" },
+        { q: "In AutoCAD, scaling an object makes it:", opts: ["Either bigger or smaller", "Only bigger", "Only smaller", "Unchanged in size"], ans: "Either bigger or smaller" },
+        { q: "The AutoCAD 'mirror' command generates an object that is:", opts: ["Upright", "Inverted", "Copied", "Chamfered"], ans: "Inverted" },
+        { q: "The 'Fillet' command in AutoCAD is used to create:", opts: ["Sharp corners", "Round corners", "Revolved corners", "Flat surfaces"], ans: "Round corners" },
+        { q: "What is the default origin point in an AutoCAD drawing?", opts: ["(0,1)", "(0,0)", "(1,1)", "(1,0)"], ans: "(0,0)" },
+        { q: "Centre lines in AutoCAD are drawn using:", opts: ["Thin chain line with thick ends", "Short thin dashes", "Short thick dashes", "Solid thick line"], ans: "Thin chain line with thick ends" },
+        { q: "Dimension lines in AutoCAD should be:", opts: ["Perpendicular to the edge being dimensioned", "Parallel to the edge being dimensioned", "At 45° to the edge", "Curved"], ans: "Parallel to the edge being dimensioned" },
+        { q: "Which AutoCAD tool is most suitable for drawing internal and external tangents between circles?", opts: ["Fillet and Circle", "Tan Tan Radius and Fillet", "Chamfer and Fillet", "Tan Tan Radius and Centre"], ans: "Tan Tan Radius and Fillet" },
+        { q: "How can you access the snap setting in AutoCAD?", opts: ["Right-clicking on the status bar", "Right-clicking on the command line", "Right-clicking on the navigation bar", "Right-clicking on the model tab"], ans: "Right-clicking on the status bar" },
+        { q: "Which AutoCAD command is used to create a smooth curve between two lines?", opts: ["Chamfer", "Fillet", "Offset", "Trim"], ans: "Fillet" },
+        { q: "In AutoCAD, the 'Offset' command is used to:", opts: ["Create a parallel copy of an object at a specified distance", "Rotate an object", "Scale an object", "Delete an object"], ans: "Create a parallel copy of an object at a specified distance" },
+        { q: "The 'Trim' command in AutoCAD is used to:", opts: ["Extend lines", "Remove portions of objects", "Create arcs", "Mirror objects"], ans: "Remove portions of objects" },
+        { q: "Which AutoCAD command allows you to create a circular pattern of objects?", opts: ["Array", "Mirror", "Rotate", "Scale"], ans: "Array" },
+        { q: "In AutoCAD, the 'Hatch' command is used to:", opts: ["Create filled patterns or gradients", "Draw lines", "Scale objects", "Rotate objects"], ans: "Create filled patterns or gradients" },
+        { q: "The 'Explode' command in AutoCAD is used to:", opts: ["Break a complex object into its component parts", "Combine multiple objects", "Scale an object", "Mirror an object"], ans: "Break a complex object into its component parts" },
+        { q: "Which AutoCAD tool is used to measure distances between two points?", opts: ["Dimension", "Measure", "Scale", "Offset"], ans: "Measure" },
+        { q: "In AutoCAD, the 'Layer' command is used to:", opts: ["Organize objects into groups with specific properties", "Create 3D models", "Scale drawings", "Mirror objects"], ans: "Organize objects into groups with specific properties" },
+        { q: "Which of the following is NOT a common AutoCAD file format?", opts: ["DWG", "DXF", "PDF", "TXT"], ans: "TXT" },
+        { q: "Orthographic projection uses projectors that are:", opts: ["Parallel to each other and perpendicular to the projection plane", "Converging towards a point", "Parallel to the object", "At 45° to the projection plane"], ans: "Parallel to each other and perpendicular to the projection plane" },
+        { q: "In first angle projection, the object is placed:", opts: ["Between the observer and the projection plane", "Behind the projection plane", "Above the projection plane", "Below the projection plane"], ans: "Between the observer and the projection plane" },
+        { q: "In third angle projection, the plan is placed:", opts: ["Below the front view", "Above the front view", "To the left of the front view", "To the right of the front view"], ans: "Above the front view" },
+        { q: "Which quadrant is used in first angle projection?", opts: ["First quadrant", "Second quadrant", "Third quadrant", "Fourth quadrant"], ans: "First quadrant" },
+        { q: "In first angle projection, the view from the left is placed:", opts: ["To the right of the front view", "To the left of the front view", "Above the front view", "Below the front view"], ans: "To the right of the front view" },
+        { q: "In third angle projection, the side view is placed:", opts: ["To the right of the front view", "To the left of the front view", "Above the front view", "Below the front view"], ans: "To the right of the front view" },
+        { q: "The minimum number of views typically required to describe an object in orthographic projection is:", opts: ["One", "Two", "Three", "Four"], ans: "Three" },
+        { q: "Hidden lines in orthographic projections are used to:", opts: ["Show visible edges", "Represent edges not directly visible", "Indicate centerlines", "Mark dimensions"], ans: "Represent edges not directly visible" },
+        { q: "In AutoCAD, orthographic projections are typically created using:", opts: ["3D modeling tools", "2D drafting tools", "Animation tools", "Rendering tools"], ans: "2D drafting tools" },
+        { q: "Which AutoCAD command is most useful for aligning views in orthographic projections?", opts: ["Align", "Move", "Copy", "Offset"], ans: "Align" },
+        { q: "In first angle projection, the top view is placed:", opts: ["Above the front view", "Below the front view", "To the left of the front view", "To the right of the front view"], ans: "Below the front view" },
+        { q: "In third angle projection, the front view is placed in the:", opts: ["First quadrant", "Second quadrant", "Third quadrant", "Fourth quadrant"], ans: "Third quadrant" },
+        { q: "The symbol for first angle projection in AutoCAD drawings is:", opts: ["A cone with a circle", "A cone with a square", "A circle with a cross", "A square with a cross"], ans: "A cone with a circle" },
+        { q: "The symbol for third angle projection in AutoCAD drawings is:", opts: ["A cone with a circle", "A cone with a square", "A circle with a cross", "A square with a cross"], ans: "A cone with a square" },
+        { q: "In orthographic projection, the front view shows:", opts: ["Width and height", "Width and depth", "Height and depth", "All three dimensions"], ans: "Width and height" },
+        { q: "In AutoCAD, hidden lines are typically drawn as:", opts: ["Solid lines", "Dashed lines", "Dotted lines", "Chain lines"], ans: "Dashed lines" },
+        { q: "The AutoCAD command used to create orthographic views from a 3D model is:", opts: ["VIEW", "FLATSHOT", "RENDER", "EXTRUDE"], ans: "FLATSHOT" },
+        { q: "In orthographic projection, the side view shows:", opts: ["Width and height", "Height and depth", "Width and depth", "All three dimensions"], ans: "Height and depth" },
+        { q: "In AutoCAD, the 'UCS' command is used to:", opts: ["Change the coordinate system for drawing", "Scale objects", "Rotate objects", "Create layers"], ans: "Change the coordinate system for drawing" },
+        { q: "The AutoCAD command to ensure precise alignment of orthographic views is:", opts: ["Snap", "Grid", "Ortho", "Align"], ans: "Align" },
+        { q: "Isometric drawing is used to represent:", opts: ["Two-dimensional views", "Three-dimensional views with distortion", "Flat surfaces only", "Hidden details only"], ans: "Three-dimensional views with distortion" },
+        { q: "In isometric drawing, the angles between the isometric axes are:", opts: ["90°", "120°", "60°", "45°"], ans: "120°" },
+        { q: "In AutoCAD, the 'Isometric Grid' is used to:", opts: ["Create 3D models", "Assist in drawing isometric views", "Scale objects", "Create orthographic projections"], ans: "Assist in drawing isometric views" },
+        { q: "Non-isometric lines in isometric drawing are:", opts: ["Lines parallel to the isometric axes", "Lines inclined at angles to the isometric axes", "Hidden lines", "Center lines"], ans: "Lines inclined at angles to the isometric axes" },
+        { q: "In AutoCAD, an isometric circle appears as:", opts: ["A perfect circle", "An ellipse", "A square", "A rectangle"], ans: "An ellipse" },
+        { q: "The AutoCAD command to switch to isometric drawing mode is:", opts: ["ISOPLANE", "VIEW", "ORTHO", "SNAP"], ans: "ISOPLANE" },
+        { q: "In isometric drawing, measurements are made:", opts: ["Along the isometric axes", "At 90° to the axes", "At 45° to the axes", "Randomly"], ans: "Along the isometric axes" },
+        { q: "The AutoCAD 'Ellipse' command is used in isometric drawing to create:", opts: ["Perfect circles", "Isometric circles (ellipses)", "Arcs", "Splines"], ans: "Isometric circles (ellipses)" },
+        { q: "In isometric drawing, a rectangular block is drawn using:", opts: ["Three receding lines at 30° to the horizontal", "Two receding lines at 45° to the horizontal", "Four receding lines at 60° to the horizontal", "One receding line at 90° to the horizontal"], ans: "Three receding lines at 30° to the horizontal" },
+        { q: "The best method to draw an object with non-isometric lines in AutoCAD is to:", opts: ["Use the 'Line' command directly", "Transfer ordinates from orthographic views", "Use the 'Circle' command", "Use the 'Arc' command"], ans: "Transfer ordinates from orthographic views" },
+        { q: "In AutoCAD, the 'Snap' setting in isometric mode is set to:", opts: ["Isometric snap", "Rectangular snap", "Polar snap", "Grid snap"], ans: "Isometric snap" },
+        { q: "The AutoCAD command to draw an isometric circle is:", opts: ["CIRCLE", "ELLIPSE with ISOCIRCLE option", "ARC", "POLYLINE"], ans: "ELLIPSE with ISOCIRCLE option" },
+        { q: "In isometric drawing, the receding lines are drawn at:", opts: ["30° to the horizontal", "45° to the horizontal", "60° to the horizontal", "90° to the horizontal"], ans: "30° to the horizontal" },
+        { q: "In AutoCAD, the 'F8' key toggles:", opts: ["Ortho mode", "Isometric mode", "Snap mode", "Grid mode"], ans: "Ortho mode" },
+        { q: "To draw an isometric box in AutoCAD, you should:", opts: ["Use the 'Box' command in 3D", "Use the 'Line' command with isometric snap", "Use the 'Circle' command", "Use the 'Rectangle' command"], ans: "Use the 'Line' command with isometric snap" },
+        { q: "A sectional view is used to:", opts: ["Show hidden details of an object", "Create 3D models", "Scale drawings", "Draw isometric views"], ans: "Show hidden details of an object" },
+        { q: "In AutoCAD, section lines (hatching) are created using the:", opts: ["Line command", "Hatch command", "Polyline command", "Offset command"], ans: "Hatch command" },
+        { q: "The angle of section lines in a sectional view is typically:", opts: ["30°", "45°", "60°", "90°"], ans: "45°" },
+        { q: "The distance between section lines in AutoCAD should be:", opts: ["Less than 4 mm", "4 to 10 mm, depending on drawing size", "Exactly 10 mm", "More than 10 mm"], ans: "4 to 10 mm, depending on drawing size" },
+        { q: "Which of the following is NOT a type of sectional view?", opts: ["Full section", "Half section", "Quarter section", "Revolved section"], ans: "Quarter section" },
+        { q: "In AutoCAD, the cutting plane line is drawn as:", opts: ["A thin chain line with thick ends", "A solid thick line", "A dashed line", "A dotted line"], ans: "A thin chain line with thick ends" },
+        { q: "In a full section, the cutting plane:", opts: ["Cuts halfway through the object", "Extends through the entire object", "Cuts at an angle", "Does not cut the object"], ans: "Extends through the entire object" },
+        { q: "A half section is typically used for:", opts: ["Asymmetrical objects", "Symmetrical objects", "Complex 3D models", "Non-geometric shapes"], ans: "Symmetrical objects" },
+        { q: "In AutoCAD, the 'BHATCH' command is used to:", opts: ["Create boundary hatches", "Draw lines", "Scale objects", "Rotate objects"], ans: "Create boundary hatches" },
+        { q: "Which of the following is exempted from sectioning in AutoCAD?", opts: ["Bolts and nuts", "Solid blocks", "Hollow pipes", "Flat surfaces"], ans: "Bolts and nuts" },
+        { q: "A conic section is formed by:", opts: ["Cutting a cone with a plane", "Rotating a circle", "Extruding a 2D shape", "Drawing a 3D model"], ans: "Cutting a cone with a plane" },
+        { q: "When a cone is cut by a plane at 90° to its axis, the resulting section is:", opts: ["A circle", "An ellipse", "A parabola", "A hyperbola"], ans: "A circle" },
+        { q: "The eccentricity of an ellipse is always:", opts: ["Equal to 1", "Less than 1", "Greater than 1", "Zero"], ans: "Less than 1" },
+        { q: "In AutoCAD, an ellipse can be drawn using the:", opts: ["Circle command", "Ellipse command", "Arc command", "Polyline command"], ans: "Ellipse command" },
+        { q: "The eccentricity of a parabola is:", opts: ["Less than 1", "Equal to 1", "Greater than 1", "Zero"], ans: "Equal to 1" },
+        { q: "Freehand sketching is primarily used to:", opts: ["Create final technical drawings", "Visualize initial design ideas", "Produce 3D models", "Render images"], ans: "Visualize initial design ideas" },
+        { q: "In AutoCAD, freehand sketching can be simulated using:", opts: ["The 'Sketch' command", "The 'Line' command", "The 'Circle' command", "The 'Hatch' command"], ans: "The 'Sketch' command" },
+        { q: "3D solid modeling in AutoCAD is used to:", opts: ["Create 2D drawings only", "Construct complete geometric forms with properties", "Draw orthographic projections", "Create artistic sketches"], ans: "Construct complete geometric forms with properties" },
+        { q: "The AutoCAD command to create a 3D solid model from a 2D shape is:", opts: ["Extrude", "Line", "Circle", "Hatch"], ans: "Extrude" },
+        { q: "Boolean operations in AutoCAD 3D modeling include:", opts: ["Union, difference, and intersection", "Scaling and rotation", "Mirroring and offsetting", "Hatching and trimming"], ans: "Union, difference, and intersection" },
+        { q: "In engineering drawings, a continuous thick line is primarily used to represent:", opts: ["Hidden edges", "Visible edges", "Centerlines", "Dimension lines"], ans: "Visible edges" },
+        { q: "A chain line in AutoCAD is typically used to indicate:", opts: ["Visible outlines", "Cutting planes or centerlines", "Hidden edges", "Construction lines"], ans: "Cutting planes or centerlines" },
+        { q: "A T-square is primarily used in manual drafting to:", opts: ["Draw vertical lines", "Draw horizontal lines", "Measure angles", "Draw circles"], ans: "Draw horizontal lines" },
+        { q: "In engineering drawing, a set square is used to draw:", opts: ["Circles", "Angles (e.g., 30°, 45°, 60°)", "Freehand sketches", "Curved lines"], ans: "Angles (e.g., 30°, 45°, 60°)" },
+        { q: "The compass in engineering drawing is used to:", opts: ["Draw straight lines", "Draw circles and arcs", "Measure distances", "Draw angles"], ans: "Draw circles and arcs" },
+        { q: "A protractor is used in manual drafting to:", opts: ["Draw circles", "Measure and draw angles", "Draw straight lines", "Create section lines"], ans: "Measure and draw angles" }
     ];
 
     // ========== STATE MANAGEMENT ==========
-    const STATE_KEY = 'get102_v2_quiz_state';
-    let state = { total: 30, indices: [], current: 0, answers: {}, skipped: [], submitted: false, optionOrders: {} };
+    const STATE_KEY = 'get102_moodle_state';
+    const TOTAL = 70;
+    const TIME_SEC = 50 * 60;
 
-    function saveState() {
-        const toStore = { ...state };
-        localStorage.setItem(STATE_KEY, JSON.stringify(toStore));
-    }
-    function loadState() {
-        const r = localStorage.getItem(STATE_KEY);
-        if(r){try{state=JSON.parse(r);return true;}catch(e){}}
-        return false;
-    }
-    function clearState() {
-        state = { total:30, indices:[], current:0, answers:{}, skipped:[], submitted:false, optionOrders:{} };
-        localStorage.removeItem(STATE_KEY);
-    }
+    let state = { total: TOTAL, indices:[], current:0, answers:{}, skipped:[], submitted:false, timeRemaining: TIME_SEC, examStarted:false };
+    let timerInterval = null;
 
-    function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+    function saveState() { const s={...state}; delete s.timerInterval; localStorage.setItem(STATE_KEY,JSON.stringify(s)); }
+    function loadState() { const r=localStorage.getItem(STATE_KEY); if(r){try{state=JSON.parse(r);return true;}catch(e){}} return false; }
+    function clearState() { state={total:TOTAL,indices:[],current:0,answers:{},skipped:[],submitted:false,timeRemaining:TIME_SEC,examStarted:false}; localStorage.removeItem(STATE_KEY); }
 
-    function getShuffledOptions(bankIndex) {
-        if (!state.optionOrders[bankIndex]) {
-            const q = questionBank[bankIndex];
-            const indices = [0, 1, 2, 3];
-            const shuffled = shuffle(indices);
-            state.optionOrders[bankIndex] = shuffled;
-        }
-        return state.optionOrders[bankIndex];
+    function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+    function getQ(){if(!state.indices.length)return null;const bi=state.indices[state.current];return{...questionBank[bi],bankIndex:bi};}
+    function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
+    function switchScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+    function updateTimerDisplay(){
+        const m=Math.floor(state.timeRemaining/60),s=state.timeRemaining%60;
+        const d=document.getElementById('timerDisplay');
+        d.innerHTML=`⏱️ ${m}:${s.toString().padStart(2,'0')}`;
+        d.classList.toggle('warning',state.timeRemaining<300);
     }
 
-    function getQ() {
-        if(!state.indices.length) return null;
-        const bi = state.indices[state.current];
-        const q = questionBank[bi];
-        const order = getShuffledOptions(bi);
-        const shuffledOpts = order.map(i => q.opts[i]);
-        const correctIndex = order.indexOf(q.opts.indexOf(q.correct));
-        return { ...q, opts: shuffledOpts, bankIndex: bi, correctIndex: correctIndex };
+    function startTimer(){
+        updateTimerDisplay();
+        timerInterval=setInterval(()=>{state.timeRemaining--;saveState();updateTimerDisplay();if(state.timeRemaining<=0){clearInterval(timerInterval);toast('Time up!');submitExam(true);}},1000);
     }
+    function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
 
-    function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); }
-    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.examStarted&&!state.submitted){stopTimer();submitExam(true,true);}});
 
-    function startQuiz(n) {
-        clearState();
-        const allIndices = shuffle(Array.from({length: questionBank.length}, (_,i)=>i));
-        const selected = allIndices.slice(0, Math.min(n, questionBank.length));
-        state = { total: selected.length, indices: selected, current: 0, answers: {}, skipped: [], submitted: false, optionOrders: {} };
-        saveState(); renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav();
+    function startExam(){
+        stopTimer();clearState();
+        state.indices=shuffle([...Array(questionBank.length).keys()]).slice(0,TOTAL);
+        state.total=TOTAL;state.current=0;state.answers={};state.skipped=[];state.submitted=false;state.timeRemaining=TIME_SEC;state.examStarted=true;
+        saveState();renderQuiz();switchScreen('quizScreen');renderQuestion();updateProgress();updateNav();startTimer();
     }
-
-    function resumeQuiz() {
-        if(!loadState() || !state.indices.length || state.submitted){ toast('No saved quiz. Start a new one.'); return; }
-        renderQuiz(); switchScreen('quizScreen'); renderQuestion(); updateProgress(); updateNav(); toast('Quiz resumed.');
+    function resumeQuiz(){
+        if(!loadState()||!state.indices.length||state.submitted){toast('No saved attempt.');return;}
+        if(state.timeRemaining<=0){toast('Time expired. Submitting...');submitExam(true);return;}
+        renderQuiz();switchScreen('quizScreen');renderQuestion();updateProgress();updateNav();updateTimerDisplay();startTimer();state.examStarted=true;saveState();toast('Attempt resumed.');
     }
+    function clearStorage(){stopTimer();clearState();saveState();document.getElementById('resumeSection').style.display='none';toast('Saved attempt cleared.');}
 
-    function clearStorage() { clearState(); saveState(); document.getElementById('resumeSection').style.display='none'; toast('Saved progress cleared.'); }
-
-    function renderQuiz() {
-        const dots = document.getElementById('questionDots'); dots.innerHTML = '';
-        for(let i=0;i<state.total;i++){ const d=document.createElement('span'); d.className='dot'; d.title=`Q${i+1}`; d.onclick=()=>{state.current=i;saveState();renderQuestion();updateProgress();updateNav();}; dots.appendChild(d); }
+    function renderQuiz(){
+        const dots=document.getElementById('questionDots');dots.innerHTML='';
+        for(let i=0;i<state.total;i++){const d=document.createElement('span');d.className='nav-dot';d.textContent=i+1;d.title=`Q${i+1}`;d.onclick=()=>{state.current=i;saveState();renderQuestion();updateProgress();updateNav();};dots.appendChild(d);}
     }
-
-    function renderQuestion() {
-        const q = getQ(); if(!q) return;
-        document.getElementById('questionNumber').textContent = `QUESTION ${state.current+1}`;
-        document.getElementById('questionText').textContent = q.q;
-        document.getElementById('progressLabel').textContent = `Question ${state.current+1} of ${state.total}`;
-        const opts = document.getElementById('optionsList'); opts.innerHTML = '';
-        const letters = ['A','B','C','D'];
-        q.opts.forEach((opt,i)=>{
-            const li = document.createElement('li'); li.className='option-item';
-            if(state.answers[state.current]===i) li.classList.add('selected');
-            li.innerHTML = `<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
-            li.onclick = ()=> selectOption(i);
-            opts.appendChild(li);
+    function renderQuestion(){
+        const q=getQ();if(!q)return;
+        document.getElementById('questionNumber').textContent=`QUESTION ${state.current+1}`;
+        document.getElementById('questionText').textContent=q.q;
+        document.getElementById('progressLabel').textContent=`Question ${state.current+1} of ${state.total}`;
+        const opts=document.getElementById('optionsList');opts.innerHTML='';
+        const letters=['A','B','C','D'];
+        const shuffledOpts=shuffle(q.opts);
+        shuffledOpts.forEach((opt,i)=>{
+            const li=document.createElement('li');li.className='option-item';
+            if(state.answers[state.current]===opt)li.classList.add('selected');
+            li.innerHTML=`<span class="radio-dot"></span><span class="opt-letter">${letters[i]}.</span><span>${opt}</span>`;
+            li.onclick=()=>selectOption(opt);opts.appendChild(li);
         });
-        const dots = document.querySelectorAll('#questionDots .dot');
-        dots.forEach((d,i)=>{ d.classList.remove('current','answered','skipped'); if(i===state.current) d.classList.add('current'); if(state.answers[i]!==undefined) d.classList.add('answered'); if(state.skipped.includes(i) && state.answers[i]===undefined) d.classList.add('skipped'); });
+        const dots=document.querySelectorAll('#questionDots .nav-dot');
+        dots.forEach((d,i)=>{d.classList.remove('answered','current','skipped');if(i===state.current)d.classList.add('current');if(state.answers[i]!==undefined)d.classList.add('answered');if(state.skipped.includes(i)&&state.answers[i]===undefined)d.classList.add('skipped');});
         document.getElementById('quizScreen').scrollIntoView({behavior:'smooth',block:'start'});
     }
-
-    function selectOption(i) { if(state.submitted) return; state.answers[state.current]=i; state.skipped = state.skipped.filter(s=>s!==state.current); saveState(); renderQuestion(); updateProgress(); updateNav(); }
-    function skipQuestion() {
-        if(state.submitted) return;
-        if(state.answers[state.current]===undefined && !state.skipped.includes(state.current)) state.skipped.push(state.current);
-        if(state.current < state.total-1){ state.current++; saveState(); renderQuestion(); updateProgress(); updateNav(); }
-        else { updateProgress(); updateNav(); renderQuestion(); }
+    function selectOption(opt){if(state.submitted)return;state.answers[state.current]=opt;state.skipped=state.skipped.filter(s=>s!==state.current);saveState();renderQuestion();updateProgress();updateNav();}
+    function skipQuestion(){
+        if(state.submitted)return;
+        if(state.answers[state.current]===undefined&&!state.skipped.includes(state.current))state.skipped.push(state.current);
+        if(state.current<state.total-1){state.current++;saveState();renderQuestion();updateProgress();updateNav();}else{updateProgress();updateNav();renderQuestion();}
     }
-    function navigate(dir) { if(state.submitted) return; const nxt = state.current+dir; if(nxt>=0 && nxt<state.total){ state.current=nxt; saveState(); renderQuestion(); updateProgress(); updateNav(); } }
-    function updateProgress() { const a = Object.keys(state.answers).length; document.getElementById('answeredCount').textContent = `${a} answered`; document.getElementById('progressFill').style.width = Math.round((a/state.total)*100)+'%'; }
-    function updateNav() { document.getElementById('btnPrev').disabled = state.current===0; document.getElementById('btnNext').disabled = state.current===state.total-1; }
+    function navigate(dir){if(state.submitted)return;const nxt=state.current+dir;if(nxt>=0&&nxt<state.total){state.current=nxt;saveState();renderQuestion();updateProgress();updateNav();}}
+    function updateProgress(){const a=Object.keys(state.answers).length;document.getElementById('answeredCount').textContent=`${a} answered`;document.getElementById('progressFill').style.width=Math.round((a/state.total)*100)+'%';}
+    function updateNav(){document.getElementById('btnPrev').disabled=state.current===0;document.getElementById('btnNext').disabled=state.current===state.total-1;}
 
-    function submitQuiz() {
-        const skipped = state.total - Object.keys(state.answers).length;
-        if(skipped>0 && !confirm(`You have ${skipped} unanswered. Submit anyway?`)) return;
-        state.submitted = true; saveState(); showResults(); switchScreen('resultsScreen');
+    function submitExam(auto=false,cheating=false){
+        if(state.submitted)return;
+        if(!auto){const skipped=state.total-Object.keys(state.answers).length;if(skipped>0&&!confirm(`You have ${skipped} unanswered. Submit?`))return;}
+        stopTimer();state.submitted=true;state.examStarted=false;saveState();
+        if(cheating)toast('Exam terminated – tab switch detected.');
+        showResults();switchScreen('resultsScreen');
     }
-
-    function showResults() {
-        let correct = 0; const review = [];
-        state.indices.forEach((bi,i)=>{
-            const q = questionBank[bi];
-            const ua = state.answers[i];
-            const order = state.optionOrders[bi] || [0,1,2,3];
-            const correctIndex = order.indexOf(q.opts.indexOf(q.correct));
-            const ok = ua === correctIndex;
-            if(ok) correct++;
-            const userText = ua !== undefined ? q.opts[order[ua]] : 'Not answered';
-            review.push({ q:q.q, correctText:q.correct, userText:userText, isCorrect:ok, idx:i+1 });
-        });
-        const pct = Math.round((correct/state.total)*100);
-        document.getElementById('scorePercent').textContent = pct+'%';
-        document.getElementById('scoreFraction').textContent = `${correct}/${state.total}`;
-        document.getElementById('resultMessage').textContent = pct>=90?'🏆 Outstanding!':pct>=70?'👏 Great job!':pct>=50?'📖 Good effort.':'💪 Keep studying.';
-        window._review = review;
-        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
+    function showResults(){
+        let correct=0;const review=[];
+        state.indices.forEach((bi,i)=>{const q=questionBank[bi];const ua=state.answers[i];const ok=ua===q.ans;if(ok)correct++;review.push({q:q.q,opts:q.opts,correctAns:q.ans,userAns:ua,isCorrect:ok,idx:i+1});});
+        const pct=Math.round((correct/state.total)*100);
+        document.getElementById('scorePercent').textContent=pct+'%';
+        document.getElementById('scoreFraction').textContent=`${correct} out of ${state.total}`;
+        document.getElementById('resultMessage').textContent=pct>=90?'🏆 Outstanding!':pct>=70?'👏 Great job!':pct>=50?'📖 Good effort.':'💪 Keep studying.';
+        window._review=review;
+        document.getElementById('reviewSection').style.display='none';document.getElementById('reviewSection').innerHTML='';
     }
-
-    function reviewAnswers() {
-        const sec = document.getElementById('reviewSection');
-        if(sec.style.display==='block'){ sec.style.display='none'; sec.innerHTML=''; return; }
-        if(!window._review) return;
-        sec.innerHTML = '<h3>📋 Detailed Review</h3>';
+    function reviewAnswers(){
+        const sec=document.getElementById('reviewSection');
+        if(sec.style.display==='block'){sec.style.display='none';sec.innerHTML='';return;}
+        if(!window._review)return;
+        sec.innerHTML='<h3 style="margin-bottom:12px;">📋 Question Review</h3><table class="results-table"><thead><tr><th>#</th><th>Question</th><th>Your Answer</th><th>Correct</th><th>Status</th></tr></thead><tbody></tbody></table>';
+        const tbody=sec.querySelector('tbody');
         window._review.forEach(r=>{
-            const d = document.createElement('div'); d.className = 'review-item '+(r.isCorrect?'correct-r':'wrong');
-            d.innerHTML = `<div class="rev-q">Q${r.idx}: ${r.q}</div><div class="rev-ans">Your answer: <span class="your-ans">${r.userText}</span><br>Correct: <span class="correct-ans">${r.correctText}</span></div>`;
-            sec.appendChild(d);
+            const tr=document.createElement('tr');tr.className=r.isCorrect?'correct-row':'incorrect-row';
+            tr.innerHTML=`<td>${r.idx}</td><td>${r.q}</td><td>${r.userAns||'Not answered'}</td><td>${r.correctAns}</td><td><span class="status-badge ${r.isCorrect?'status-correct':'status-incorrect'}">${r.isCorrect?'✓ Correct':'✗ Incorrect'}</span></td>`;
+            tbody.appendChild(tr);
         });
-        sec.style.display='block'; sec.scrollIntoView({behavior:'smooth'});
+        sec.style.display='block';sec.scrollIntoView({behavior:'smooth'});
     }
-
-    function restartQuiz() {
-        clearState(); saveState();
-        document.getElementById('reviewSection').style.display='none'; document.getElementById('reviewSection').innerHTML='';
-        window._review = null; switchScreen('startScreen');
-        document.getElementById('resumeSection').style.display='none'; updateResumeBtn();
-    }
-
-    function updateResumeBtn() {
-        const s = document.getElementById('resumeSection');
-        if(loadState() && state.indices.length && !state.submitted){ s.style.display='block'; }
-        else { s.style.display='none'; clearState(); saveState(); }
-    }
+    function restartExam(){stopTimer();clearState();saveState();document.getElementById('reviewSection').style.display='none';document.getElementById('reviewSection').innerHTML='';window._review=null;switchScreen('startScreen');document.getElementById('resumeSection').style.display='none';updateResumeBtn();}
+    function updateResumeBtn(){const s=document.getElementById('resumeSection');if(loadState()&&state.indices.length&&!state.submitted){s.style.display='block';}else{s.style.display='none';clearState();saveState();}}
 
     document.addEventListener('keydown',(e)=>{
-        if(state.submitted || !document.getElementById('quizScreen').classList.contains('active')) return;
+        if(state.submitted||!document.getElementById('quizScreen').classList.contains('active'))return;
+        const items=document.querySelectorAll('#optionsList .option-item');
         switch(e.key.toLowerCase()){
-            case 'a': selectOption(0); break;
-            case 'b': selectOption(1); break;
-            case 'c': selectOption(2); break;
-            case 'd': selectOption(3); break;
-            case 'arrowleft': e.preventDefault(); navigate(-1); break;
-            case 'arrowright': e.preventDefault(); navigate(1); break;
-            case 's': if(!e.ctrlKey&&!e.metaKey){ e.preventDefault(); skipQuestion(); } break;
-            case 'enter': e.preventDefault(); if(Object.keys(state.answers).length===state.total) submitQuiz(); break;
+            case 'a':if(items[0])selectOption(items[0].textContent.slice(2).trim());break;
+            case 'b':if(items[1])selectOption(items[1].textContent.slice(2).trim());break;
+            case 'c':if(items[2])selectOption(items[2].textContent.slice(2).trim());break;
+            case 'd':if(items[3])selectOption(items[3].textContent.slice(2).trim());break;
+            case 'arrowleft':e.preventDefault();navigate(-1);break;
+            case 'arrowright':e.preventDefault();navigate(1);break;
+            case 's':if(!e.ctrlKey&&!e.metaKey){e.preventDefault();skipQuestion();}break;
+            case 'enter':e.preventDefault();if(Object.keys(state.answers).length===state.total)submitExam();break;
         }
     });
 
-    updateResumeBtn();
-    switchScreen('startScreen');
+    updateResumeBtn();switchScreen('startScreen');
 </script>
 </body>
 </html>
