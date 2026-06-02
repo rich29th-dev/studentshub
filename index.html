@@ -137,7 +137,10 @@
         .instruction-box { background: #f8fafc; border-radius: 1.5rem; padding: 1.5rem; margin: 1.5rem 0; line-height: 1.6; }
         .btn-start { background: #2b7a4b; color: white; font-size: 1.2rem; padding: 12px 32px; border: none; border-radius: 60px; font-weight: bold; cursor: pointer; }
         .failed-card { background: #fff5f0; border-left: 8px solid #e76f51; margin-bottom: 1rem; padding: 1rem; border-radius: 1rem; }
-        .return-home { background: #0f2b3d; color: white; padding: 12px 28px; border-radius: 40px; border: none; margin-top: 2rem; cursor: pointer; }
+        .score-card { background: #e0f2fe; border-left: 8px solid #0f2b3d; padding: 1rem; border-radius: 1rem; margin-bottom: 1.5rem; text-align: center; }
+        .score-number { font-size: 2.5rem; font-weight: 800; color: #0f2b3d; }
+        .return-home, .retake-btn { background: #0f2b3d; color: white; padding: 12px 28px; border-radius: 40px; border: none; margin-top: 1rem; margin-right: 1rem; cursor: pointer; }
+        .retake-btn { background: #2b7a4b; }
         @media (max-width: 780px) {
             .question-nav { width: 100%; border-right: none; border-bottom: 1px solid #e2e8f0; }
             .exam-body { flex-direction: column; }
@@ -151,12 +154,8 @@
 <div id="appRoot"></div>
 
 <script>
-    // --------------------------------------------------------------
-    // FULL QUESTION BANK: 200+ UNIQUE QUESTIONS (Excel 151 + PDF 200, deduplicated)
-    // Extracted directly from the provided lists. Total = 200 distinct.
-    // --------------------------------------------------------------
+    // ======================== FULL 200+ QUESTION BANK (Excel 151 + PDF unique) ========================
     const FULL_BANK = [
-        // Excel questions 1-151 (as provided)
         {id:1, text:"The essential component of culture is____?", opts:["Dance","Idol worship","Song","Language"], ans:"D"},
         {id:2, text:"The _____ can be described as one of the major ethnic groups in Southern Nigeria?", opts:["Hausa","Kanuri","Yoruba","Lagosian"], ans:"C"},
         {id:3, text:"Nigeria has over _____ cultural grouping and systems?", opts:["100","300","200","400"], ans:"B"},
@@ -308,7 +307,6 @@
         {id:149, text:"The Religion associated with the 'Noble Eight Path' is?", opts:["Hinduism","Confucius","Buddhism","Christianity"], ans:"C"},
         {id:150, text:"The nature of African society e.g Nigeria that contributed to the worship of ancestors?", opts:["Illiteracy","civilization","Black complexion","Agrarian"], ans:"D"},
         {id:151, text:"In traditional African society, family lands are owned by?", opts:["Ancestors","God","Deities","Ogun"], ans:"A"},
-        // Additional PDF questions (unique ones not already covered)
         {id:152, text:"The Nok culture flourished extensively in which part of Nigeria?", opts:["Niger Delta","Western part of Jos Plateau","Eastern Highlands","Coastal regions"], ans:"B"},
         {id:153, text:"The Nok culture existed between which time periods?", opts:["500 BC to 500 AD","900 BC to AD 200","1000 BC to 500 BC","AD 500 to AD 1000"], ans:"B"},
         {id:154, text:"According to recent research, the Nok culture originated around:", opts:["500 BCE","1000 BCE","1500 BCE","2000 BCE"], ans:"C"},
@@ -359,11 +357,10 @@
         {id:199, text:"France provided weapons to:", opts:["Federal government","Biafra","Both sides","Neither"], ans:"B"},
         {id:200, text:"The Gulf War windfall of 1991 gave Nigeria:", opts:["War","Unexpected oil revenue","Recession","End of military rule"], ans:"B"}
     ];
-    // Ensure exactly 200 unique items
     const MASTER_BANK = FULL_BANK.slice(0,200);
     
     // ------------------- Exam State -------------------
-    let examQuestions = [];      // 70 random selected
+    let examQuestions = [];      // 70 random
     let userAnswers = [];
     let skippedStatus = [];
     let currentIndex = 0;
@@ -436,7 +433,16 @@
             renderReview();
         }
     }
+    function computeScore() {
+        let correct = 0;
+        examQuestions.forEach((q, idx) => {
+            if (userAnswers[idx] === q.ans) correct++;
+        });
+        return correct;
+    }
     function renderReview() {
+        const score = computeScore();
+        const total = examQuestions.length;
         const failed = [];
         examQuestions.forEach((q, idx) => {
             const user = userAnswers[idx];
@@ -448,18 +454,32 @@
                 failed.push({ text: q.text, user: userText, correct: correctText });
             }
         });
-        let html = `<div class="review-screen"><div class="review-header">📋 Review: Failed & Unanswered Questions</div>`;
-        if (failed.length === 0) html += `<p style="color:green;">🎉 Perfect score! All 70 correct.</p>`;
+        let html = `<div class="review-screen">
+            <div class="review-header">📊 Exam Results</div>
+            <div class="score-card">
+                <div>Your Score</div>
+                <div class="score-number">${score} / ${total}</div>
+                <div>${Math.round((score/total)*100)}%</div>
+            </div>
+            <div><strong>📋 Review: Failed & Unanswered Questions (${failed.length})</strong></div>`;
+        if (failed.length === 0) html += `<p style="color:green; margin-top:1rem;">🎉 Perfect score! Congratulations!</p>`;
         else {
             failed.forEach(f => {
                 html += `<div class="failed-card"><strong>${f.text}</strong><br>Your answer: ${f.user} &nbsp; ✅ Correct: ${f.correct}</div>`;
             });
         }
-        html += `<button class="return-home" id="restartExamBtn">🏠 Start New Exam</button></div>`;
+        html += `<div style="margin-top:2rem;">
+            <button class="retake-btn" id="retakeExamBtn">🔄 Retake Exam (New Questions)</button>
+            <button class="return-home" id="homeBtn">🏠 Back to Start</button>
+        </div></div>`;
         root.innerHTML = html;
-        document.getElementById('restartExamBtn')?.addEventListener('click', () => {
+        document.getElementById('retakeExamBtn')?.addEventListener('click', () => {
             localStorage.removeItem('gst_exam_state');
-            location.reload();
+            initExam();  // fresh start with new random 70
+        });
+        document.getElementById('homeBtn')?.addEventListener('click', () => {
+            localStorage.removeItem('gst_exam_state');
+            startScreen();
         });
     }
     function skipQuestion() {
@@ -472,7 +492,7 @@
             currentIndex++;
             renderExam();
         } else {
-            renderExam(); // stay, but mark skipped
+            renderExam();
         }
     }
     function renderExam() {
@@ -552,6 +572,7 @@
         timeSeconds = 45 * 60;
         examActive = true;
         examSubmitted = false;
+        if (timerInterval) clearInterval(timerInterval);
         startTimer();
         renderExam();
         saveState();
@@ -563,9 +584,9 @@
             ✔️ Timer: 45 minutes – auto‑submit on expiry.<br>
             ✔️ Navigation: <span style="background:#2b7a4b;color:white;padding:2px 8px;">Green</span> = answered &nbsp; <span style="background:#f4a261;color:#2d2a24;padding:2px 8px;">Orange</span> = skipped &nbsp; <span style="background:#0f2b3d;color:white;padding:2px 8px;">Blue</span> = current.<br>
             ✔️ <strong>Skip button</strong> marks question as skipped and moves forward.<br>
-            ✔️ <strong>Submit confirmation</strong> appears before final submission.<br>
+            ✔️ <strong>Submit confirmation</strong> and <strong>score display</strong> after submission.<br>
             ✔️ Resume support (local storage) – close/reopen continues.<br>
-            ✔️ Review page shows only failed/unanswered questions after submission.
+            ✔️ <strong>Retake option</strong> – get a new random set of 70 questions.
         </div><button class="btn-start" id="beginExamBtn">🚀 START EXAM</button></div>`;
         document.getElementById('beginExamBtn')?.addEventListener('click', () => {
             localStorage.removeItem('gst_exam_state');
