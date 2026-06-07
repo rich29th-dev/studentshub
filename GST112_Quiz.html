@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GST 112 — Nigerian Peoples & Culture Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,300;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #008751;
+    --green-dark: #005c37;
+    --green-light: #00b368;
+    --gold: #c8971a;
+    --gold-light: #f0c040;
+    --white: #fafaf8;
+    --cream: #f4f1e8;
+    --text: #1a1a18;
+    --text-muted: #5a5a52;
+    --border: #d4d0c2;
+    --correct: #1a7a4a;
+    --correct-bg: #e6f4ed;
+    --wrong: #b03030;
+    --wrong-bg: #fce8e8;
+    --shadow: 0 4px 24px rgba(0,60,30,0.12);
+    --radius: 16px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 10% 20%, rgba(0,135,81,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(200,151,26,0.06) 0%, transparent 50%);
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--green-dark);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,60,30,0.3);
+  }
+  .flag {
+    display: flex;
+    width: 32px;
+    height: 22px;
+    border-radius: 3px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .flag-stripe { flex: 1; }
+  .flag-stripe.green { background: #008751; }
+  .flag-stripe.white { background: #fff; }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.01em;
+  }
+  header .subtitle {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.65);
+    margin-left: auto;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── HOME SCREEN ── */
+  #home-screen {
+    flex-direction: column;
+  }
+  .home-hero {
+    background: var(--green-dark);
+    padding: 40px 24px 48px;
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .home-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.02) 0px,
+      rgba(255,255,255,0.02) 1px,
+      transparent 1px,
+      transparent 20px
+    );
+  }
+  .home-hero h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .home-hero h2 em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+  .home-hero p {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.7);
+    position: relative;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .home-content {
+    padding: 28px 20px 40px;
+    max-width: 680px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .chapter-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.18s ease;
+    text-align: left;
+  }
+  .chapter-card:hover {
+    border-color: var(--green);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+  }
+  .chapter-card:active { transform: scale(0.99); }
+
+  .ch-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--green);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ch-badge .ch-label {
+    font-size: 0.55rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+    line-height: 1;
+  }
+  .ch-badge .ch-num {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .ch-info { flex: 1; min-width: 0; }
+  .ch-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--text);
+  }
+  .ch-count {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .ch-arrow {
+    color: var(--border);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .all-chapters-card {
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    border: none;
+    color: white;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.18s ease;
+    box-shadow: 0 4px 20px rgba(0,135,81,0.35);
+  }
+  .all-chapters-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0,135,81,0.45);
+  }
+  .all-chapters-card:active { transform: scale(0.99); }
+  .all-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .all-info { flex: 1; }
+  .all-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: white;
+  }
+  .all-desc {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.75);
+    margin-top: 3px;
+  }
+  .all-badge {
+    background: var(--gold);
+    color: var(--green-dark);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .stat-box {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--green);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-top: 4px;
+  }
+
+  /* ── QUIZ SCREEN ── */
+  #quiz-screen {
+    flex-direction: column;
+  }
+
+  .quiz-header {
+    background: white;
+    border-bottom: 1.5px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 60px;
+    z-index: 50;
+  }
+  .back-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    transition: background 0.15s;
+  }
+  .back-btn:hover { background: var(--cream); }
+
+  .quiz-meta { flex: 1; min-width: 0; }
+  .quiz-chapter-name {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .quiz-progress-text {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .score-chip {
+    background: var(--green);
+    color: white;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    font-family: 'Fraunces', serif;
+  }
+
+  .progress-bar-wrap {
+    height: 4px;
+    background: var(--border);
+    position: sticky;
+    top: calc(60px + 62px);
+    z-index: 49;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--green-light));
+    transition: width 0.4s ease;
+  }
+
+  .quiz-body {
+    flex: 1;
+    padding: 24px 20px 40px;
+    max-width: 680px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .q-number {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .option-btn {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    text-align: left;
+    transition: all 0.15s ease;
+    width: 100%;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--green);
+    background: rgba(0,135,81,0.04);
+  }
+  .option-btn:active:not(:disabled) { transform: scale(0.99); }
+  .option-btn:disabled { cursor: default; }
+
+  .opt-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .opt-text {
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--text);
+    padding-top: 3px;
+  }
+
+  .option-btn.selected-correct {
+    border-color: var(--correct);
+    background: var(--correct-bg);
+  }
+  .option-btn.selected-correct .opt-letter {
+    background: var(--correct);
+    border-color: var(--correct);
+    color: white;
+  }
+  .option-btn.selected-correct .opt-text { color: var(--correct); font-weight: 500; }
+
+  .option-btn.selected-wrong {
+    border-color: var(--wrong);
+    background: var(--wrong-bg);
+  }
+  .option-btn.selected-wrong .opt-letter {
+    background: var(--wrong);
+    border-color: var(--wrong);
+    color: white;
+  }
+  .option-btn.selected-wrong .opt-text { color: var(--wrong); font-weight: 500; }
+
+  .option-btn.reveal-correct {
+    border-color: var(--correct);
+    background: var(--correct-bg);
+    opacity: 0.75;
+  }
+  .option-btn.reveal-correct .opt-letter {
+    background: var(--correct);
+    border-color: var(--correct);
+    color: white;
+  }
+
+  .feedback-box {
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+  .feedback-box.show { display: flex; }
+  .feedback-box.correct { background: var(--correct-bg); color: var(--correct); }
+  .feedback-box.wrong { background: var(--wrong-bg); color: var(--wrong); }
+  .feedback-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+  .next-btn {
+    width: 100%;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.18s;
+    display: none;
+  }
+  .next-btn.show { display: block; }
+  .next-btn:hover { background: var(--green-dark); }
+  .next-btn:active { transform: scale(0.99); }
+
+  /* ── RESULTS SCREEN ── */
+  #results-screen {
+    flex-direction: column;
+  }
+
+  .results-body {
+    flex: 1;
+    padding: 28px 20px 60px;
+    max-width: 680px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .results-hero {
+    background: var(--green-dark);
+    border-radius: 20px;
+    padding: 32px 24px;
+    text-align: center;
+    color: white;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .results-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.02) 0px,
+      rgba(255,255,255,0.02) 1px,
+      transparent 1px,
+      transparent 24px
+    );
+  }
+  .results-emoji {
+    font-size: 3rem;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .results-score-big {
+    font-family: 'Fraunces', serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
+    position: relative;
+  }
+  .results-score-big span { color: var(--gold-light); }
+  .results-out-of {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.7);
+    margin-top: 6px;
+    position: relative;
+  }
+  .results-chapter-name {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.55);
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    position: relative;
+  }
+
+  .results-grade {
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .results-grade .grade-letter {
+    font-family: 'Fraunces', serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+  }
+  .results-grade .grade-desc {
+    font-size: 0.85rem;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  .grade-A { background: var(--correct-bg); color: var(--correct); }
+  .grade-B { background: #e8f4ff; color: #1a5fa8; }
+  .grade-C { background: #fff8e0; color: #8a6d00; }
+  .grade-D { background: var(--wrong-bg); color: var(--wrong); }
+
+  .results-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .result-stat {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .result-stat .rs-num {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .result-stat .rs-label {
+    font-size: 0.67rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-top: 4px;
+  }
+  .rs-correct { color: var(--correct); }
+  .rs-wrong { color: var(--wrong); }
+  .rs-pct { color: var(--green); }
+
+  .results-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .btn-primary {
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.18s;
+  }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-secondary {
+    background: white;
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.18s;
+  }
+  .btn-secondary:hover { border-color: var(--green); color: var(--green); }
+
+  @keyframes pop-in {
+    from { transform: scale(0.92) translateY(10px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  .quiz-body .q-text { animation: pop-in 0.25s ease; }
+  .options-list { animation: pop-in 0.3s ease; }
+
+  @media (max-width: 400px) {
+    .home-hero h2 { font-size: 1.65rem; }
+    .q-text { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ GLOBAL HEADER ═══════════════ -->
+<header>
+  <div class="flag">
+    <div class="flag-stripe green"></div>
+    <div class="flag-stripe white"></div>
+    <div class="flag-stripe green"></div>
+  </div>
+  <h1>GST 112 Quiz</h1>
+  <span class="subtitle">Nigerian Peoples & Culture</span>
+</header>
+
+<!-- ═══════════════ HOME SCREEN ═══════════════ -->
+<div id="home-screen" class="screen active">
+  <div class="home-hero">
+    <h2>Test Your<br><em>Cultural Knowledge</em></h2>
+    <p>400 MCQs covering all 7 chapters. Choose a chapter or take the full mixed quiz.</p>
+  </div>
+
+  <div class="home-content">
+    <div class="section-label" style="margin-bottom:14px">📚 Select a Chapter</div>
+
+    <div class="chapter-grid" id="chapter-grid">
+      <!-- Cards generated by JS -->
+    </div>
+
+    <div class="section-label" style="margin-top:24px; margin-bottom:12px">🌍 Mixed Mode</div>
+    <div class="all-chapters-card" onclick="startAllChapters()">
+      <div class="all-icon">🎲</div>
+      <div class="all-info">
+        <div class="all-title">All Chapters</div>
+        <div class="all-desc">10 random questions from each of the 7 chapters</div>
+      </div>
+      <div class="all-badge">70 Qs</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-num">400</div>
+        <div class="stat-label">Total Questions</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">7</div>
+        <div class="stat-label">Chapters</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Options Each</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ QUIZ SCREEN ═══════════════ -->
+<div id="quiz-screen" class="screen">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="goHome()" title="Back to menu">&#8592;</button>
+    <div class="quiz-meta">
+      <div class="quiz-chapter-name" id="quiz-chapter-name">Chapter 1</div>
+      <div class="quiz-progress-text" id="quiz-progress-text">Question 1 of 57</div>
+    </div>
+    <div class="score-chip" id="score-chip">0 / 0</div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+  </div>
+
+  <div class="quiz-body">
+    <div class="q-number" id="q-number">Question 1</div>
+    <div class="q-text" id="q-text">Loading...</div>
+    <div class="options-list" id="options-list"></div>
+    <div class="feedback-box" id="feedback-box">
+      <span class="feedback-icon" id="feedback-icon"></span>
+      <span id="feedback-text"></span>
+    </div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ RESULTS SCREEN ═══════════════ -->
+<div id="results-screen" class="screen">
+  <div class="results-body">
+    <div class="results-hero">
+      <div class="results-emoji" id="results-emoji">🎉</div>
+      <div class="results-score-big" id="results-score-big"><span>0</span> / 0</div>
+      <div class="results-out-of" id="results-out-of">You answered 0 questions</div>
+      <div class="results-chapter-name" id="results-chapter-name">Chapter 1</div>
+    </div>
+
+    <div id="results-grade" class="results-grade">
+      <div class="grade-letter" id="grade-letter">A</div>
+      <div class="grade-desc" id="grade-desc">Excellent!</div>
+    </div>
+
+    <div class="results-stats">
+      <div class="result-stat">
+        <div class="rs-num rs-correct" id="rs-correct">0</div>
+        <div class="rs-label">Correct</div>
+      </div>
+      <div class="result-stat">
+        <div class="rs-num rs-wrong" id="rs-wrong">0</div>
+        <div class="rs-label">Wrong</div>
+      </div>
+      <div class="result-stat">
+        <div class="rs-num rs-pct" id="rs-pct">0%</div>
+        <div class="rs-label">Score</div>
+      </div>
+    </div>
+
+    <div class="results-actions">
+      <button class="btn-primary" id="retry-btn" onclick="retryQuiz()">🔁 Retry Same Quiz</button>
+      <button class="btn-secondary" onclick="goHome()">← Back to Chapters</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────
+const QUIZ_DATA = {"1":{"title":"HISTORICAL EVOLUTION OF NIGERIA: THE CULTURAL PERSPECTIVE","questions":[{"q":"Which of the following best represents the broad cultural diversity of Nigeria?","o":["The coexistence of many ethnic groups, languages and traditions within one national space","The existence of only one language and one religion throughout the country","A society without regional variation","The absence of any historical migration or settlement pattern"],"a":0},{"q":"Which of the following best describes Nigeria's geographical location?","o":["A country in Southern Africa bordered mainly by desert states","A country in West Africa situated roughly between latitudes 4\u00b0N and 14\u00b0N and longitudes 3\u00b0E and 14\u00b0E, bounded by Benin, Niger, Lake Chad, Cameroon and the Atlantic Ocean","A landlocked country in Central Africa","A Caribbean island state with no Atlantic coastline"],"a":1},{"q":"What is the most accurate feature associated with Nigeria's geographical location?","o":["A Caribbean island state with no Atlantic coastline","A country in Southern Africa bordered mainly by desert states","A country in West Africa situated roughly between latitudes 4\u00b0N and 14\u00b0N and longitudes 3\u00b0E and 14\u00b0E, bounded by Benin, Niger, Lake Chad, Cameroon and the Atlantic Ocean","A landlocked country in Central Africa"],"a":2},{"q":"Nigeria's geographical location is most closely connected with which of the following?","o":["A landlocked country in Central Africa","A Caribbean island state with no Atlantic coastline","A country in Southern Africa bordered mainly by desert states","A country in West Africa situated roughly between latitudes 4\u00b0N and 14\u00b0N and longitudes 3\u00b0E and 14\u00b0E, bounded by Benin, Niger, Lake Chad, Cameroon and the Atlantic Ocean"],"a":3},{"q":"Which of the following is NOT correct about Nigeria's geographical location?","o":["A country in Southern Africa bordered mainly by desert states","A Caribbean island state with no Atlantic coastline","A landlocked country in Central Africa","All of the above"],"a":0},{"q":"In the context of historical evolution of Nigeria and its cultural development, Nigeria's geographical location is best understood as what?","o":["A country in Southern Africa bordered mainly by desert states","A Caribbean island state with no Atlantic coastline","A country in West Africa situated roughly between latitudes 4\u00b0N and 14\u00b0N and longitudes 3\u00b0E and 14\u00b0E, bounded by Benin, Niger, Lake Chad, Cameroon and the Atlantic Ocean","A landlocked country in Central Africa"],"a":2},{"q":"Which statement about Nigeria's geographical location would earn full marks in an objective test?","o":["A country in West Africa situated roughly between latitudes 4\u00b0N and 14\u00b0N and longitudes 3\u00b0E and 14\u00b0E, bounded by Benin, Niger, Lake Chad, Cameroon and the Atlantic Ocean","A Caribbean island state with no Atlantic coastline","A landlocked country in Central Africa","A country in Southern Africa bordered mainly by desert states"],"a":0},{"q":"Which option most nearly matches the idea of Nigeria's geographical location?","o":["A country in West Africa situated roughly between latitudes 4\u00b0N and 14\u00b0N and longitudes 3\u00b0E and 14\u00b0E, bounded by Benin, Niger, Lake Chad, Cameroon and the Atlantic Ocean","A Caribbean island state with no Atlantic coastline","A country in Southern Africa bordered mainly by desert states","A landlocked country in Central Africa"],"a":0},{"q":"Which of the following best describes Iwo-Eleru?","o":["A coastal market town in the Niger Delta","A colonial railway station in Kano","An important archaeological site near Akure in Ondo State linked to very early human civilization in Nigeria","A modern federal capital territory"],"a":2},{"q":"What is the most accurate feature associated with Iwo-Eleru?","o":["A coastal market town in the Niger Delta","A colonial railway station in Kano","A modern federal capital territory","An important archaeological site near Akure in Ondo State linked to very early human civilization in Nigeria"],"a":3},{"q":"Iwo-Eleru is most closely connected with which of the following?","o":["A colonial railway station in Kano","An important archaeological site near Akure in Ondo State linked to very early human civilization in Nigeria","A coastal market town in the Niger Delta","A modern federal capital territory"],"a":1},{"q":"Which of the following is NOT correct about Iwo-Eleru?","o":["A modern federal capital territory","A colonial railway station in Kano","All of the above","A coastal market town in the Niger Delta"],"a":3},{"q":"In the context of historical evolution of Nigeria and its cultural development, Iwo-Eleru is best understood as what?","o":["An important archaeological site near Akure in Ondo State linked to very early human civilization in Nigeria","A coastal market town in the Niger Delta","A colonial railway station in Kano","A modern federal capital territory"],"a":0},{"q":"Which statement about Iwo-Eleru would earn full marks in an objective test?","o":["A colonial railway station in Kano","A modern federal capital territory","A coastal market town in the Niger Delta","An important archaeological site near Akure in Ondo State linked to very early human civilization in Nigeria"],"a":3},{"q":"Which option most nearly matches the idea of Iwo-Eleru?","o":["An important archaeological site near Akure in Ondo State linked to very early human civilization in Nigeria","A modern federal capital territory","A colonial railway station in Kano","A coastal market town in the Niger Delta"],"a":0},{"q":"Which of the following best describes the major ethnic groups?","o":["The Efik, Ibibio and Idoma only","The Hausa-Fulani, Yoruba and Igbo, which are commonly treated as the largest ethnic groups in Nigeria","The Bini, Urhobo and Jukun only","The Tiv, Nupe and Kanuri only"],"a":1},{"q":"What is the most accurate feature associated with the major ethnic groups?","o":["The Hausa-Fulani, Yoruba and Igbo, which are commonly treated as the largest ethnic groups in Nigeria","The Efik, Ibibio and Idoma only","The Bini, Urhobo and Jukun only","The Tiv, Nupe and Kanuri only"],"a":0},{"q":"the major ethnic groups is most closely connected with which of the following?","o":["The Efik, Ibibio and Idoma only","The Hausa-Fulani, Yoruba and Igbo, which are commonly treated as the largest ethnic groups in Nigeria","The Bini, Urhobo and Jukun only","The Tiv, Nupe and Kanuri only"],"a":1},{"q":"Which of the following is NOT correct about the major ethnic groups?","o":["The Efik, Ibibio and Idoma only","The Tiv, Nupe and Kanuri only","The Bini, Urhobo and Jukun only","All of the above"],"a":1},{"q":"In the context of historical evolution of Nigeria and its cultural development, the major ethnic groups is best understood as what?","o":["The Efik, Ibibio and Idoma only","The Hausa-Fulani, Yoruba and Igbo, which are commonly treated as the largest ethnic groups in Nigeria","The Bini, Urhobo and Jukun only","The Tiv, Nupe and Kanuri only"],"a":1},{"q":"Which statement about the major ethnic groups would earn full marks in an objective test?","o":["The Tiv, Nupe and Kanuri only","The Hausa-Fulani, Yoruba and Igbo, which are commonly treated as the largest ethnic groups in Nigeria","The Efik, Ibibio and Idoma only","The Bini, Urhobo and Jukun only"],"a":1},{"q":"Which option most nearly matches the idea of the major ethnic groups?","o":["The Efik, Ibibio and Idoma only","The Tiv, Nupe and Kanuri only","The Bini, Urhobo and Jukun only","The Hausa-Fulani, Yoruba and Igbo, which are commonly treated as the largest ethnic groups in Nigeria"],"a":3},{"q":"Which of the following best describes a culture area?","o":["A city with the highest population density","A language spoken by one ethnic group","A military district created by colonial rule","A zone made up of groups that develop within a similar physical environment and tend to show related cultural traits and historical experiences"],"a":3},{"q":"What is the most accurate feature associated with a culture area?","o":["A military district created by colonial rule","A zone made up of groups that develop within a similar physical environment and tend to show related cultural traits and historical experiences","A city with the highest population density","A language spoken by one ethnic group"],"a":1},{"q":"a culture area is most closely connected with which of the following?","o":["A military district created by colonial rule","A language spoken by one ethnic group","A zone made up of groups that develop within a similar physical environment and tend to show related cultural traits and historical experiences","A city with the highest population density"],"a":2},{"q":"Which of the following is NOT correct about a culture area?","o":["All of the above","A city with the highest population density","A language spoken by one ethnic group","A military district created by colonial rule"],"a":3},{"q":"In the context of historical evolution of Nigeria and its cultural development, a culture area is best understood as what?","o":["A zone made up of groups that develop within a similar physical environment and tend to show related cultural traits and historical experiences","A language spoken by one ethnic group","A military district created by colonial rule","A city with the highest population density"],"a":0},{"q":"Which statement about a culture area would earn full marks in an objective test?","o":["A city with the highest population density","A zone made up of groups that develop within a similar physical environment and tend to show related cultural traits and historical experiences","A military district created by colonial rule","A language spoken by one ethnic group"],"a":1},{"q":"Which option most nearly matches the idea of a culture area?","o":["A military district created by colonial rule","A language spoken by one ethnic group","A zone made up of groups that develop within a similar physical environment and tend to show related cultural traits and historical experiences","A city with the highest population density"],"a":2},{"q":"Which of the following best describes Hausa culture?","o":["A culture strongly shaped by Islamization, emirate administration, Sharia influence and titles such as Alkali and Qadi","A culture built around isolated nomadic camps in the desert only","A culture based on hereditary royal houses with no Islamic influence","A culture centered mainly on river worship and sea rituals"],"a":0},{"q":"What is the most accurate feature associated with Hausa culture?","o":["A culture centered mainly on river worship and sea rituals","A culture based on hereditary royal houses with no Islamic influence","A culture strongly shaped by Islamization, emirate administration, Sharia influence and titles such as Alkali and Qadi","A culture built around isolated nomadic camps in the desert only"],"a":2},{"q":"Hausa culture is most closely connected with which of the following?","o":["A culture built around isolated nomadic camps in the desert only","A culture strongly shaped by Islamization, emirate administration, Sharia influence and titles such as Alkali and Qadi","A culture centered mainly on river worship and sea rituals","A culture based on hereditary royal houses with no Islamic influence"],"a":1},{"q":"Which of the following is NOT correct about Hausa culture?","o":["A culture centered mainly on river worship and sea rituals","A culture built around isolated nomadic camps in the desert only","A culture based on hereditary royal houses with no Islamic influence","All of the above"],"a":0},{"q":"In the context of historical evolution of Nigeria and its cultural development, Hausa culture is best understood as what?","o":["A culture centered mainly on river worship and sea rituals","A culture built around isolated nomadic camps in the desert only","A culture strongly shaped by Islamization, emirate administration, Sharia influence and titles such as Alkali and Qadi","A culture based on hereditary royal houses with no Islamic influence"],"a":2},{"q":"Which statement about Hausa culture would earn full marks in an objective test?","o":["A culture strongly shaped by Islamization, emirate administration, Sharia influence and titles such as Alkali and Qadi","A culture centered mainly on river worship and sea rituals","A culture based on hereditary royal houses with no Islamic influence","A culture built around isolated nomadic camps in the desert only"],"a":0},{"q":"Which option most nearly matches the idea of Hausa culture?","o":["A culture based on hereditary royal houses with no Islamic influence","A culture centered mainly on river worship and sea rituals","A culture strongly shaped by Islamization, emirate administration, Sharia influence and titles such as Alkali and Qadi","A culture built around isolated nomadic camps in the desert only"],"a":2},{"q":"Which of the following best describes Fulani culture?","o":["A culture based on direct democracy in autonomous villages only","A strictly urban culture founded in the Niger Delta","A largely nomadic culture associated with the Futa Jalon highlands and the code of conduct known as pulaaku","A culture centered on kingship by primogeniture in Benin"],"a":2},{"q":"What is the most accurate feature associated with Fulani culture?","o":["A largely nomadic culture associated with the Futa Jalon highlands and the code of conduct known as pulaaku","A culture centered on kingship by primogeniture in Benin","A strictly urban culture founded in the Niger Delta","A culture based on direct democracy in autonomous villages only"],"a":0},{"q":"Fulani culture is most closely connected with which of the following?","o":["A culture based on direct democracy in autonomous villages only","A strictly urban culture founded in the Niger Delta","A culture centered on kingship by primogeniture in Benin","A largely nomadic culture associated with the Futa Jalon highlands and the code of conduct known as pulaaku"],"a":3},{"q":"Which of the following is NOT correct about Fulani culture?","o":["A strictly urban culture founded in the Niger Delta","All of the above","A culture based on direct democracy in autonomous villages only","A culture centered on kingship by primogeniture in Benin"],"a":0},{"q":"In the context of historical evolution of Nigeria and its cultural development, Fulani culture is best understood as what?","o":["A largely nomadic culture associated with the Futa Jalon highlands and the code of conduct known as pulaaku","A culture centered on kingship by primogeniture in Benin","A strictly urban culture founded in the Niger Delta","A culture based on direct democracy in autonomous villages only"],"a":0},{"q":"Which statement about Fulani culture would earn full marks in an objective test?","o":["A culture centered on kingship by primogeniture in Benin","A largely nomadic culture associated with the Futa Jalon highlands and the code of conduct known as pulaaku","A strictly urban culture founded in the Niger Delta","A culture based on direct democracy in autonomous villages only"],"a":1},{"q":"Which option most nearly matches the idea of Fulani culture?","o":["A culture centered on kingship by primogeniture in Benin","A strictly urban culture founded in the Niger Delta","A largely nomadic culture associated with the Futa Jalon highlands and the code of conduct known as pulaaku","A culture based on direct democracy in autonomous villages only"],"a":2},{"q":"Which of the following best describes Yoruba culture?","o":["A culture associated with Ile-Ife, Oduduwa, the Oba, kingship rotation and strong political institutions such as the Oyomesi and Ogboni","A culture that rejects leadership institutions entirely","A culture founded by a single emir under Sharia law","A culture with no oral tradition or royal history"],"a":0},{"q":"What is the most accurate feature associated with Yoruba culture?","o":["A culture that rejects leadership institutions entirely","A culture associated with Ile-Ife, Oduduwa, the Oba, kingship rotation and strong political institutions such as the Oyomesi and Ogboni","A culture with no oral tradition or royal history","A culture founded by a single emir under Sharia law"],"a":1},{"q":"Yoruba culture is most closely connected with which of the following?","o":["A culture that rejects leadership institutions entirely","A culture associated with Ile-Ife, Oduduwa, the Oba, kingship rotation and strong political institutions such as the Oyomesi and Ogboni","A culture founded by a single emir under Sharia law","A culture with no oral tradition or royal history"],"a":1},{"q":"Which of the following is NOT correct about Yoruba culture?","o":["A culture that rejects leadership institutions entirely","A culture founded by a single emir under Sharia law","A culture with no oral tradition or royal history","All of the above"],"a":2},{"q":"In the context of historical evolution of Nigeria and its cultural development, Yoruba culture is best understood as what?","o":["A culture that rejects leadership institutions entirely","A culture with no oral tradition or royal history","A culture associated with Ile-Ife, Oduduwa, the Oba, kingship rotation and strong political institutions such as the Oyomesi and Ogboni","A culture founded by a single emir under Sharia law"],"a":2},{"q":"Which statement about Yoruba culture would earn full marks in an objective test?","o":["A culture associated with Ile-Ife, Oduduwa, the Oba, kingship rotation and strong political institutions such as the Oyomesi and Ogboni","A culture founded by a single emir under Sharia law","A culture that rejects leadership institutions entirely","A culture with no oral tradition or royal history"],"a":0},{"q":"Which option most nearly matches the idea of Yoruba culture?","o":["A culture that rejects leadership institutions entirely","A culture with no oral tradition or royal history","A culture founded by a single emir under Sharia law","A culture associated with Ile-Ife, Oduduwa, the Oba, kingship rotation and strong political institutions such as the Oyomesi and Ogboni"],"a":3},{"q":"Which of the following best describes Igbo culture?","o":["A culture organized mainly around the Oba and hereditary palaces","A culture ruled by one central caliphate","A culture with no dialectal variation","A largely acephalous culture characterized by segmentary organization, direct democracy, the staff of authority called Ofo and strong village autonomy"],"a":3},{"q":"What is the most accurate feature associated with Igbo culture?","o":["A culture organized mainly around the Oba and hereditary palaces","A culture with no dialectal variation","A culture ruled by one central caliphate","A largely acephalous culture characterized by segmentary organization, direct democracy, the staff of authority called Ofo and strong village autonomy"],"a":3},{"q":"Igbo culture is most closely connected with which of the following?","o":["A culture organized mainly around the Oba and hereditary palaces","A largely acephalous culture characterized by segmentary organization, direct democracy, the staff of authority called Ofo and strong village autonomy","A culture with no dialectal variation","A culture ruled by one central caliphate"],"a":1},{"q":"Which of the following is NOT correct about Igbo culture?","o":["A culture organized mainly around the Oba and hereditary palaces","A culture with no dialectal variation","All of the above","A culture ruled by one central caliphate"],"a":0},{"q":"In the context of historical evolution of Nigeria and its cultural development, Igbo culture is best understood as what?","o":["A largely acephalous culture characterized by segmentary organization, direct democracy, the staff of authority called Ofo and strong village autonomy","A culture organized mainly around the Oba and hereditary palaces","A culture ruled by one central caliphate","A culture with no dialectal variation"],"a":0},{"q":"Which statement about Igbo culture would earn full marks in an objective test?","o":["A culture ruled by one central caliphate","A culture with no dialectal variation","A culture organized mainly around the Oba and hereditary palaces","A largely acephalous culture characterized by segmentary organization, direct democracy, the staff of authority called Ofo and strong village autonomy"],"a":3},{"q":"Which option most nearly matches the idea of Igbo culture?","o":["A culture organized mainly around the Oba and hereditary palaces","A largely acephalous culture characterized by segmentary organization, direct democracy, the staff of authority called Ofo and strong village autonomy","A culture ruled by one central caliphate","A culture with no dialectal variation"],"a":1}]},"2":{"title":"THE PEOPLES OF THE ETHNIC MINORITY GROUPS IN NIGERIA AND THEIR CULTURE","questions":[{"q":"What is the strongest unifying idea behind the study of Nigeria's minority peoples?","o":["One king, one tribe, one language","A complete rejection of historical differences","Unity in diversity","The abolition of all local cultures"],"a":2},{"q":"Which of the following best describes the Bini people?","o":["A people famous for desert caravans and camel breeding","A people strongly associated with Benin history, early European contact and the authority of the Oba","A people whose main identity is tied to the Kano Chronicle","A people with no connection to any royal institution"],"a":1},{"q":"What is the most accurate feature associated with the Bini people?","o":["A people famous for desert caravans and camel breeding","A people whose main identity is tied to the Kano Chronicle","A people with no connection to any royal institution","A people strongly associated with Benin history, early European contact and the authority of the Oba"],"a":3},{"q":"the Bini people is most closely connected with which of the following?","o":["A people with no connection to any royal institution","A people famous for desert caravans and camel breeding","A people strongly associated with Benin history, early European contact and the authority of the Oba","A people whose main identity is tied to the Kano Chronicle"],"a":2},{"q":"Which of the following is NOT correct about the Bini people?","o":["A people famous for desert caravans and camel breeding","All of the above","A people with no connection to any royal institution","A people whose main identity is tied to the Kano Chronicle"],"a":0},{"q":"In the context of the peoples of the ethnic minority groups in Nigeria, the Bini people is best understood as what?","o":["A people with no connection to any royal institution","A people famous for desert caravans and camel breeding","A people whose main identity is tied to the Kano Chronicle","A people strongly associated with Benin history, early European contact and the authority of the Oba"],"a":3},{"q":"Which statement about the Bini people would earn full marks in an objective test?","o":["A people whose main identity is tied to the Kano Chronicle","A people famous for desert caravans and camel breeding","A people strongly associated with Benin history, early European contact and the authority of the Oba","A people with no connection to any royal institution"],"a":2},{"q":"Which option most nearly matches the idea of the Bini people?","o":["A people famous for desert caravans and camel breeding","A people whose main identity is tied to the Kano Chronicle","A people with no connection to any royal institution","A people strongly associated with Benin history, early European contact and the authority of the Oba"],"a":3},{"q":"Which of the following best describes the Oba of Benin?","o":["A military commander appointed by foreigners","The civil and religious head of Benin Kingdom, regarded as a divine ruler and linked to primogeniture","A merchant guild leader with no royal significance","A village head elected every year by ballot"],"a":1},{"q":"What is the most accurate feature associated with the Oba of Benin?","o":["A village head elected every year by ballot","A military commander appointed by foreigners","The civil and religious head of Benin Kingdom, regarded as a divine ruler and linked to primogeniture","A merchant guild leader with no royal significance"],"a":2},{"q":"the Oba of Benin is most closely connected with which of the following?","o":["A village head elected every year by ballot","A merchant guild leader with no royal significance","A military commander appointed by foreigners","The civil and religious head of Benin Kingdom, regarded as a divine ruler and linked to primogeniture"],"a":3},{"q":"Which of the following is NOT correct about the Oba of Benin?","o":["A merchant guild leader with no royal significance","A village head elected every year by ballot","All of the above","A military commander appointed by foreigners"],"a":1},{"q":"In the context of the peoples of the ethnic minority groups in Nigeria, the Oba of Benin is best understood as what?","o":["A merchant guild leader with no royal significance","A military commander appointed by foreigners","The civil and religious head of Benin Kingdom, regarded as a divine ruler and linked to primogeniture","A village head elected every year by ballot"],"a":2},{"q":"Which statement about the Oba of Benin would earn full marks in an objective test?","o":["A merchant guild leader with no royal significance","The civil and religious head of Benin Kingdom, regarded as a divine ruler and linked to primogeniture","A village head elected every year by ballot","A military commander appointed by foreigners"],"a":1},{"q":"Which option most nearly matches the idea of the Oba of Benin?","o":["A merchant guild leader with no royal significance","A village head elected every year by ballot","A military commander appointed by foreigners","The civil and religious head of Benin Kingdom, regarded as a divine ruler and linked to primogeniture"],"a":3},{"q":"Which of the following best describes Benin family structure?","o":["A structure based only on matrilineal clans and no households","A social structure that recognizes the nuclear, joint and extended family, with elders exercising authority","A system where only strangers can inherit property","A structure that rejects the role of elders completely"],"a":1},{"q":"What is the most accurate feature associated with Benin family structure?","o":["A system where only strangers can inherit property","A structure based only on matrilineal clans and no households","A structure that rejects the role of elders completely","A social structure that recognizes the nuclear, joint and extended family, with elders exercising authority"],"a":3},{"q":"Benin family structure is most closely connected with which of the following?","o":["A system where only strangers can inherit property","A social structure that recognizes the nuclear, joint and extended family, with elders exercising authority","A structure that rejects the role of elders completely","A structure based only on matrilineal clans and no households"],"a":1},{"q":"Which of the following is NOT correct about Benin family structure?","o":["A system where only strangers can inherit property","All of the above","A structure based only on matrilineal clans and no households","A structure that rejects the role of elders completely"],"a":3},{"q":"In the context of the peoples of the ethnic minority groups in Nigeria, Benin family structure is best understood as what?","o":["A structure that rejects the role of elders completely","A system where only strangers can inherit property","A structure based only on matrilineal clans and no households","A social structure that recognizes the nuclear, joint and extended family, with elders exercising authority"],"a":3},{"q":"Which statement about Benin family structure would earn full marks in an objective test?","o":["A structure based only on matrilineal clans and no households","A system where only strangers can inherit property","A social structure that recognizes the nuclear, joint and extended family, with elders exercising authority","A structure that rejects the role of elders completely"],"a":2},{"q":"Which option most nearly matches the idea of Benin family structure?","o":["A social structure that recognizes the nuclear, joint and extended family, with elders exercising authority","A system where only strangers can inherit property","A structure that rejects the role of elders completely","A structure based only on matrilineal clans and no households"],"a":0},{"q":"Which of the following best describes the Itsekiri people?","o":["A people whose tradition denies any Benin influence","A Niger Delta people whose origin tradition is linked to Iginuwa, the son and heir of the Oba of Benin","A desert community whose ruler came from Baghdad","A mountain people whose origin is traced to Lake Chad"],"a":1},{"q":"What is the most accurate feature associated with the Itsekiri people?","o":["A mountain people whose origin is traced to Lake Chad","A desert community whose ruler came from Baghdad","A Niger Delta people whose origin tradition is linked to Iginuwa, the son and heir of the Oba of Benin","A people whose tradition denies any Benin influence"],"a":2},{"q":"the Itsekiri people is most closely connected with which of the following?","o":["A mountain people whose origin is traced to Lake Chad","A Niger Delta people whose origin tradition is linked to Iginuwa, the son and heir of the Oba of Benin","A desert community whose ruler came from Baghdad","A people whose tradition denies any Benin influence"],"a":1},{"q":"Which of the following is NOT correct about the Itsekiri people?","o":["All of the above","A desert community whose ruler came from Baghdad","A mountain people whose origin is traced to Lake Chad","A people whose tradition denies any Benin influence"],"a":2},{"q":"In the context of the peoples of the ethnic minority groups in Nigeria, the Itsekiri people is best understood as what?","o":["A desert community whose ruler came from Baghdad","A Niger Delta people whose origin tradition is linked to Iginuwa, the son and heir of the Oba of Benin","A people whose tradition denies any Benin influence","A mountain people whose origin is traced to Lake Chad"],"a":1},{"q":"Which statement about the Itsekiri people would earn full marks in an objective test?","o":["A Niger Delta people whose origin tradition is linked to Iginuwa, the son and heir of the Oba of Benin","A mountain people whose origin is traced to Lake Chad","A desert community whose ruler came from Baghdad","A people whose tradition denies any Benin influence"],"a":0},{"q":"Which option most nearly matches the idea of the Itsekiri people?","o":["A Niger Delta people whose origin tradition is linked to Iginuwa, the son and heir of the Oba of Benin","A desert community whose ruler came from Baghdad","A mountain people whose origin is traced to Lake Chad","A people whose tradition denies any Benin influence"],"a":0},{"q":"Which of the following best describes the Urhobo people?","o":["A people whose culture is identical to the Tiv farming system","A people with no village leadership at all","A Niger Delta people with fragmented settlements, village rulers called Ovi and a socio-political pattern influenced by Benin","A people whose society is organized around the emirate system"],"a":2},{"q":"What is the most accurate feature associated with the Urhobo people?","o":["A people whose society is organized around the emirate system","A Niger Delta people with fragmented settlements, village rulers called Ovi and a socio-political pattern influenced by Benin","A people with no village leadership at all","A people whose culture is identical to the Tiv farming system"],"a":1},{"q":"the Urhobo people is most closely connected with which of the following?","o":["A people with no village leadership at all","A people whose culture is identical to the Tiv farming system","A people whose society is organized around the emirate system","A Niger Delta people with fragmented settlements, village rulers called Ovi and a socio-political pattern influenced by Benin"],"a":3},{"q":"Which of the following is NOT correct about the Urhobo people?","o":["A people whose culture is identical to the Tiv farming system","A people with no village leadership at all","A people whose society is organized around the emirate system","All of the above"],"a":2},{"q":"In the context of the peoples of the ethnic minority groups in Nigeria, the Urhobo people is best understood as what?","o":["A Niger Delta people with fragmented settlements, village rulers called Ovi and a socio-political pattern influenced by Benin","A people with no village leadership at all","A people whose culture is identical to the Tiv farming system","A people whose society is organized around the emirate system"],"a":0},{"q":"Which statement about the Urhobo people would earn full marks in an objective test?","o":["A people with no village leadership at all","A Niger Delta people with fragmented settlements, village rulers called Ovi and a socio-political pattern influenced by Benin","A people whose society is organized around the emirate system","A people whose culture is identical to the Tiv farming system"],"a":1},{"q":"Which option most nearly matches the idea of the Urhobo people?","o":["A people with no village leadership at all","A people whose culture is identical to the Tiv farming system","A people whose society is organized around the emirate system","A Niger Delta people with fragmented settlements, village rulers called Ovi and a socio-political pattern influenced by Benin"],"a":3},{"q":"Which of the following best describes the Ijaw people?","o":["A highland people known for terracotta sculpture only","A savanna people whose economy depends mainly on camel trading","A people whose religion excludes all deities","A Niger Delta people whose life is closely tied to rivers, creeks, fishing and belief in water deities"],"a":3},{"q":"What is the most accurate feature associated with the Ijaw people?","o":["A Niger Delta people whose life is closely tied to rivers, creeks, fishing and belief in water deities","A highland people known for terracotta sculpture only","A savanna people whose economy depends mainly on camel trading","A people whose religion excludes all deities"],"a":0},{"q":"the Ijaw people is most closely connected with which of the following?","o":["A Niger Delta people whose life is closely tied to rivers, creeks, fishing and belief in water deities","A savanna people whose economy depends mainly on camel trading","A people whose religion excludes all deities","A highland people known for terracotta sculpture only"],"a":0},{"q":"Which of the following is NOT correct about the Ijaw people?","o":["All of the above","A people whose religion excludes all deities","A savanna people whose economy depends mainly on camel trading","A highland people known for terracotta sculpture only"],"a":2},{"q":"In the context of the peoples of the ethnic minority groups in Nigeria, the Ijaw people is best understood as what?","o":["A Niger Delta people whose life is closely tied to rivers, creeks, fishing and belief in water deities","A savanna people whose economy depends mainly on camel trading","A highland people known for terracotta sculpture only","A people whose religion excludes all deities"],"a":0},{"q":"Which statement about the Ijaw people would earn full marks in an objective test?","o":["A savanna people whose economy depends mainly on camel trading","A people whose religion excludes all deities","A highland people known for terracotta sculpture only","A Niger Delta people whose life is closely tied to rivers, creeks, fishing and belief in water deities"],"a":3},{"q":"Which option most nearly matches the idea of the Ijaw people?","o":["A savanna people whose economy depends mainly on camel trading","A highland people known for terracotta sculpture only","A people whose religion excludes all deities","A Niger Delta people whose life is closely tied to rivers, creeks, fishing and belief in water deities"],"a":3},{"q":"Which of the following best describes the Jukun people?","o":["A group whose historical records are often connected to the Kano Chronicle and who raided Hausa-land and Bornu in the sixteenth and seventeenth centuries","A group whose history begins with the Bayajida legend in Daura","A people defined mainly by coastal fishing settlements","A people first recorded in the Roman Empire"],"a":0},{"q":"What is the most accurate feature associated with the Jukun people?","o":["A people defined mainly by coastal fishing settlements","A group whose history begins with the Bayajida legend in Daura","A people first recorded in the Roman Empire","A group whose historical records are often connected to the Kano Chronicle and who raided Hausa-land and Bornu in the sixteenth and seventeenth centuries"],"a":3},{"q":"the Jukun people is most closely connected with which of the following?","o":["A people first recorded in the Roman Empire","A people defined mainly by coastal fishing settlements","A group whose historical records are often connected to the Kano Chronicle and who raided Hausa-land and Bornu in the sixteenth and seventeenth centuries","A group whose history begins with the Bayajida legend in Daura"],"a":2},{"q":"Which of the following is NOT correct about the Jukun people?","o":["A people first recorded in the Roman Empire","All of the above","A group whose history begins with the Bayajida legend in Daura","A people defined mainly by coastal fishing settlements"],"a":0},{"q":"In the context of the peoples of the ethnic minority groups in Nigeria, the Jukun people is best understood as what?","o":["A group whose history begins with the Bayajida legend in Daura","A people first recorded in the Roman Empire","A group whose historical records are often connected to the Kano Chronicle and who raided Hausa-land and Bornu in the sixteenth and seventeenth centuries","A people defined mainly by coastal fishing settlements"],"a":2},{"q":"Which statement about the Jukun people would earn full marks in an objective test?","o":["A group whose historical records are often connected to the Kano Chronicle and who raided Hausa-land and Bornu in the sixteenth and seventeenth centuries","A people first recorded in the Roman Empire","A group whose history begins with the Bayajida legend in Daura","A people defined mainly by coastal fishing settlements"],"a":0},{"q":"Which option most nearly matches the idea of the Jukun people?","o":["A people first recorded in the Roman Empire","A people defined mainly by coastal fishing settlements","A group whose history begins with the Bayajida legend in Daura","A group whose historical records are often connected to the Kano Chronicle and who raided Hausa-land and Bornu in the sixteenth and seventeenth centuries"],"a":3},{"q":"Which of the following best describes the Tiv people?","o":["The largest single ethnic group in the middle Benue basin, with a strong farming tradition, communal land ownership and belief in Aondo","A group without any notion of communal land","A people whose chief occupation is desert caravan trade","A people best known for sea transport and naval warfare"],"a":0},{"q":"What is the most accurate feature associated with the Tiv people?","o":["A group without any notion of communal land","A people whose chief occupation is desert caravan trade","The largest single ethnic group in the middle Benue basin, with a strong farming tradition, communal land ownership and belief in Aondo","A people best known for sea transport and naval warfare"],"a":2},{"q":"the Tiv people is most closely connected with which of the following?","o":["The largest single ethnic group in the middle Benue basin, with a strong farming tradition, communal land ownership and belief in Aondo","A people whose chief occupation is desert caravan trade","A group without any notion of communal land","A people best known for sea transport and naval warfare"],"a":0},{"q":"Which of the following is NOT correct about the Tiv people?","o":["A people whose chief occupation is desert caravan trade","A group without any notion of communal land","All of the above","A people best known for sea transport and naval warfare"],"a":3},{"q":"In the context of the peoples of the ethnic minority groups in Nigeria, the Tiv people is best understood as what?","o":["The largest single ethnic group in the middle Benue basin, with a strong farming tradition, communal land ownership and belief in Aondo","A people whose chief occupation is desert caravan trade","A group without any notion of communal land","A people best known for sea transport and naval warfare"],"a":0},{"q":"Which statement about the Tiv people would earn full marks in an objective test?","o":["A people best known for sea transport and naval warfare","The largest single ethnic group in the middle Benue basin, with a strong farming tradition, communal land ownership and belief in Aondo","A group without any notion of communal land","A people whose chief occupation is desert caravan trade"],"a":1},{"q":"Which option most nearly matches the idea of the Tiv people?","o":["The largest single ethnic group in the middle Benue basin, with a strong farming tradition, communal land ownership and belief in Aondo","A people best known for sea transport and naval warfare","A group without any notion of communal land","A people whose chief occupation is desert caravan trade"],"a":0}]},"3":{"title":"INDIGENOUS LANGUAGES, USAGE AND DEVELOPMENT: NEGATIVE ATTITUDES AND CONDUCTS","questions":[{"q":"Why is the promotion of indigenous languages important?","o":["It removes the need for education","It makes literacy impossible in every case","It preserves identity, improves learning and keeps cultural knowledge alive","It destroys communication between generations"],"a":2},{"q":"Which of the following best describes language?","o":["A structured system of communication used to express thought, share meaning and transmit culture","A form of taxation imposed by the state","A physical boundary separating communities","A type of animal sound without rules"],"a":0},{"q":"What is the most accurate feature associated with language?","o":["A structured system of communication used to express thought, share meaning and transmit culture","A form of taxation imposed by the state","A physical boundary separating communities","A type of animal sound without rules"],"a":0},{"q":"language is most closely connected with which of the following?","o":["A type of animal sound without rules","A physical boundary separating communities","A form of taxation imposed by the state","A structured system of communication used to express thought, share meaning and transmit culture"],"a":3},{"q":"Which of the following is NOT correct about language?","o":["All of the above","A physical boundary separating communities","A form of taxation imposed by the state","A type of animal sound without rules"],"a":2},{"q":"In the context of indigenous languages, usage and development, language is best understood as what?","o":["A structured system of communication used to express thought, share meaning and transmit culture","A form of taxation imposed by the state","A type of animal sound without rules","A physical boundary separating communities"],"a":0},{"q":"Which statement about language would earn full marks in an objective test?","o":["A type of animal sound without rules","A physical boundary separating communities","A form of taxation imposed by the state","A structured system of communication used to express thought, share meaning and transmit culture"],"a":3},{"q":"Which option most nearly matches the idea of language?","o":["A form of taxation imposed by the state","A structured system of communication used to express thought, share meaning and transmit culture","A type of animal sound without rules","A physical boundary separating communities"],"a":1},{"q":"Which of the following best describes indigenous language?","o":["Any foreign language learned only in adulthood","A native language of a people that carries identity, values and history","A code used exclusively by machines","A language created only for laboratory use"],"a":1},{"q":"What is the most accurate feature associated with indigenous language?","o":["A code used exclusively by machines","A language created only for laboratory use","Any foreign language learned only in adulthood","A native language of a people that carries identity, values and history"],"a":3},{"q":"indigenous language is most closely connected with which of the following?","o":["A language created only for laboratory use","A code used exclusively by machines","Any foreign language learned only in adulthood","A native language of a people that carries identity, values and history"],"a":3},{"q":"Which of the following is NOT correct about indigenous language?","o":["Any foreign language learned only in adulthood","All of the above","A code used exclusively by machines","A language created only for laboratory use"],"a":0},{"q":"In the context of indigenous languages, usage and development, indigenous language is best understood as what?","o":["A language created only for laboratory use","Any foreign language learned only in adulthood","A code used exclusively by machines","A native language of a people that carries identity, values and history"],"a":3},{"q":"Which statement about indigenous language would earn full marks in an objective test?","o":["A code used exclusively by machines","A native language of a people that carries identity, values and history","Any foreign language learned only in adulthood","A language created only for laboratory use"],"a":1},{"q":"Which option most nearly matches the idea of indigenous language?","o":["A native language of a people that carries identity, values and history","A code used exclusively by machines","Any foreign language learned only in adulthood","A language created only for laboratory use"],"a":0},{"q":"Which of the following best describes encoded and decoded communication?","o":["A process of storing money in a bank account","The idea that speakers package meaning into language and listeners must interpret it correctly","A political system of rotating kingship","A method of converting farms into markets"],"a":1},{"q":"What is the most accurate feature associated with encoded and decoded communication?","o":["The idea that speakers package meaning into language and listeners must interpret it correctly","A method of converting farms into markets","A political system of rotating kingship","A process of storing money in a bank account"],"a":0},{"q":"encoded and decoded communication is most closely connected with which of the following?","o":["The idea that speakers package meaning into language and listeners must interpret it correctly","A method of converting farms into markets","A political system of rotating kingship","A process of storing money in a bank account"],"a":0},{"q":"Which of the following is NOT correct about encoded and decoded communication?","o":["All of the above","A process of storing money in a bank account","A political system of rotating kingship","A method of converting farms into markets"],"a":1},{"q":"In the context of indigenous languages, usage and development, encoded and decoded communication is best understood as what?","o":["A method of converting farms into markets","A political system of rotating kingship","The idea that speakers package meaning into language and listeners must interpret it correctly","A process of storing money in a bank account"],"a":2},{"q":"Which statement about encoded and decoded communication would earn full marks in an objective test?","o":["A method of converting farms into markets","The idea that speakers package meaning into language and listeners must interpret it correctly","A process of storing money in a bank account","A political system of rotating kingship"],"a":1},{"q":"Which option most nearly matches the idea of encoded and decoded communication?","o":["A political system of rotating kingship","The idea that speakers package meaning into language and listeners must interpret it correctly","A process of storing money in a bank account","A method of converting farms into markets"],"a":1},{"q":"Which of the following best describes negative attitudes toward indigenous languages?","o":["The publication of dictionaries and folklore texts","Active preservation of oral literature in schools","Bias, neglect or preference for foreign languages that weakens local language use and transmission","A policy that rewards mother-tongue literacy"],"a":2},{"q":"What is the most accurate feature associated with negative attitudes toward indigenous languages?","o":["The publication of dictionaries and folklore texts","Bias, neglect or preference for foreign languages that weakens local language use and transmission","A policy that rewards mother-tongue literacy","Active preservation of oral literature in schools"],"a":1},{"q":"negative attitudes toward indigenous languages is most closely connected with which of the following?","o":["Bias, neglect or preference for foreign languages that weakens local language use and transmission","A policy that rewards mother-tongue literacy","The publication of dictionaries and folklore texts","Active preservation of oral literature in schools"],"a":0},{"q":"Which of the following is NOT correct about negative attitudes toward indigenous languages?","o":["All of the above","The publication of dictionaries and folklore texts","A policy that rewards mother-tongue literacy","Active preservation of oral literature in schools"],"a":3},{"q":"In the context of indigenous languages, usage and development, negative attitudes toward indigenous languages is best understood as what?","o":["Active preservation of oral literature in schools","The publication of dictionaries and folklore texts","Bias, neglect or preference for foreign languages that weakens local language use and transmission","A policy that rewards mother-tongue literacy"],"a":2},{"q":"Which statement about negative attitudes toward indigenous languages would earn full marks in an objective test?","o":["Active preservation of oral literature in schools","A policy that rewards mother-tongue literacy","Bias, neglect or preference for foreign languages that weakens local language use and transmission","The publication of dictionaries and folklore texts"],"a":2},{"q":"Which option most nearly matches the idea of negative attitudes toward indigenous languages?","o":["Bias, neglect or preference for foreign languages that weakens local language use and transmission","The publication of dictionaries and folklore texts","A policy that rewards mother-tongue literacy","Active preservation of oral literature in schools"],"a":0},{"q":"Which of the following best describes language development?","o":["The deliberate process of standardizing, expanding and promoting a language through writing, education and media","The total abandonment of all written forms","The conversion of a language into a tax system","The replacement of all languages with one dialect forever"],"a":0},{"q":"What is the most accurate feature associated with language development?","o":["The deliberate process of standardizing, expanding and promoting a language through writing, education and media","The replacement of all languages with one dialect forever","The total abandonment of all written forms","The conversion of a language into a tax system"],"a":0},{"q":"language development is most closely connected with which of the following?","o":["The replacement of all languages with one dialect forever","The total abandonment of all written forms","The deliberate process of standardizing, expanding and promoting a language through writing, education and media","The conversion of a language into a tax system"],"a":2},{"q":"Which of the following is NOT correct about language development?","o":["The replacement of all languages with one dialect forever","The conversion of a language into a tax system","All of the above","The total abandonment of all written forms"],"a":3},{"q":"In the context of indigenous languages, usage and development, language development is best understood as what?","o":["The deliberate process of standardizing, expanding and promoting a language through writing, education and media","The conversion of a language into a tax system","The total abandonment of all written forms","The replacement of all languages with one dialect forever"],"a":0},{"q":"Which statement about language development would earn full marks in an objective test?","o":["The total abandonment of all written forms","The deliberate process of standardizing, expanding and promoting a language through writing, education and media","The replacement of all languages with one dialect forever","The conversion of a language into a tax system"],"a":1},{"q":"Which option most nearly matches the idea of language development?","o":["The total abandonment of all written forms","The deliberate process of standardizing, expanding and promoting a language through writing, education and media","The conversion of a language into a tax system","The replacement of all languages with one dialect forever"],"a":1},{"q":"Which of the following best describes mother tongue?","o":["The official language of a foreign parliament","A language used only in courtrooms","The first language a child acquires naturally in the home environment","A computer programming language"],"a":2},{"q":"What is the most accurate feature associated with mother tongue?","o":["A computer programming language","The first language a child acquires naturally in the home environment","The official language of a foreign parliament","A language used only in courtrooms"],"a":1},{"q":"mother tongue is most closely connected with which of the following?","o":["The first language a child acquires naturally in the home environment","A computer programming language","A language used only in courtrooms","The official language of a foreign parliament"],"a":0},{"q":"Which of the following is NOT correct about mother tongue?","o":["The official language of a foreign parliament","A computer programming language","A language used only in courtrooms","All of the above"],"a":0},{"q":"In the context of indigenous languages, usage and development, mother tongue is best understood as what?","o":["A language used only in courtrooms","A computer programming language","The official language of a foreign parliament","The first language a child acquires naturally in the home environment"],"a":3},{"q":"Which statement about mother tongue would earn full marks in an objective test?","o":["A computer programming language","The first language a child acquires naturally in the home environment","A language used only in courtrooms","The official language of a foreign parliament"],"a":1},{"q":"Which option most nearly matches the idea of mother tongue?","o":["The official language of a foreign parliament","A language used only in courtrooms","A computer programming language","The first language a child acquires naturally in the home environment"],"a":3},{"q":"Which of the following best describes the role of indigenous language in education?","o":["It is useful only for military drills","It has no relationship to cognitive development","It improves comprehension, preserves culture and helps early learning when used effectively","It prevents all forms of literacy"],"a":2},{"q":"What is the most accurate feature associated with the role of indigenous language in education?","o":["It prevents all forms of literacy","It has no relationship to cognitive development","It is useful only for military drills","It improves comprehension, preserves culture and helps early learning when used effectively"],"a":3},{"q":"the role of indigenous language in education is most closely connected with which of the following?","o":["It prevents all forms of literacy","It has no relationship to cognitive development","It is useful only for military drills","It improves comprehension, preserves culture and helps early learning when used effectively"],"a":3},{"q":"Which of the following is NOT correct about the role of indigenous language in education?","o":["It has no relationship to cognitive development","It is useful only for military drills","It prevents all forms of literacy","All of the above"],"a":2},{"q":"In the context of indigenous languages, usage and development, the role of indigenous language in education is best understood as what?","o":["It prevents all forms of literacy","It improves comprehension, preserves culture and helps early learning when used effectively","It has no relationship to cognitive development","It is useful only for military drills"],"a":1},{"q":"Which statement about the role of indigenous language in education would earn full marks in an objective test?","o":["It is useful only for military drills","It has no relationship to cognitive development","It improves comprehension, preserves culture and helps early learning when used effectively","It prevents all forms of literacy"],"a":2},{"q":"Which option most nearly matches the idea of the role of indigenous language in education?","o":["It prevents all forms of literacy","It improves comprehension, preserves culture and helps early learning when used effectively","It has no relationship to cognitive development","It is useful only for military drills"],"a":1},{"q":"Which of the following best describes language policy?","o":["An official plan guiding the selection, promotion and use of languages in a society","A ban on all forms of communication","A private agreement between two families only","A market rule that controls food prices"],"a":0},{"q":"What is the most accurate feature associated with language policy?","o":["An official plan guiding the selection, promotion and use of languages in a society","A ban on all forms of communication","A market rule that controls food prices","A private agreement between two families only"],"a":0},{"q":"language policy is most closely connected with which of the following?","o":["A private agreement between two families only","An official plan guiding the selection, promotion and use of languages in a society","A market rule that controls food prices","A ban on all forms of communication"],"a":1},{"q":"Which of the following is NOT correct about language policy?","o":["All of the above","A market rule that controls food prices","A ban on all forms of communication","A private agreement between two families only"],"a":1},{"q":"In the context of indigenous languages, usage and development, language policy is best understood as what?","o":["A ban on all forms of communication","A market rule that controls food prices","A private agreement between two families only","An official plan guiding the selection, promotion and use of languages in a society"],"a":3},{"q":"Which statement about language policy would earn full marks in an objective test?","o":["A ban on all forms of communication","A private agreement between two families only","A market rule that controls food prices","An official plan guiding the selection, promotion and use of languages in a society"],"a":3},{"q":"Which option most nearly matches the idea of language policy?","o":["A ban on all forms of communication","A market rule that controls food prices","A private agreement between two families only","An official plan guiding the selection, promotion and use of languages in a society"],"a":3}]},"4":{"title":"CULTISM, KIDNAPPING, ARMED BANDITRY AND KILLER HERDSMEN","questions":[{"q":"Which response is most effective against violent insecurity?","o":["Celebrating offenders publicly","A combination of justice, intelligence, community cooperation and credible law enforcement","Ignoring all warning signs","Replacing law with revenge"],"a":1},{"q":"Which of the following best describes cultism?","o":["A farming cooperative built on open membership","The organized secret association of persons who often use secrecy, intimidation and violence to pursue group interests","A formal sports association registered in school records","A public debate club that operates transparently"],"a":1},{"q":"What is the most accurate feature associated with cultism?","o":["The organized secret association of persons who often use secrecy, intimidation and violence to pursue group interests","A farming cooperative built on open membership","A public debate club that operates transparently","A formal sports association registered in school records"],"a":0},{"q":"cultism is most closely connected with which of the following?","o":["A farming cooperative built on open membership","A public debate club that operates transparently","The organized secret association of persons who often use secrecy, intimidation and violence to pursue group interests","A formal sports association registered in school records"],"a":2},{"q":"Which of the following is NOT correct about cultism?","o":["All of the above","A public debate club that operates transparently","A formal sports association registered in school records","A farming cooperative built on open membership"],"a":1},{"q":"In the context of cultism, kidnapping, armed banditry and insecurity, cultism is best understood as what?","o":["A public debate club that operates transparently","A farming cooperative built on open membership","The organized secret association of persons who often use secrecy, intimidation and violence to pursue group interests","A formal sports association registered in school records"],"a":2},{"q":"Which statement about cultism would earn full marks in an objective test?","o":["The organized secret association of persons who often use secrecy, intimidation and violence to pursue group interests","A formal sports association registered in school records","A farming cooperative built on open membership","A public debate club that operates transparently"],"a":0},{"q":"Which option most nearly matches the idea of cultism?","o":["The organized secret association of persons who often use secrecy, intimidation and violence to pursue group interests","A farming cooperative built on open membership","A formal sports association registered in school records","A public debate club that operates transparently"],"a":0},{"q":"Which of the following best describes kidnapping?","o":["A ceremonial visit to a family house","The lawful transfer of a student to another class","The voluntary movement of a worker to a new town","The unlawful seizure and detention of a person, usually for ransom, coercion or political pressure"],"a":3},{"q":"What is the most accurate feature associated with kidnapping?","o":["The voluntary movement of a worker to a new town","A ceremonial visit to a family house","The unlawful seizure and detention of a person, usually for ransom, coercion or political pressure","The lawful transfer of a student to another class"],"a":2},{"q":"kidnapping is most closely connected with which of the following?","o":["A ceremonial visit to a family house","The lawful transfer of a student to another class","The voluntary movement of a worker to a new town","The unlawful seizure and detention of a person, usually for ransom, coercion or political pressure"],"a":3},{"q":"Which of the following is NOT correct about kidnapping?","o":["All of the above","The lawful transfer of a student to another class","The voluntary movement of a worker to a new town","A ceremonial visit to a family house"],"a":1},{"q":"In the context of cultism, kidnapping, armed banditry and insecurity, kidnapping is best understood as what?","o":["The voluntary movement of a worker to a new town","A ceremonial visit to a family house","The lawful transfer of a student to another class","The unlawful seizure and detention of a person, usually for ransom, coercion or political pressure"],"a":3},{"q":"Which statement about kidnapping would earn full marks in an objective test?","o":["The lawful transfer of a student to another class","The unlawful seizure and detention of a person, usually for ransom, coercion or political pressure","A ceremonial visit to a family house","The voluntary movement of a worker to a new town"],"a":1},{"q":"Which option most nearly matches the idea of kidnapping?","o":["A ceremonial visit to a family house","The voluntary movement of a worker to a new town","The unlawful seizure and detention of a person, usually for ransom, coercion or political pressure","The lawful transfer of a student to another class"],"a":2},{"q":"Which of the following best describes armed banditry?","o":["Routine market bargaining between traders","A peaceful legal protest by workers","A school debate on civic education","Organized criminal violence involving weapons, robbery, raids, intimidation and destruction"],"a":3},{"q":"What is the most accurate feature associated with armed banditry?","o":["Routine market bargaining between traders","A peaceful legal protest by workers","A school debate on civic education","Organized criminal violence involving weapons, robbery, raids, intimidation and destruction"],"a":3},{"q":"armed banditry is most closely connected with which of the following?","o":["A peaceful legal protest by workers","A school debate on civic education","Routine market bargaining between traders","Organized criminal violence involving weapons, robbery, raids, intimidation and destruction"],"a":3},{"q":"Which of the following is NOT correct about armed banditry?","o":["Routine market bargaining between traders","All of the above","A school debate on civic education","A peaceful legal protest by workers"],"a":0},{"q":"In the context of cultism, kidnapping, armed banditry and insecurity, armed banditry is best understood as what?","o":["A school debate on civic education","Organized criminal violence involving weapons, robbery, raids, intimidation and destruction","Routine market bargaining between traders","A peaceful legal protest by workers"],"a":1},{"q":"Which statement about armed banditry would earn full marks in an objective test?","o":["Routine market bargaining between traders","A peaceful legal protest by workers","A school debate on civic education","Organized criminal violence involving weapons, robbery, raids, intimidation and destruction"],"a":3},{"q":"Which option most nearly matches the idea of armed banditry?","o":["Organized criminal violence involving weapons, robbery, raids, intimidation and destruction","A peaceful legal protest by workers","Routine market bargaining between traders","A school debate on civic education"],"a":0},{"q":"Which of the following best describes killer herdsmen crisis?","o":["A system of traditional apprenticeship among traders","Violent clashes and attacks associated with armed pastoral groups, land pressure and insecurity","A dispute limited to school admission lists","A harvest festival celebrated by farmers"],"a":1},{"q":"What is the most accurate feature associated with killer herdsmen crisis?","o":["A harvest festival celebrated by farmers","A system of traditional apprenticeship among traders","Violent clashes and attacks associated with armed pastoral groups, land pressure and insecurity","A dispute limited to school admission lists"],"a":2},{"q":"killer herdsmen crisis is most closely connected with which of the following?","o":["A dispute limited to school admission lists","A system of traditional apprenticeship among traders","A harvest festival celebrated by farmers","Violent clashes and attacks associated with armed pastoral groups, land pressure and insecurity"],"a":3},{"q":"Which of the following is NOT correct about killer herdsmen crisis?","o":["A dispute limited to school admission lists","A harvest festival celebrated by farmers","A system of traditional apprenticeship among traders","All of the above"],"a":1},{"q":"In the context of cultism, kidnapping, armed banditry and insecurity, killer herdsmen crisis is best understood as what?","o":["A harvest festival celebrated by farmers","A dispute limited to school admission lists","Violent clashes and attacks associated with armed pastoral groups, land pressure and insecurity","A system of traditional apprenticeship among traders"],"a":2},{"q":"Which statement about killer herdsmen crisis would earn full marks in an objective test?","o":["A harvest festival celebrated by farmers","Violent clashes and attacks associated with armed pastoral groups, land pressure and insecurity","A system of traditional apprenticeship among traders","A dispute limited to school admission lists"],"a":1},{"q":"Which option most nearly matches the idea of killer herdsmen crisis?","o":["A harvest festival celebrated by farmers","A system of traditional apprenticeship among traders","A dispute limited to school admission lists","Violent clashes and attacks associated with armed pastoral groups, land pressure and insecurity"],"a":3},{"q":"Which of the following best describes the causes of insecurity?","o":["Excessive rainfall alone in all cases","Factors such as unemployment, poverty, corruption, weak institutions, weapons access and poor governance","The use of textbooks in school","The presence of too many libraries"],"a":1},{"q":"What is the most accurate feature associated with the causes of insecurity?","o":["Factors such as unemployment, poverty, corruption, weak institutions, weapons access and poor governance","The presence of too many libraries","Excessive rainfall alone in all cases","The use of textbooks in school"],"a":0},{"q":"the causes of insecurity is most closely connected with which of the following?","o":["The use of textbooks in school","The presence of too many libraries","Excessive rainfall alone in all cases","Factors such as unemployment, poverty, corruption, weak institutions, weapons access and poor governance"],"a":3},{"q":"Which of the following is NOT correct about the causes of insecurity?","o":["The presence of too many libraries","The use of textbooks in school","Excessive rainfall alone in all cases","All of the above"],"a":0},{"q":"In the context of cultism, kidnapping, armed banditry and insecurity, the causes of insecurity is best understood as what?","o":["Factors such as unemployment, poverty, corruption, weak institutions, weapons access and poor governance","The presence of too many libraries","Excessive rainfall alone in all cases","The use of textbooks in school"],"a":0},{"q":"Which statement about the causes of insecurity would earn full marks in an objective test?","o":["The use of textbooks in school","Excessive rainfall alone in all cases","Factors such as unemployment, poverty, corruption, weak institutions, weapons access and poor governance","The presence of too many libraries"],"a":2},{"q":"Which option most nearly matches the idea of the causes of insecurity?","o":["The use of textbooks in school","Excessive rainfall alone in all cases","The presence of too many libraries","Factors such as unemployment, poverty, corruption, weak institutions, weapons access and poor governance"],"a":3},{"q":"Which of the following best describes the effect of violent crime?","o":["More efficient farming seasons","Automatic rise in literacy levels","Elimination of all social conflict","Fear, displacement, loss of life, economic disruption, school closures and social mistrust"],"a":3},{"q":"What is the most accurate feature associated with the effect of violent crime?","o":["Elimination of all social conflict","Automatic rise in literacy levels","More efficient farming seasons","Fear, displacement, loss of life, economic disruption, school closures and social mistrust"],"a":3},{"q":"the effect of violent crime is most closely connected with which of the following?","o":["Elimination of all social conflict","Fear, displacement, loss of life, economic disruption, school closures and social mistrust","More efficient farming seasons","Automatic rise in literacy levels"],"a":1},{"q":"Which of the following is NOT correct about the effect of violent crime?","o":["All of the above","Automatic rise in literacy levels","More efficient farming seasons","Elimination of all social conflict"],"a":2},{"q":"In the context of cultism, kidnapping, armed banditry and insecurity, the effect of violent crime is best understood as what?","o":["More efficient farming seasons","Automatic rise in literacy levels","Fear, displacement, loss of life, economic disruption, school closures and social mistrust","Elimination of all social conflict"],"a":2},{"q":"Which statement about the effect of violent crime would earn full marks in an objective test?","o":["More efficient farming seasons","Fear, displacement, loss of life, economic disruption, school closures and social mistrust","Elimination of all social conflict","Automatic rise in literacy levels"],"a":1},{"q":"Which option most nearly matches the idea of the effect of violent crime?","o":["Fear, displacement, loss of life, economic disruption, school closures and social mistrust","More efficient farming seasons","Elimination of all social conflict","Automatic rise in literacy levels"],"a":0},{"q":"Which of the following best describes community intelligence?","o":["The collection and sharing of local information to help prevent crime and improve security response","The use of threats to force silence","The hiding of all local information from law enforcement","The celebration of violent acts on social media"],"a":0},{"q":"What is the most accurate feature associated with community intelligence?","o":["The collection and sharing of local information to help prevent crime and improve security response","The celebration of violent acts on social media","The use of threats to force silence","The hiding of all local information from law enforcement"],"a":0},{"q":"community intelligence is most closely connected with which of the following?","o":["The hiding of all local information from law enforcement","The use of threats to force silence","The collection and sharing of local information to help prevent crime and improve security response","The celebration of violent acts on social media"],"a":2},{"q":"Which of the following is NOT correct about community intelligence?","o":["The use of threats to force silence","All of the above","The celebration of violent acts on social media","The hiding of all local information from law enforcement"],"a":2},{"q":"In the context of cultism, kidnapping, armed banditry and insecurity, community intelligence is best understood as what?","o":["The use of threats to force silence","The collection and sharing of local information to help prevent crime and improve security response","The hiding of all local information from law enforcement","The celebration of violent acts on social media"],"a":1},{"q":"Which statement about community intelligence would earn full marks in an objective test?","o":["The celebration of violent acts on social media","The hiding of all local information from law enforcement","The collection and sharing of local information to help prevent crime and improve security response","The use of threats to force silence"],"a":2},{"q":"Which option most nearly matches the idea of community intelligence?","o":["The celebration of violent acts on social media","The use of threats to force silence","The collection and sharing of local information to help prevent crime and improve security response","The hiding of all local information from law enforcement"],"a":2},{"q":"Which of the following best describes conflict prevention?","o":["Encouraging impunity for offenders","Ignoring warning signs completely","Promoting private revenge as policy","Measures such as justice, dialogue, law enforcement reform, civic education and social development"],"a":3},{"q":"What is the most accurate feature associated with conflict prevention?","o":["Measures such as justice, dialogue, law enforcement reform, civic education and social development","Encouraging impunity for offenders","Ignoring warning signs completely","Promoting private revenge as policy"],"a":0},{"q":"conflict prevention is most closely connected with which of the following?","o":["Encouraging impunity for offenders","Promoting private revenge as policy","Measures such as justice, dialogue, law enforcement reform, civic education and social development","Ignoring warning signs completely"],"a":2},{"q":"Which of the following is NOT correct about conflict prevention?","o":["Ignoring warning signs completely","Promoting private revenge as policy","All of the above","Encouraging impunity for offenders"],"a":3},{"q":"In the context of cultism, kidnapping, armed banditry and insecurity, conflict prevention is best understood as what?","o":["Measures such as justice, dialogue, law enforcement reform, civic education and social development","Promoting private revenge as policy","Encouraging impunity for offenders","Ignoring warning signs completely"],"a":0},{"q":"Which statement about conflict prevention would earn full marks in an objective test?","o":["Promoting private revenge as policy","Encouraging impunity for offenders","Measures such as justice, dialogue, law enforcement reform, civic education and social development","Ignoring warning signs completely"],"a":2},{"q":"Which option most nearly matches the idea of conflict prevention?","o":["Encouraging impunity for offenders","Promoting private revenge as policy","Measures such as justice, dialogue, law enforcement reform, civic education and social development","Ignoring warning signs completely"],"a":2}]},"5":{"title":"INDIGENOUS APPRENTICESHIP SYSTEMS AMONG NIGERIAN PEOPLE: TRADE, SKILL ACQUISITION, AND SELF-RELIANCE","questions":[{"q":"What is the central purpose of apprenticeship in traditional economic life?","o":["To transfer practical skills that can support work, trade and self-reliance","To train people for endless dependency","To replace all family life with formal exams","To prevent skill transfer completely"],"a":0},{"q":"Which of the following best describes indigenous apprenticeship system?","o":["A form of military recruitment only","A system of tax collection by elders","A traditional training model in which a learner acquires practical trade skills under a master over time","A short-term quiz competition in school"],"a":2},{"q":"What is the most accurate feature associated with indigenous apprenticeship system?","o":["A system of tax collection by elders","A form of military recruitment only","A traditional training model in which a learner acquires practical trade skills under a master over time","A short-term quiz competition in school"],"a":2},{"q":"indigenous apprenticeship system is most closely connected with which of the following?","o":["A short-term quiz competition in school","A traditional training model in which a learner acquires practical trade skills under a master over time","A system of tax collection by elders","A form of military recruitment only"],"a":1},{"q":"Which of the following is NOT correct about indigenous apprenticeship system?","o":["A short-term quiz competition in school","A system of tax collection by elders","A form of military recruitment only","All of the above"],"a":0},{"q":"In the context of indigenous apprenticeship systems and skill acquisition, indigenous apprenticeship system is best understood as what?","o":["A form of military recruitment only","A short-term quiz competition in school","A system of tax collection by elders","A traditional training model in which a learner acquires practical trade skills under a master over time"],"a":3},{"q":"Which statement about indigenous apprenticeship system would earn full marks in an objective test?","o":["A system of tax collection by elders","A short-term quiz competition in school","A traditional training model in which a learner acquires practical trade skills under a master over time","A form of military recruitment only"],"a":2},{"q":"Which option most nearly matches the idea of indigenous apprenticeship system?","o":["A traditional training model in which a learner acquires practical trade skills under a master over time","A system of tax collection by elders","A form of military recruitment only","A short-term quiz competition in school"],"a":0},{"q":"Which of the following best describes skill acquisition?","o":["The process of learning practical abilities that make a person productive and employable","The replacement of work with idle speculation","The refusal to learn any trade at all","The memorization of only political slogans"],"a":0},{"q":"What is the most accurate feature associated with skill acquisition?","o":["The refusal to learn any trade at all","The process of learning practical abilities that make a person productive and employable","The replacement of work with idle speculation","The memorization of only political slogans"],"a":1},{"q":"skill acquisition is most closely connected with which of the following?","o":["The memorization of only political slogans","The process of learning practical abilities that make a person productive and employable","The refusal to learn any trade at all","The replacement of work with idle speculation"],"a":1},{"q":"Which of the following is NOT correct about skill acquisition?","o":["The replacement of work with idle speculation","The memorization of only political slogans","All of the above","The refusal to learn any trade at all"],"a":3},{"q":"In the context of indigenous apprenticeship systems and skill acquisition, skill acquisition is best understood as what?","o":["The refusal to learn any trade at all","The memorization of only political slogans","The replacement of work with idle speculation","The process of learning practical abilities that make a person productive and employable"],"a":3},{"q":"Which statement about skill acquisition would earn full marks in an objective test?","o":["The replacement of work with idle speculation","The refusal to learn any trade at all","The process of learning practical abilities that make a person productive and employable","The memorization of only political slogans"],"a":2},{"q":"Which option most nearly matches the idea of skill acquisition?","o":["The memorization of only political slogans","The replacement of work with idle speculation","The refusal to learn any trade at all","The process of learning practical abilities that make a person productive and employable"],"a":3},{"q":"Which of the following best describes self-reliance?","o":["Avoidance of all productive work","Permanent dependence on strangers for survival","A legal term for property inheritance only","The capacity to depend on one's own skills, effort and resources for livelihood"],"a":3},{"q":"What is the most accurate feature associated with self-reliance?","o":["Permanent dependence on strangers for survival","Avoidance of all productive work","The capacity to depend on one's own skills, effort and resources for livelihood","A legal term for property inheritance only"],"a":2},{"q":"self-reliance is most closely connected with which of the following?","o":["The capacity to depend on one's own skills, effort and resources for livelihood","A legal term for property inheritance only","Permanent dependence on strangers for survival","Avoidance of all productive work"],"a":0},{"q":"Which of the following is NOT correct about self-reliance?","o":["Permanent dependence on strangers for survival","All of the above","A legal term for property inheritance only","Avoidance of all productive work"],"a":0},{"q":"In the context of indigenous apprenticeship systems and skill acquisition, self-reliance is best understood as what?","o":["Avoidance of all productive work","A legal term for property inheritance only","Permanent dependence on strangers for survival","The capacity to depend on one's own skills, effort and resources for livelihood"],"a":3},{"q":"Which statement about self-reliance would earn full marks in an objective test?","o":["Permanent dependence on strangers for survival","The capacity to depend on one's own skills, effort and resources for livelihood","Avoidance of all productive work","A legal term for property inheritance only"],"a":1},{"q":"Which option most nearly matches the idea of self-reliance?","o":["Avoidance of all productive work","The capacity to depend on one's own skills, effort and resources for livelihood","A legal term for property inheritance only","Permanent dependence on strangers for survival"],"a":1},{"q":"Which of the following best describes the Igbo apprenticeship model?","o":["A purely religious order with no economic element","A well-known commercial training system that emphasizes business learning, settlement and entrepreneurship","A system that trains only soldiers for war","A palace school for royal children only"],"a":1},{"q":"What is the most accurate feature associated with the Igbo apprenticeship model?","o":["A system that trains only soldiers for war","A purely religious order with no economic element","A well-known commercial training system that emphasizes business learning, settlement and entrepreneurship","A palace school for royal children only"],"a":2},{"q":"the Igbo apprenticeship model is most closely connected with which of the following?","o":["A system that trains only soldiers for war","A purely religious order with no economic element","A well-known commercial training system that emphasizes business learning, settlement and entrepreneurship","A palace school for royal children only"],"a":2},{"q":"Which of the following is NOT correct about the Igbo apprenticeship model?","o":["All of the above","A palace school for royal children only","A purely religious order with no economic element","A system that trains only soldiers for war"],"a":2},{"q":"In the context of indigenous apprenticeship systems and skill acquisition, the Igbo apprenticeship model is best understood as what?","o":["A well-known commercial training system that emphasizes business learning, settlement and entrepreneurship","A palace school for royal children only","A system that trains only soldiers for war","A purely religious order with no economic element"],"a":0},{"q":"Which statement about the Igbo apprenticeship model would earn full marks in an objective test?","o":["A palace school for royal children only","A purely religious order with no economic element","A well-known commercial training system that emphasizes business learning, settlement and entrepreneurship","A system that trains only soldiers for war"],"a":2},{"q":"Which option most nearly matches the idea of the Igbo apprenticeship model?","o":["A well-known commercial training system that emphasizes business learning, settlement and entrepreneurship","A system that trains only soldiers for war","A purely religious order with no economic element","A palace school for royal children only"],"a":0},{"q":"Which of the following best describes the Hausa apprenticeship tradition?","o":["A system that rejects all manual skills","A pattern of learning trades such as farming, craft, trade and blacksmithing through observation and practice","A system limited to ocean navigation","A school method that bans practical work"],"a":1},{"q":"What is the most accurate feature associated with the Hausa apprenticeship tradition?","o":["A system limited to ocean navigation","A pattern of learning trades such as farming, craft, trade and blacksmithing through observation and practice","A school method that bans practical work","A system that rejects all manual skills"],"a":1},{"q":"the Hausa apprenticeship tradition is most closely connected with which of the following?","o":["A pattern of learning trades such as farming, craft, trade and blacksmithing through observation and practice","A system limited to ocean navigation","A system that rejects all manual skills","A school method that bans practical work"],"a":0},{"q":"Which of the following is NOT correct about the Hausa apprenticeship tradition?","o":["A system limited to ocean navigation","A system that rejects all manual skills","All of the above","A school method that bans practical work"],"a":1},{"q":"In the context of indigenous apprenticeship systems and skill acquisition, the Hausa apprenticeship tradition is best understood as what?","o":["A pattern of learning trades such as farming, craft, trade and blacksmithing through observation and practice","A school method that bans practical work","A system that rejects all manual skills","A system limited to ocean navigation"],"a":0},{"q":"Which statement about the Hausa apprenticeship tradition would earn full marks in an objective test?","o":["A system limited to ocean navigation","A pattern of learning trades such as farming, craft, trade and blacksmithing through observation and practice","A school method that bans practical work","A system that rejects all manual skills"],"a":1},{"q":"Which option most nearly matches the idea of the Hausa apprenticeship tradition?","o":["A system limited to ocean navigation","A system that rejects all manual skills","A pattern of learning trades such as farming, craft, trade and blacksmithing through observation and practice","A school method that bans practical work"],"a":2},{"q":"Which of the following best describes the Yoruba apprenticeship experience?","o":["A doctrine that forbids trading in markets","A compulsory ritual of royal succession","A training arrangement in which young people learn crafts, commerce and service under experienced persons","A political election for village heads"],"a":2},{"q":"What is the most accurate feature associated with the Yoruba apprenticeship experience?","o":["A political election for village heads","A training arrangement in which young people learn crafts, commerce and service under experienced persons","A doctrine that forbids trading in markets","A compulsory ritual of royal succession"],"a":1},{"q":"the Yoruba apprenticeship experience is most closely connected with which of the following?","o":["A doctrine that forbids trading in markets","A compulsory ritual of royal succession","A political election for village heads","A training arrangement in which young people learn crafts, commerce and service under experienced persons"],"a":3},{"q":"Which of the following is NOT correct about the Yoruba apprenticeship experience?","o":["A political election for village heads","A compulsory ritual of royal succession","A doctrine that forbids trading in markets","All of the above"],"a":1},{"q":"In the context of indigenous apprenticeship systems and skill acquisition, the Yoruba apprenticeship experience is best understood as what?","o":["A compulsory ritual of royal succession","A training arrangement in which young people learn crafts, commerce and service under experienced persons","A political election for village heads","A doctrine that forbids trading in markets"],"a":1},{"q":"Which statement about the Yoruba apprenticeship experience would earn full marks in an objective test?","o":["A compulsory ritual of royal succession","A political election for village heads","A doctrine that forbids trading in markets","A training arrangement in which young people learn crafts, commerce and service under experienced persons"],"a":3},{"q":"Which option most nearly matches the idea of the Yoruba apprenticeship experience?","o":["A doctrine that forbids trading in markets","A compulsory ritual of royal succession","A training arrangement in which young people learn crafts, commerce and service under experienced persons","A political election for village heads"],"a":2},{"q":"Which of the following best describes benefits of apprenticeship?","o":["The disappearance of technical skills","Employment creation, entrepreneurship, poverty reduction, practical competence and social mobility","Guaranteed unemployment after training","The removal of all business risks forever"],"a":1},{"q":"What is the most accurate feature associated with benefits of apprenticeship?","o":["Employment creation, entrepreneurship, poverty reduction, practical competence and social mobility","The disappearance of technical skills","Guaranteed unemployment after training","The removal of all business risks forever"],"a":0},{"q":"benefits of apprenticeship is most closely connected with which of the following?","o":["Employment creation, entrepreneurship, poverty reduction, practical competence and social mobility","Guaranteed unemployment after training","The removal of all business risks forever","The disappearance of technical skills"],"a":0},{"q":"Which of the following is NOT correct about benefits of apprenticeship?","o":["Guaranteed unemployment after training","The removal of all business risks forever","All of the above","The disappearance of technical skills"],"a":0},{"q":"In the context of indigenous apprenticeship systems and skill acquisition, benefits of apprenticeship is best understood as what?","o":["The removal of all business risks forever","Guaranteed unemployment after training","The disappearance of technical skills","Employment creation, entrepreneurship, poverty reduction, practical competence and social mobility"],"a":3},{"q":"Which statement about benefits of apprenticeship would earn full marks in an objective test?","o":["Employment creation, entrepreneurship, poverty reduction, practical competence and social mobility","The removal of all business risks forever","The disappearance of technical skills","Guaranteed unemployment after training"],"a":0},{"q":"Which option most nearly matches the idea of benefits of apprenticeship?","o":["Employment creation, entrepreneurship, poverty reduction, practical competence and social mobility","The disappearance of technical skills","The removal of all business risks forever","Guaranteed unemployment after training"],"a":0},{"q":"Which of the following best describes modern challenges of apprenticeship?","o":["Too many textbooks in circulation","Excessively high rainfall in cities","Overpopulation of royal palaces","Exploitation, poor regulation, delayed settlement, weak funding and limited formal recognition"],"a":3},{"q":"What is the most accurate feature associated with modern challenges of apprenticeship?","o":["Too many textbooks in circulation","Exploitation, poor regulation, delayed settlement, weak funding and limited formal recognition","Excessively high rainfall in cities","Overpopulation of royal palaces"],"a":1},{"q":"modern challenges of apprenticeship is most closely connected with which of the following?","o":["Exploitation, poor regulation, delayed settlement, weak funding and limited formal recognition","Overpopulation of royal palaces","Excessively high rainfall in cities","Too many textbooks in circulation"],"a":0},{"q":"Which of the following is NOT correct about modern challenges of apprenticeship?","o":["All of the above","Too many textbooks in circulation","Excessively high rainfall in cities","Overpopulation of royal palaces"],"a":1},{"q":"In the context of indigenous apprenticeship systems and skill acquisition, modern challenges of apprenticeship is best understood as what?","o":["Too many textbooks in circulation","Overpopulation of royal palaces","Excessively high rainfall in cities","Exploitation, poor regulation, delayed settlement, weak funding and limited formal recognition"],"a":3},{"q":"Which statement about modern challenges of apprenticeship would earn full marks in an objective test?","o":["Exploitation, poor regulation, delayed settlement, weak funding and limited formal recognition","Excessively high rainfall in cities","Overpopulation of royal palaces","Too many textbooks in circulation"],"a":0},{"q":"Which option most nearly matches the idea of modern challenges of apprenticeship?","o":["Excessively high rainfall in cities","Too many textbooks in circulation","Overpopulation of royal palaces","Exploitation, poor regulation, delayed settlement, weak funding and limited formal recognition"],"a":3}]},"6":{"title":"INDIVIDUAL NORMS AND VALUES IN NIGERIA (BASIC NIGERIAN NORMS, AND VALUES, PATTERNS OF CITIZENSHIP ACQUISITION, CITIZENSHIP AND CIVIC RESPONSIBILITIES)","questions":[{"q":"Which statement best captures the relationship between rights and duties?","o":["Rights exist without any corresponding responsibility","Citizens enjoy rights, but they must also fulfil civic duties to keep society orderly","A citizen may ignore the law and still demand full order","Duties are only for foreigners"],"a":1},{"q":"Which of the following best describes norms?","o":["Random personal opinions with no social meaning","A type of road construction","A form of rainfall pattern","Accepted rules or standards that guide behaviour in a society"],"a":3},{"q":"What is the most accurate feature associated with norms?","o":["A type of road construction","Accepted rules or standards that guide behaviour in a society","Random personal opinions with no social meaning","A form of rainfall pattern"],"a":1},{"q":"norms is most closely connected with which of the following?","o":["A form of rainfall pattern","A type of road construction","Accepted rules or standards that guide behaviour in a society","Random personal opinions with no social meaning"],"a":2},{"q":"Which of the following is NOT correct about norms?","o":["A type of road construction","All of the above","A form of rainfall pattern","Random personal opinions with no social meaning"],"a":3},{"q":"In the context of individual norms and values, citizenship acquisition and civic responsibilities, norms is best understood as what?","o":["A type of road construction","Accepted rules or standards that guide behaviour in a society","Random personal opinions with no social meaning","A form of rainfall pattern"],"a":1},{"q":"Which statement about norms would earn full marks in an objective test?","o":["Accepted rules or standards that guide behaviour in a society","A type of road construction","Random personal opinions with no social meaning","A form of rainfall pattern"],"a":0},{"q":"Which option most nearly matches the idea of norms?","o":["Accepted rules or standards that guide behaviour in a society","A form of rainfall pattern","A type of road construction","Random personal opinions with no social meaning"],"a":0},{"q":"Which of the following best describes values?","o":["A form of public transport","Temporary prices of market goods","Deeply held beliefs about what is important, desirable or worthwhile","A list of family names only"],"a":2},{"q":"What is the most accurate feature associated with values?","o":["A list of family names only","A form of public transport","Deeply held beliefs about what is important, desirable or worthwhile","Temporary prices of market goods"],"a":2},{"q":"values is most closely connected with which of the following?","o":["Temporary prices of market goods","A list of family names only","Deeply held beliefs about what is important, desirable or worthwhile","A form of public transport"],"a":2},{"q":"Which of the following is NOT correct about values?","o":["A form of public transport","All of the above","Temporary prices of market goods","A list of family names only"],"a":2},{"q":"In the context of individual norms and values, citizenship acquisition and civic responsibilities, values is best understood as what?","o":["Deeply held beliefs about what is important, desirable or worthwhile","A list of family names only","Temporary prices of market goods","A form of public transport"],"a":0},{"q":"Which statement about values would earn full marks in an objective test?","o":["Deeply held beliefs about what is important, desirable or worthwhile","A list of family names only","A form of public transport","Temporary prices of market goods"],"a":0},{"q":"Which option most nearly matches the idea of values?","o":["Deeply held beliefs about what is important, desirable or worthwhile","Temporary prices of market goods","A list of family names only","A form of public transport"],"a":0},{"q":"Which of the following best describes citizenship by birth?","o":["Citizenship obtained because a person is born within the conditions recognized by law","Citizenship received after a court debate","Citizenship purchased with cash only","Citizenship won in a lottery"],"a":0},{"q":"What is the most accurate feature associated with citizenship by birth?","o":["Citizenship won in a lottery","Citizenship obtained because a person is born within the conditions recognized by law","Citizenship received after a court debate","Citizenship purchased with cash only"],"a":1},{"q":"citizenship by birth is most closely connected with which of the following?","o":["Citizenship obtained because a person is born within the conditions recognized by law","Citizenship won in a lottery","Citizenship received after a court debate","Citizenship purchased with cash only"],"a":0},{"q":"Which of the following is NOT correct about citizenship by birth?","o":["All of the above","Citizenship won in a lottery","Citizenship received after a court debate","Citizenship purchased with cash only"],"a":1},{"q":"In the context of individual norms and values, citizenship acquisition and civic responsibilities, citizenship by birth is best understood as what?","o":["Citizenship received after a court debate","Citizenship obtained because a person is born within the conditions recognized by law","Citizenship purchased with cash only","Citizenship won in a lottery"],"a":1},{"q":"Which statement about citizenship by birth would earn full marks in an objective test?","o":["Citizenship purchased with cash only","Citizenship won in a lottery","Citizenship received after a court debate","Citizenship obtained because a person is born within the conditions recognized by law"],"a":3},{"q":"Which option most nearly matches the idea of citizenship by birth?","o":["Citizenship purchased with cash only","Citizenship received after a court debate","Citizenship obtained because a person is born within the conditions recognized by law","Citizenship won in a lottery"],"a":2},{"q":"Which of the following best describes citizenship by descent?","o":["Citizenship gained from market association","Citizenship obtained by wearing a uniform","Citizenship created by school registration","Citizenship acquired through one's parents or ancestry"],"a":3},{"q":"What is the most accurate feature associated with citizenship by descent?","o":["Citizenship created by school registration","Citizenship acquired through one's parents or ancestry","Citizenship obtained by wearing a uniform","Citizenship gained from market association"],"a":1},{"q":"citizenship by descent is most closely connected with which of the following?","o":["Citizenship obtained by wearing a uniform","Citizenship gained from market association","Citizenship acquired through one's parents or ancestry","Citizenship created by school registration"],"a":2},{"q":"Which of the following is NOT correct about citizenship by descent?","o":["Citizenship gained from market association","Citizenship obtained by wearing a uniform","Citizenship created by school registration","All of the above"],"a":1},{"q":"In the context of individual norms and values, citizenship acquisition and civic responsibilities, citizenship by descent is best understood as what?","o":["Citizenship acquired through one's parents or ancestry","Citizenship obtained by wearing a uniform","Citizenship gained from market association","Citizenship created by school registration"],"a":0},{"q":"Which statement about citizenship by descent would earn full marks in an objective test?","o":["Citizenship gained from market association","Citizenship obtained by wearing a uniform","Citizenship created by school registration","Citizenship acquired through one's parents or ancestry"],"a":3},{"q":"Which option most nearly matches the idea of citizenship by descent?","o":["Citizenship created by school registration","Citizenship gained from market association","Citizenship obtained by wearing a uniform","Citizenship acquired through one's parents or ancestry"],"a":3},{"q":"Which of the following best describes naturalization?","o":["The act of renouncing all laws","The automatic destruction of a passport","The casual choice to visit a country for holiday","The legal process through which a foreigner becomes a citizen after meeting required conditions"],"a":3},{"q":"What is the most accurate feature associated with naturalization?","o":["The automatic destruction of a passport","The casual choice to visit a country for holiday","The act of renouncing all laws","The legal process through which a foreigner becomes a citizen after meeting required conditions"],"a":3},{"q":"naturalization is most closely connected with which of the following?","o":["The automatic destruction of a passport","The casual choice to visit a country for holiday","The legal process through which a foreigner becomes a citizen after meeting required conditions","The act of renouncing all laws"],"a":2},{"q":"Which of the following is NOT correct about naturalization?","o":["The automatic destruction of a passport","The casual choice to visit a country for holiday","The act of renouncing all laws","All of the above"],"a":1},{"q":"In the context of individual norms and values, citizenship acquisition and civic responsibilities, naturalization is best understood as what?","o":["The act of renouncing all laws","The legal process through which a foreigner becomes a citizen after meeting required conditions","The casual choice to visit a country for holiday","The automatic destruction of a passport"],"a":1},{"q":"Which statement about naturalization would earn full marks in an objective test?","o":["The act of renouncing all laws","The legal process through which a foreigner becomes a citizen after meeting required conditions","The automatic destruction of a passport","The casual choice to visit a country for holiday"],"a":1},{"q":"Which option most nearly matches the idea of naturalization?","o":["The casual choice to visit a country for holiday","The automatic destruction of a passport","The legal process through which a foreigner becomes a citizen after meeting required conditions","The act of renouncing all laws"],"a":2},{"q":"Which of the following best describes civic responsibilities?","o":["The freedom to reject every public rule","The right to ignore public order","A privilege reserved only for visitors","Duties citizens owe the state and society, such as obeying laws, paying taxes and voting"],"a":3},{"q":"What is the most accurate feature associated with civic responsibilities?","o":["Duties citizens owe the state and society, such as obeying laws, paying taxes and voting","The freedom to reject every public rule","The right to ignore public order","A privilege reserved only for visitors"],"a":0},{"q":"civic responsibilities is most closely connected with which of the following?","o":["Duties citizens owe the state and society, such as obeying laws, paying taxes and voting","A privilege reserved only for visitors","The freedom to reject every public rule","The right to ignore public order"],"a":0},{"q":"Which of the following is NOT correct about civic responsibilities?","o":["A privilege reserved only for visitors","The freedom to reject every public rule","All of the above","The right to ignore public order"],"a":3},{"q":"In the context of individual norms and values, citizenship acquisition and civic responsibilities, civic responsibilities is best understood as what?","o":["Duties citizens owe the state and society, such as obeying laws, paying taxes and voting","The freedom to reject every public rule","The right to ignore public order","A privilege reserved only for visitors"],"a":0},{"q":"Which statement about civic responsibilities would earn full marks in an objective test?","o":["A privilege reserved only for visitors","The freedom to reject every public rule","Duties citizens owe the state and society, such as obeying laws, paying taxes and voting","The right to ignore public order"],"a":2},{"q":"Which option most nearly matches the idea of civic responsibilities?","o":["The right to ignore public order","Duties citizens owe the state and society, such as obeying laws, paying taxes and voting","The freedom to reject every public rule","A privilege reserved only for visitors"],"a":1},{"q":"Which of the following best describes fundamental rights?","o":["Basic rights such as dignity, liberty, fair hearing, expression, movement, religion and property","The right to own another person","A license to break the law","A tax exemption for all citizens"],"a":0},{"q":"What is the most accurate feature associated with fundamental rights?","o":["The right to own another person","A tax exemption for all citizens","Basic rights such as dignity, liberty, fair hearing, expression, movement, religion and property","A license to break the law"],"a":2},{"q":"fundamental rights is most closely connected with which of the following?","o":["The right to own another person","A tax exemption for all citizens","Basic rights such as dignity, liberty, fair hearing, expression, movement, religion and property","A license to break the law"],"a":2},{"q":"Which of the following is NOT correct about fundamental rights?","o":["A tax exemption for all citizens","All of the above","The right to own another person","A license to break the law"],"a":2},{"q":"In the context of individual norms and values, citizenship acquisition and civic responsibilities, fundamental rights is best understood as what?","o":["A license to break the law","Basic rights such as dignity, liberty, fair hearing, expression, movement, religion and property","A tax exemption for all citizens","The right to own another person"],"a":1},{"q":"Which statement about fundamental rights would earn full marks in an objective test?","o":["The right to own another person","A tax exemption for all citizens","Basic rights such as dignity, liberty, fair hearing, expression, movement, religion and property","A license to break the law"],"a":2},{"q":"Which option most nearly matches the idea of fundamental rights?","o":["The right to own another person","A license to break the law","A tax exemption for all citizens","Basic rights such as dignity, liberty, fair hearing, expression, movement, religion and property"],"a":3},{"q":"Which of the following best describes Yoruba social norm?","o":["Strong respect for age, seniority, communal ties and formal greetings","Open rejection of elders and titles","Total denial of community life","A rule that forbids all greetings"],"a":0},{"q":"What is the most accurate feature associated with Yoruba social norm?","o":["Total denial of community life","A rule that forbids all greetings","Open rejection of elders and titles","Strong respect for age, seniority, communal ties and formal greetings"],"a":3},{"q":"Yoruba social norm is most closely connected with which of the following?","o":["Open rejection of elders and titles","A rule that forbids all greetings","Total denial of community life","Strong respect for age, seniority, communal ties and formal greetings"],"a":3},{"q":"Which of the following is NOT correct about Yoruba social norm?","o":["Open rejection of elders and titles","All of the above","Total denial of community life","A rule that forbids all greetings"],"a":0},{"q":"In the context of individual norms and values, citizenship acquisition and civic responsibilities, Yoruba social norm is best understood as what?","o":["Strong respect for age, seniority, communal ties and formal greetings","Total denial of community life","A rule that forbids all greetings","Open rejection of elders and titles"],"a":0},{"q":"Which statement about Yoruba social norm would earn full marks in an objective test?","o":["Strong respect for age, seniority, communal ties and formal greetings","A rule that forbids all greetings","Open rejection of elders and titles","Total denial of community life"],"a":0},{"q":"Which option most nearly matches the idea of Yoruba social norm?","o":["A rule that forbids all greetings","Strong respect for age, seniority, communal ties and formal greetings","Total denial of community life","Open rejection of elders and titles"],"a":1}]},"7":{"title":"SOCIAL JUSTICE AND NATIONAL DEVELOPMENT (LAW AND LAW CLASSIFICATIONS)","questions":[{"q":"What links social justice most directly to national development?","o":["Social justice is unrelated to public welfare","Unequal access automatically guarantees progress","Fair access to opportunities and resources creates stability, trust and progress","Development can thrive permanently without law"],"a":2},{"q":"Which of the following best describes social justice?","o":["The fair and equitable distribution of opportunities, resources, rights and burdens in society","The private ownership of all government offices","A market strategy for setting food prices","The removal of equality from public life"],"a":0},{"q":"What is the most accurate feature associated with social justice?","o":["The fair and equitable distribution of opportunities, resources, rights and burdens in society","The private ownership of all government offices","The removal of equality from public life","A market strategy for setting food prices"],"a":0},{"q":"social justice is most closely connected with which of the following?","o":["A market strategy for setting food prices","The removal of equality from public life","The private ownership of all government offices","The fair and equitable distribution of opportunities, resources, rights and burdens in society"],"a":3},{"q":"Which of the following is NOT correct about social justice?","o":["The private ownership of all government offices","All of the above","The removal of equality from public life","A market strategy for setting food prices"],"a":0},{"q":"In the context of social justice, national development and law, social justice is best understood as what?","o":["The removal of equality from public life","A market strategy for setting food prices","The private ownership of all government offices","The fair and equitable distribution of opportunities, resources, rights and burdens in society"],"a":3},{"q":"Which statement about social justice would earn full marks in an objective test?","o":["The removal of equality from public life","A market strategy for setting food prices","The fair and equitable distribution of opportunities, resources, rights and burdens in society","The private ownership of all government offices"],"a":2},{"q":"Which option most nearly matches the idea of social justice?","o":["The private ownership of all government offices","A market strategy for setting food prices","The removal of equality from public life","The fair and equitable distribution of opportunities, resources, rights and burdens in society"],"a":3},{"q":"Which of the following best describes national development?","o":["The destruction of schools and hospitals","The process of improving the economic, social, political and institutional life of a nation","A temporary rise in one market alone","A campaign for private entertainment only"],"a":1},{"q":"What is the most accurate feature associated with national development?","o":["A temporary rise in one market alone","The destruction of schools and hospitals","A campaign for private entertainment only","The process of improving the economic, social, political and institutional life of a nation"],"a":3},{"q":"national development is most closely connected with which of the following?","o":["The destruction of schools and hospitals","A campaign for private entertainment only","The process of improving the economic, social, political and institutional life of a nation","A temporary rise in one market alone"],"a":2},{"q":"Which of the following is NOT correct about national development?","o":["The destruction of schools and hospitals","All of the above","A temporary rise in one market alone","A campaign for private entertainment only"],"a":2},{"q":"In the context of social justice, national development and law, national development is best understood as what?","o":["A temporary rise in one market alone","The process of improving the economic, social, political and institutional life of a nation","The destruction of schools and hospitals","A campaign for private entertainment only"],"a":1},{"q":"Which statement about national development would earn full marks in an objective test?","o":["A temporary rise in one market alone","A campaign for private entertainment only","The process of improving the economic, social, political and institutional life of a nation","The destruction of schools and hospitals"],"a":2},{"q":"Which option most nearly matches the idea of national development?","o":["The process of improving the economic, social, political and institutional life of a nation","A temporary rise in one market alone","A campaign for private entertainment only","The destruction of schools and hospitals"],"a":0},{"q":"Which of the following best describes law?","o":["A type of weather warning","A body of rules recognized and enforced by a society to regulate behaviour and maintain order","A collection of rumours and gossip","A personal wish with no social force"],"a":1},{"q":"What is the most accurate feature associated with law?","o":["A personal wish with no social force","A body of rules recognized and enforced by a society to regulate behaviour and maintain order","A collection of rumours and gossip","A type of weather warning"],"a":1},{"q":"law is most closely connected with which of the following?","o":["A body of rules recognized and enforced by a society to regulate behaviour and maintain order","A type of weather warning","A collection of rumours and gossip","A personal wish with no social force"],"a":0},{"q":"Which of the following is NOT correct about law?","o":["A collection of rumours and gossip","A personal wish with no social force","A type of weather warning","All of the above"],"a":0},{"q":"In the context of social justice, national development and law, law is best understood as what?","o":["A personal wish with no social force","A collection of rumours and gossip","A type of weather warning","A body of rules recognized and enforced by a society to regulate behaviour and maintain order"],"a":3},{"q":"Which statement about law would earn full marks in an objective test?","o":["A collection of rumours and gossip","A type of weather warning","A body of rules recognized and enforced by a society to regulate behaviour and maintain order","A personal wish with no social force"],"a":2},{"q":"Which option most nearly matches the idea of law?","o":["A body of rules recognized and enforced by a society to regulate behaviour and maintain order","A collection of rumours and gossip","A personal wish with no social force","A type of weather warning"],"a":0},{"q":"Which of the following best describes public law?","o":["Law dealing only with family cooking rules","The branch of law that governs the relationship between the state and individuals","Law used only in sports competitions","Law that regulates fashion choices alone"],"a":1},{"q":"What is the most accurate feature associated with public law?","o":["The branch of law that governs the relationship between the state and individuals","Law used only in sports competitions","Law dealing only with family cooking rules","Law that regulates fashion choices alone"],"a":0},{"q":"public law is most closely connected with which of the following?","o":["Law used only in sports competitions","Law dealing only with family cooking rules","Law that regulates fashion choices alone","The branch of law that governs the relationship between the state and individuals"],"a":3},{"q":"Which of the following is NOT correct about public law?","o":["Law that regulates fashion choices alone","Law used only in sports competitions","Law dealing only with family cooking rules","All of the above"],"a":2},{"q":"In the context of social justice, national development and law, public law is best understood as what?","o":["Law dealing only with family cooking rules","The branch of law that governs the relationship between the state and individuals","Law used only in sports competitions","Law that regulates fashion choices alone"],"a":1},{"q":"Which statement about public law would earn full marks in an objective test?","o":["Law that regulates fashion choices alone","The branch of law that governs the relationship between the state and individuals","Law used only in sports competitions","Law dealing only with family cooking rules"],"a":1},{"q":"Which option most nearly matches the idea of public law?","o":["Law that regulates fashion choices alone","Law dealing only with family cooking rules","Law used only in sports competitions","The branch of law that governs the relationship between the state and individuals"],"a":3},{"q":"Which of the following best describes private law?","o":["Law that deals only with state security agencies","Law that abolishes all contracts","Law limited to constitutional amendments","The branch of law that governs relations between private persons or organizations"],"a":3},{"q":"What is the most accurate feature associated with private law?","o":["Law that abolishes all contracts","The branch of law that governs relations between private persons or organizations","Law that deals only with state security agencies","Law limited to constitutional amendments"],"a":1},{"q":"private law is most closely connected with which of the following?","o":["Law that deals only with state security agencies","Law limited to constitutional amendments","The branch of law that governs relations between private persons or organizations","Law that abolishes all contracts"],"a":2},{"q":"Which of the following is NOT correct about private law?","o":["All of the above","Law that deals only with state security agencies","Law that abolishes all contracts","Law limited to constitutional amendments"],"a":1},{"q":"In the context of social justice, national development and law, private law is best understood as what?","o":["Law that abolishes all contracts","Law that deals only with state security agencies","Law limited to constitutional amendments","The branch of law that governs relations between private persons or organizations"],"a":3},{"q":"Which statement about private law would earn full marks in an objective test?","o":["The branch of law that governs relations between private persons or organizations","Law that abolishes all contracts","Law limited to constitutional amendments","Law that deals only with state security agencies"],"a":0},{"q":"Which option most nearly matches the idea of private law?","o":["Law limited to constitutional amendments","Law that deals only with state security agencies","The branch of law that governs relations between private persons or organizations","Law that abolishes all contracts"],"a":2},{"q":"Which of the following best describes criminal law?","o":["Law that describes rainfall patterns","Law about buying and selling vegetables only","Law that decides school timetables","The branch of law concerned with offences against the state and punishments for wrongdoing"],"a":3},{"q":"What is the most accurate feature associated with criminal law?","o":["Law that describes rainfall patterns","The branch of law concerned with offences against the state and punishments for wrongdoing","Law about buying and selling vegetables only","Law that decides school timetables"],"a":1},{"q":"criminal law is most closely connected with which of the following?","o":["The branch of law concerned with offences against the state and punishments for wrongdoing","Law about buying and selling vegetables only","Law that describes rainfall patterns","Law that decides school timetables"],"a":0},{"q":"Which of the following is NOT correct about criminal law?","o":["Law about buying and selling vegetables only","All of the above","Law that decides school timetables","Law that describes rainfall patterns"],"a":0},{"q":"In the context of social justice, national development and law, criminal law is best understood as what?","o":["Law about buying and selling vegetables only","Law that decides school timetables","The branch of law concerned with offences against the state and punishments for wrongdoing","Law that describes rainfall patterns"],"a":2},{"q":"Which statement about criminal law would earn full marks in an objective test?","o":["Law about buying and selling vegetables only","The branch of law concerned with offences against the state and punishments for wrongdoing","Law that describes rainfall patterns","Law that decides school timetables"],"a":1},{"q":"Which option most nearly matches the idea of criminal law?","o":["Law that describes rainfall patterns","Law about buying and selling vegetables only","The branch of law concerned with offences against the state and punishments for wrongdoing","Law that decides school timetables"],"a":2},{"q":"Which of the following best describes human rights?","o":["Temporary gifts that can never be recognized","Privileges granted only by market leaders","Rights inherent in human beings and protected in many legal and moral systems","Rewards given only to athletes"],"a":2},{"q":"What is the most accurate feature associated with human rights?","o":["Rights inherent in human beings and protected in many legal and moral systems","Privileges granted only by market leaders","Rewards given only to athletes","Temporary gifts that can never be recognized"],"a":0},{"q":"human rights is most closely connected with which of the following?","o":["Temporary gifts that can never be recognized","Privileges granted only by market leaders","Rights inherent in human beings and protected in many legal and moral systems","Rewards given only to athletes"],"a":2},{"q":"Which of the following is NOT correct about human rights?","o":["Temporary gifts that can never be recognized","Privileges granted only by market leaders","All of the above","Rewards given only to athletes"],"a":1},{"q":"In the context of social justice, national development and law, human rights is best understood as what?","o":["Temporary gifts that can never be recognized","Privileges granted only by market leaders","Rights inherent in human beings and protected in many legal and moral systems","Rewards given only to athletes"],"a":2},{"q":"Which statement about human rights would earn full marks in an objective test?","o":["Rights inherent in human beings and protected in many legal and moral systems","Privileges granted only by market leaders","Temporary gifts that can never be recognized","Rewards given only to athletes"],"a":0},{"q":"Which option most nearly matches the idea of human rights?","o":["Privileges granted only by market leaders","Temporary gifts that can never be recognized","Rewards given only to athletes","Rights inherent in human beings and protected in many legal and moral systems"],"a":3},{"q":"Which of the following best describes law and morality?","o":["A relationship in which law may overlap with moral standards, though the two are not identical","A complete rejection of all moral ideas","A claim that every moral rule is always a criminal offence","An argument that law has no social effect at all"],"a":0},{"q":"What is the most accurate feature associated with law and morality?","o":["A complete rejection of all moral ideas","A claim that every moral rule is always a criminal offence","An argument that law has no social effect at all","A relationship in which law may overlap with moral standards, though the two are not identical"],"a":3},{"q":"law and morality is most closely connected with which of the following?","o":["A relationship in which law may overlap with moral standards, though the two are not identical","A claim that every moral rule is always a criminal offence","An argument that law has no social effect at all","A complete rejection of all moral ideas"],"a":0},{"q":"Which of the following is NOT correct about law and morality?","o":["A claim that every moral rule is always a criminal offence","All of the above","A complete rejection of all moral ideas","An argument that law has no social effect at all"],"a":2},{"q":"In the context of social justice, national development and law, law and morality is best understood as what?","o":["An argument that law has no social effect at all","A claim that every moral rule is always a criminal offence","A complete rejection of all moral ideas","A relationship in which law may overlap with moral standards, though the two are not identical"],"a":3},{"q":"Which statement about law and morality would earn full marks in an objective test?","o":["A relationship in which law may overlap with moral standards, though the two are not identical","A claim that every moral rule is always a criminal offence","An argument that law has no social effect at all","A complete rejection of all moral ideas"],"a":0},{"q":"Which option most nearly matches the idea of law and morality?","o":["A complete rejection of all moral ideas","A relationship in which law may overlap with moral standards, though the two are not identical","An argument that law has no social effect at all","A claim that every moral rule is always a criminal offence"],"a":1},{"q":"Which option best explains why this whole course matters to society?","o":["It teaches that social life has no rules or values","It helps students understand culture, language, citizenship, security, justice and development as connected national issues","It only helps with memorizing isolated facts for one test","It proves that history has no link with present-day society"],"a":1}]}};
+
+const CHAPTER_TITLES = {
+  1: "Historical Evolution of Nigeria",
+  2: "Ethnic Minority Groups & Culture",
+  3: "Indigenous Languages & Development",
+  4: "Cultism, Kidnapping & Banditry",
+  5: "Indigenous Apprenticeship Systems",
+  6: "Individual Norms & Values",
+  7: "Social Justice & National Development"
+};
+
+const OPTION_LABELS = ['A', 'B', 'C', 'D'];
+
+// ── STATE ─────────────────────────────────────────────────
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let currentChapterLabel = '';
+let lastChapterMode = null; // {type:'chapter', num:X} or {type:'all'}
+let answered = false;
+
+// ── SHUFFLE ───────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Pick N random items from array
+function pickRandom(arr, n) {
+  return shuffle(arr).slice(0, n);
+}
+
+// Randomize a question's options while tracking the correct index
+function randomizeOptions(q) {
+  const indices = shuffle([0, 1, 2, 3]);
+  const newOptions = indices.map(i => q.o[i]);
+  const newCorrect = indices.indexOf(q.a);
+  return { q: q.q, o: newOptions, a: newCorrect };
+}
+
+// ── BUILD HOME ────────────────────────────────────────────
+function buildHome() {
+  const grid = document.getElementById('chapter-grid');
+  grid.innerHTML = '';
+
+  for (let i = 1; i <= 7; i++) {
+    const ch = QUIZ_DATA[String(i)];
+    const qCount = ch.questions.length;
+    const card = document.createElement('div');
+    card.className = 'chapter-card';
+    card.onclick = () => startChapter(i);
+    card.innerHTML = `
+      <div class="ch-badge">
+        <span class="ch-label">Ch.</span>
+        <span class="ch-num">${i}</span>
+      </div>
+      <div class="ch-info">
+        <div class="ch-title">${CHAPTER_TITLES[i]}</div>
+        <div class="ch-count">${qCount} questions</div>
+      </div>
+      <span class="ch-arrow">›</span>
+    `;
+    grid.appendChild(card);
+  }
+}
+
+// ── START QUIZ ─────────────────────────────────────────────
+function startChapter(chNum) {
+  const ch = QUIZ_DATA[String(chNum)];
+  const questions = ch.questions.map(q => randomizeOptions(q));
+  lastChapterMode = { type: 'chapter', num: chNum };
+  currentChapterLabel = `Chapter ${chNum} — ${CHAPTER_TITLES[chNum]}`;
+  beginQuiz(shuffle(questions), currentChapterLabel);
+}
+
+function startAllChapters() {
+  let allQs = [];
+  for (let i = 1; i <= 7; i++) {
+    const ch = QUIZ_DATA[String(i)];
+    const picked = pickRandom(ch.questions, 10).map(q => randomizeOptions(q));
+    allQs = allQs.concat(picked);
+  }
+  allQs = shuffle(allQs);
+  lastChapterMode = { type: 'all' };
+  currentChapterLabel = 'All Chapters — Mixed Mode';
+  beginQuiz(allQs, currentChapterLabel);
+}
+
+function beginQuiz(questions, label) {
+  currentQuestions = questions;
+  currentIndex = 0;
+  score = 0;
+  answered = false;
+  showScreen('quiz-screen');
+  document.getElementById('quiz-chapter-name').textContent = label;
+  renderQuestion();
+}
+
+// ── RENDER QUESTION ────────────────────────────────────────
+function renderQuestion() {
+  const q = currentQuestions[currentIndex];
+  const total = currentQuestions.length;
+  answered = false;
+
+  document.getElementById('q-number').textContent = `Question ${currentIndex + 1} of ${total}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('quiz-progress-text').textContent = `Question ${currentIndex + 1} of ${total}`;
+  document.getElementById('score-chip').textContent = `${score} / ${currentIndex}`;
+  document.getElementById('progress-bar').style.width = `${(currentIndex / total) * 100}%`;
+
+  // Hide feedback & next
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  document.getElementById('next-btn').className = 'next-btn';
+
+  // Render options
+  const optList = document.getElementById('options-list');
+  optList.innerHTML = '';
+  q.o.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.onclick = () => selectOption(idx);
+    btn.innerHTML = `
+      <div class="opt-letter">${OPTION_LABELS[idx]}</div>
+      <div class="opt-text">${opt}</div>
+    `;
+    optList.appendChild(btn);
+  });
+
+  // Scroll to top of quiz body
+  document.getElementById('quiz-screen').scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+// ── SELECT OPTION ──────────────────────────────────────────
+function selectOption(selectedIdx) {
+  if (answered) return;
+  answered = true;
+
+  const q = currentQuestions[currentIndex];
+  const correct = q.a;
+  const isCorrect = selectedIdx === correct;
+  if (isCorrect) score++;
+
+  const buttons = document.getElementById('options-list').querySelectorAll('.option-btn');
+
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === selectedIdx && isCorrect) btn.classList.add('selected-correct');
+    else if (idx === selectedIdx && !isCorrect) btn.classList.add('selected-wrong');
+    else if (idx === correct && !isCorrect) btn.classList.add('reveal-correct');
+  });
+
+  // Feedback
+  const fb = document.getElementById('feedback-box');
+  const fi = document.getElementById('feedback-icon');
+  const ft = document.getElementById('feedback-text');
+  if (isCorrect) {
+    fb.className = 'feedback-box show correct';
+    fi.textContent = '✓';
+    ft.textContent = 'Correct! Well done.';
+  } else {
+    fb.className = 'feedback-box show wrong';
+    fi.textContent = '✗';
+    ft.textContent = `Incorrect. The correct answer is ${OPTION_LABELS[correct]}: ${q.o[correct]}`;
+  }
+
+  // Update score chip
+  document.getElementById('score-chip').textContent = `${score} / ${currentIndex + 1}`;
+
+  // Show next button
+  const isLast = currentIndex === currentQuestions.length - 1;
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.className = 'next-btn show';
+  nextBtn.textContent = isLast ? 'View Results →' : 'Next Question →';
+}
+
+// ── NEXT QUESTION ──────────────────────────────────────────
+function nextQuestion() {
+  if (currentIndex === currentQuestions.length - 1) {
+    showResults();
+  } else {
+    currentIndex++;
+    renderQuestion();
+  }
+}
+
+// ── RESULTS ────────────────────────────────────────────────
+function showResults() {
+  const total = currentQuestions.length;
+  const pct = Math.round((score / total) * 100);
+  const wrong = total - score;
+
+  document.getElementById('results-score-big').innerHTML = `<span>${score}</span> / ${total}`;
+  document.getElementById('results-out-of').textContent = `You answered ${total} questions`;
+  document.getElementById('results-chapter-name').textContent = currentChapterLabel;
+  document.getElementById('rs-correct').textContent = score;
+  document.getElementById('rs-wrong').textContent = wrong;
+  document.getElementById('rs-pct').textContent = `${pct}%`;
+
+  // Grade
+  let grade, desc, emoji, gradeClass;
+  if (pct >= 70) { grade = 'A'; desc = 'Excellent! Outstanding performance!'; emoji = '🏆'; gradeClass = 'grade-A'; }
+  else if (pct >= 60) { grade = 'B'; desc = 'Good job! Above average.'; emoji = '🎉'; gradeClass = 'grade-B'; }
+  else if (pct >= 50) { grade = 'C'; desc = 'Fair. Keep studying!'; emoji = '📖'; gradeClass = 'grade-C'; }
+  else { grade = 'D'; desc = 'Below average. Review the chapter again.'; emoji = '💪'; gradeClass = 'grade-D'; }
+
+  document.getElementById('results-emoji').textContent = emoji;
+  document.getElementById('grade-letter').textContent = grade;
+  document.getElementById('grade-desc').textContent = desc;
+  const gradeEl = document.getElementById('results-grade');
+  gradeEl.className = `results-grade ${gradeClass}`;
+
+  document.getElementById('progress-bar').style.width = '100%';
+  showScreen('results-screen');
+  window.scrollTo(0, 0);
+}
+
+// ── RETRY ──────────────────────────────────────────────────
+function retryQuiz() {
+  if (!lastChapterMode) { goHome(); return; }
+  if (lastChapterMode.type === 'chapter') {
+    startChapter(lastChapterMode.num);
+  } else {
+    startAllChapters();
+  }
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────
+function goHome() {
+  showScreen('home-screen');
+  window.scrollTo(0, 0);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── INIT ───────────────────────────────────────────────────
+buildHome();
+</script>
+</body>
+</html>
