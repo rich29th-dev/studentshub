@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CBT Hub — Practice Exams</title>
+<style>
+:root{
+  --ink:#1b2430;
+  --ink-soft:#4a5568;
+  --paper:#f5f3ee;
+  --panel:#ffffff;
+  --line:#e2ddd0;
+  --navy:#1f3a5f;
+  --navy-deep:#16293f;
+  --navy-pale:#eaf0f7;
+  --gold:#c8963e;
+  --gold-soft:#f4e6c8;
+  --good:#2e7d4f;
+  --good-bg:#e6f4ea;
+  --bad:#b3432b;
+  --bad-bg:#fbe9e4;
+  --flag:#a6741b;
+  --flag-bg:#fbf0dc;
+  --radius:10px;
+  --shadow: 0 1px 2px rgba(20,30,45,0.06), 0 4px 14px rgba(20,30,45,0.06);
+  --mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--sans);
+  background:var(--paper);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{color:inherit;}
+button{font-family:inherit;cursor:pointer;}
+::selection{background:var(--gold-soft);}
+
+/* ============ TOP BAR ============ */
+.topbar{
+  background:var(--navy-deep);
+  color:#fff;
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:50;
+  box-shadow:0 2px 10px rgba(0,0,0,0.15);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:var(--serif);
+  font-size:19px;
+  letter-spacing:0.2px;
+}
+.brand .mark{
+  width:30px;height:30px;border-radius:7px;
+  background:linear-gradient(145deg, var(--gold), #a97a2c);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-weight:700;font-size:13px;color:#1a1000;
+  flex-shrink:0;
+}
+.topbar-right{display:flex;align-items:center;gap:14px;font-size:13px;color:#c3cee0;}
+.topbar-right .pill{
+  background:rgba(255,255,255,0.08);
+  padding:5px 11px;border-radius:20px;
+  font-family:var(--mono); font-size:12px;
+}
+
+/* ============ LAYOUT ============ */
+.app{max-width:1180px;margin:0 auto;padding:0 16px;}
+.hidden{display:none !important;}
+
+/* ============ HUB / COURSE GRID ============ */
+.hub-hero{
+  padding:38px 4px 22px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:26px;
+}
+.hub-hero h1{
+  font-family:var(--serif);
+  font-size:34px;
+  margin:0 0 8px;
+  font-weight:600;
+  color:var(--navy-deep);
+}
+.hub-hero p{
+  color:var(--ink-soft);
+  font-size:15px;
+  max-width:640px;
+  line-height:1.55;
+  margin:0;
+}
+.hub-stats{display:flex;gap:26px;margin-top:20px;flex-wrap:wrap;}
+.hub-stat{font-family:var(--mono);}
+.hub-stat b{display:block;font-size:22px;color:var(--navy);}
+.hub-stat span{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);}
+
+.course-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+  gap:16px;
+  padding-bottom:50px;
+}
+.course-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  transition:transform .15s ease, box-shadow .15s ease;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+}
+.course-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(20,30,45,0.12);}
+.course-card::before{
+  content:"";
+  position:absolute; top:0; left:0; width:5px; height:100%;
+  background:var(--code-color, var(--navy));
+}
+.course-code{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:0.05em;
+  color:var(--code-color, var(--navy));
+  font-weight:700;
+}
+.course-title{
+  font-family:var(--serif);
+  font-size:18px;
+  font-weight:600;
+  color:var(--ink);
+  line-height:1.3;
+}
+.course-meta{
+  font-size:12.5px;
+  color:var(--ink-soft);
+  display:flex;
+  gap:14px;
+  margin-top:auto;
+  padding-top:10px;
+  border-top:1px dashed var(--line);
+}
+.course-meta span{display:flex;align-items:center;gap:5px;}
+
+/* ============ SETUP SCREEN ============ */
+.setup-wrap{
+  max-width:640px;
+  margin:40px auto;
+  padding:0 16px 60px;
+}
+.setup-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:30px;
+  box-shadow:var(--shadow);
+}
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;color:var(--ink-soft);
+  margin-bottom:18px;
+  text-decoration:none;
+  border:none;background:none;padding:0;
+}
+.back-link:hover{color:var(--navy);}
+.setup-card h2{
+  font-family:var(--serif);
+  font-size:24px;margin:0 0 4px;
+  color:var(--navy-deep);
+}
+.setup-sub{color:var(--ink-soft);font-size:13.5px;margin:0 0 22px;}
+
+.resume-banner{
+  background:var(--gold-soft);
+  border:1px solid var(--gold);
+  border-radius:8px;
+  padding:14px 16px;
+  margin-bottom:20px;
+  font-size:13.5px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.resume-banner b{display:block;color:#5a4108;margin-bottom:2px;}
+.btn-row{display:flex;gap:8px;}
+
+.opt-toggle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 0;
+  border-bottom:1px solid var(--line);
+}
+.opt-toggle:last-of-type{border-bottom:none;}
+.opt-label{font-size:14px;font-weight:600;color:var(--ink);}
+.opt-desc{font-size:12.5px;color:var(--ink-soft);margin-top:2px;max-width:380px;}
+
+.switch{
+  position:relative;width:46px;height:26px;flex-shrink:0;
+}
+.switch input{opacity:0;width:0;height:0;}
+.slider{
+  position:absolute;cursor:pointer;inset:0;
+  background:#d8d3c4;border-radius:999px;transition:.2s;
+}
+.slider::before{
+  content:"";position:absolute;height:20px;width:20px;left:3px;top:3px;
+  background:#fff;border-radius:50%;transition:.2s;
+  box-shadow:0 1px 3px rgba(0,0,0,0.3);
+}
+input:checked + .slider{background:var(--navy);}
+input:checked + .slider::before{transform:translateX(20px);}
+
+.seg-control{
+  display:flex;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:3px;
+  margin-top:8px;
+}
+.seg-btn{
+  flex:1;border:none;background:none;padding:8px 10px;
+  font-size:12.5px;font-weight:600;color:var(--ink-soft);
+  border-radius:6px;transition:.15s;
+}
+.seg-btn.active{background:var(--navy);color:#fff;}
+
+.start-btn{
+  width:100%;
+  margin-top:26px;
+  padding:14px;
+  background:var(--navy);
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:0.02em;
+  transition:.15s;
+  box-shadow:0 2px 8px rgba(31,58,95,0.3);
+}
+.start-btn:hover{background:var(--navy-deep);}
+.start-btn:active{transform:scale(0.99);}
+
+/* ============ QUIZ SCREEN ============ */
+.quiz-shell{
+  display:flex;
+  max-width:1180px;
+  margin:0 auto;
+  align-items:flex-start;
+  gap:20px;
+  padding:20px 16px 40px;
+}
+.quiz-main{flex:1;min-width:0;}
+.quiz-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.quiz-title-block h2{
+  font-family:var(--serif);
+  font-size:20px;margin:0;color:var(--navy-deep);
+}
+.quiz-title-block .sub{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+
+.timer-box{
+  font-family:var(--mono);
+  background:var(--navy-deep);
+  color:#fff;
+  padding:10px 16px;
+  border-radius:8px;
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:0.04em;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  box-shadow:var(--shadow);
+}
+.timer-box.warn{background:#8a4a12;animation:pulse 1.5s infinite;}
+.timer-box.crit{background:var(--bad);animation:pulse .9s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.65;}}
+.timer-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;flex-shrink:0;}
+.timer-box.warn .timer-dot,.timer-box.crit .timer-dot{background:#fff;}
+
+.offline-banner{
+  background:var(--bad-bg);
+  border:1px solid var(--bad);
+  color:#7a2c17;
+  font-size:12.5px;
+  font-weight:600;
+  padding:9px 14px;
+  border-radius:8px;
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.qcard{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:26px;
+  box-shadow:var(--shadow);
+  min-height:340px;
+  display:flex;
+  flex-direction:column;
+}
+.qcard-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:16px;
+  gap:10px;
+}
+.qnum-tag{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--navy);
+  background:var(--navy-pale);
+  padding:4px 10px;
+  border-radius:20px;
+  font-weight:700;
+}
+.flag-btn{
+  border:1px solid var(--line);
+  background:#fff;
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--ink-soft);
+  display:flex;align-items:center;gap:6px;
+  transition:.15s;
+}
+.flag-btn:hover{border-color:var(--flag);color:var(--flag);}
+.flag-btn.active{background:var(--flag-bg);border-color:var(--flag);color:var(--flag);}
+.flag-btn svg{width:13px;height:13px;}
+
+.qtext{
+  font-size:17px;
+  line-height:1.55;
+  color:var(--ink);
+  margin-bottom:22px;
+  font-weight:500;
+}
+
+.options{display:flex;flex-direction:column;gap:10px;flex:1;}
+.option{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  border:1.5px solid var(--line);
+  border-radius:8px;
+  padding:13px 15px;
+  font-size:14.5px;
+  line-height:1.45;
+  transition:.12s;
+  background:#fff;
+}
+.option:hover{border-color:var(--navy);background:var(--navy-pale);}
+.option.selected{border-color:var(--navy);background:var(--navy-pale);}
+.option-letter{
+  width:24px;height:24px;border-radius:50%;
+  border:1.5px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:12px;font-weight:700;
+  color:var(--ink-soft);flex-shrink:0;
+  background:#fff;
+}
+.option.selected .option-letter{background:var(--navy);border-color:var(--navy);color:#fff;}
+
+.option.correct{border-color:var(--good);background:var(--good-bg);}
+.option.correct .option-letter{background:var(--good);border-color:var(--good);color:#fff;}
+.option.incorrect{border-color:var(--bad);background:var(--bad-bg);}
+.option.incorrect .option-letter{background:var(--bad);border-color:var(--bad);color:#fff;}
+
+.feedback-box{
+  margin-top:16px;
+  padding:14px 16px;
+  border-radius:8px;
+  font-size:13.5px;
+  line-height:1.55;
+  display:none;
+}
+.feedback-box.show{display:block;}
+.feedback-box.right{background:var(--good-bg);border:1px solid var(--good);color:#1e5636;}
+.feedback-box.wrong{background:var(--bad-bg);border:1px solid var(--bad);color:#7a2c17;}
+.feedback-box b{display:block;margin-bottom:3px;font-size:12.5px;text-transform:uppercase;letter-spacing:0.04em;}
+
+.qcard-nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:24px;
+  padding-top:18px;
+  border-top:1px solid var(--line);
+  gap:8px;
+  flex-wrap:wrap;
+}
+.nav-btn-group{display:flex;gap:8px;}
+.nbtn{
+  padding:10px 16px;
+  border-radius:7px;
+  font-size:13.5px;
+  font-weight:600;
+  border:1.5px solid var(--line);
+  background:#fff;
+  color:var(--ink);
+  display:flex;align-items:center;gap:6px;
+  transition:.15s;
+}
+.nbtn:hover{border-color:var(--navy);color:var(--navy);}
+.nbtn:disabled{opacity:0.35;pointer-events:none;}
+.nbtn.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+.nbtn.primary:hover{background:var(--navy-deep);}
+.nbtn.skip{color:var(--ink-soft);}
+.nbtn.submit{background:var(--gold);border-color:var(--gold);color:#2b1c04;}
+.nbtn.submit:hover{background:#b3822f;}
+.nbtn.review{background:var(--navy-pale);border-color:var(--navy-pale);color:var(--navy);}
+
+/* ============ NAV PANEL (Moodle-style, right side desktop) ============ */
+.nav-panel{
+  width:260px;
+  flex-shrink:0;
+  position:sticky;
+  top:76px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:18px;
+  max-height:calc(100vh - 96px);
+  overflow-y:auto;
+}
+.nav-panel h3{
+  font-family:var(--serif);
+  font-size:15px;margin:0 0 12px;
+  color:var(--navy-deep);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.legend{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;font-size:12px;color:var(--ink-soft);}
+.legend-row{display:flex;align-items:center;gap:8px;}
+.legend-swatch{width:13px;height:13px;border-radius:4px;flex-shrink:0;border:1.5px solid var(--line);}
+.legend-swatch.answered{background:var(--good);border-color:var(--good);}
+.legend-swatch.flagged{background:var(--flag-bg);border-color:var(--flag);}
+.legend-swatch.notanswered{background:#fff;border-color:var(--line);}
+.legend-swatch.skipped{background:#f0ede3;border-color:var(--line);}
+
+.qgrid{
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:6px;
+  margin-bottom:16px;
+}
+.qgrid-item{
+  aspect-ratio:1;
+  border-radius:6px;
+  border:1.5px solid var(--line);
+  background:#fff;
+  font-family:var(--mono);
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--ink-soft);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  transition:.12s;
+}
+.qgrid-item:hover{border-color:var(--navy);}
+.qgrid-item.current{outline:2px solid var(--navy);outline-offset:1.5px;}
+.qgrid-item.answered{background:var(--good);border-color:var(--good);color:#fff;}
+.qgrid-item.skipped{background:#f0ede3;color:var(--ink-soft);}
+.qgrid-item.notanswered{background:#fff;}
+.qgrid-item.flagged::after{
+  content:"";
+  position:absolute;top:-3px;right:-3px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--flag);
+  border:1.5px solid #fff;
+}
+
+.panel-stats{
+  font-size:12px;color:var(--ink-soft);
+  display:flex;flex-direction:column;gap:4px;
+  padding:12px 0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);
+  margin-bottom:14px;
+}
+.panel-stats div{display:flex;justify-content:space-between;}
+.panel-stats b{color:var(--ink);}
+
+.submit-panel-btn{
+  width:100%;
+  padding:12px;
+  background:var(--gold);
+  border:none;
+  border-radius:8px;
+  font-weight:700;
+  font-size:13.5px;
+  color:#2b1c04;
+}
+.submit-panel-btn:hover{background:#b3822f;}
+
+/* ============ MOBILE NAV DRAWER ============ */
+.mobile-nav-toggle{
+  display:none;
+  position:fixed;
+  bottom:18px;right:18px;
+  width:56px;height:56px;
+  border-radius:50%;
+  background:var(--navy);
+  color:#fff;
+  border:none;
+  box-shadow:0 4px 16px rgba(0,0,0,0.3);
+  z-index:60;
+  align-items:center;justify-content:center;
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:700;
+  flex-direction:column;
+  gap:2px;
+}
+.mobile-nav-toggle .count{font-size:13px;}
+.mobile-drawer-overlay{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(20,25,35,0.5);
+  z-index:70;
+}
+.mobile-drawer{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:var(--panel);
+  border-radius:18px 18px 0 0;
+  padding:18px 18px 26px;
+  max-height:78vh;
+  overflow-y:auto;
+  box-shadow:0 -6px 24px rgba(0,0,0,0.25);
+  transform:translateY(100%);
+  transition:transform .25s ease;
+}
+.mobile-drawer.open{transform:translateY(0);}
+.mobile-drawer-handle{
+  width:40px;height:4px;background:var(--line);border-radius:3px;
+  margin:0 auto 14px;
+}
+.drawer-close{
+  position:absolute;top:16px;right:18px;
+  border:none;background:none;font-size:20px;color:var(--ink-soft);
+}
+
+/* ============ RESULTS SCREEN ============ */
+.results-wrap{max-width:760px;margin:30px auto;padding:0 16px 60px;}
+.results-hero{
+  background:var(--navy-deep);
+  color:#fff;
+  border-radius:var(--radius);
+  padding:34px 30px;
+  text-align:center;
+  margin-bottom:22px;
+  position:relative;
+  overflow:hidden;
+}
+.results-hero .score-big{
+  font-family:var(--serif);
+  font-size:56px;
+  font-weight:700;
+  line-height:1;
+  margin:6px 0;
+}
+.results-hero .score-label{font-size:13px;color:#a9bcd4;text-transform:uppercase;letter-spacing:0.08em;}
+.results-hero .verdict{
+  display:inline-block;
+  margin-top:14px;
+  padding:6px 16px;
+  border-radius:20px;
+  font-size:13px;font-weight:700;
+}
+.verdict.pass{background:var(--good);color:#fff;}
+.verdict.fail{background:var(--bad);color:#fff;}
+
+.results-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-bottom:24px;
+}
+.result-stat{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:14px;
+  text-align:center;
+}
+.result-stat b{display:block;font-size:22px;font-family:var(--mono);color:var(--navy);}
+.result-stat span{font-size:11px;color:var(--ink-soft);text-transform:uppercase;}
+
+.results-actions{display:flex;gap:10px;margin-bottom:30px;flex-wrap:wrap;}
+.results-actions button, .results-actions a{
+  flex:1;min-width:150px;
+  padding:12px;border-radius:8px;
+  font-weight:700;font-size:13.5px;
+  border:1.5px solid var(--line);
+  background:#fff;color:var(--ink);
+  text-align:center;text-decoration:none;
+  display:block;
+}
+.results-actions .primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+.review-item{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px;
+  margin-bottom:14px;
+}
+.review-item .rq-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px;}
+.review-item .rq-num{font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:700;}
+.review-item .rq-status{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:0.03em;}
+.rq-status.correct{background:var(--good-bg);color:var(--good);}
+.rq-status.incorrect{background:var(--bad-bg);color:var(--bad);}
+.rq-status.unanswered{background:#f0ede3;color:var(--ink-soft);}
+.review-item .rq-text{font-size:15px;margin-bottom:12px;line-height:1.5;font-weight:500;}
+.review-opts{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;}
+.review-opt{
+  border:1.5px solid var(--line);border-radius:7px;padding:9px 12px;font-size:13.5px;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.review-opt.correct{border-color:var(--good);background:var(--good-bg);}
+.review-opt.incorrect{border-color:var(--bad);background:var(--bad-bg);}
+.review-explain{
+  font-size:13px;color:var(--ink-soft);background:var(--paper);
+  border-left:3px solid var(--gold);padding:10px 14px;border-radius:6px;line-height:1.55;
+}
+.review-explain b{color:var(--ink);}
+
+.filter-row{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.filter-btn{
+  padding:7px 14px;border-radius:20px;font-size:12.5px;font-weight:600;
+  border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);
+}
+.filter-btn.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+
+/* ============ MODAL (submit confirm) ============ */
+.modal-overlay{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(20,25,35,0.55);
+  z-index:100;
+  align-items:center;justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:#fff;
+  border-radius:var(--radius);
+  max-width:420px;
+  width:100%;
+  padding:26px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);
+}
+.modal-box h3{font-family:var(--serif);margin:0 0 10px;font-size:19px;color:var(--navy-deep);}
+.modal-box p{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin:0 0 6px;}
+.modal-stats{
+  display:flex;gap:16px;margin:16px 0;padding:14px;background:var(--paper);border-radius:8px;
+}
+.modal-stats div{flex:1;text-align:center;}
+.modal-stats b{display:block;font-size:20px;font-family:var(--mono);}
+.modal-stats span{font-size:11px;color:var(--ink-soft);text-transform:uppercase;}
+.modal-actions{display:flex;gap:10px;margin-top:18px;}
+.modal-actions button{flex:1;padding:12px;border-radius:8px;font-weight:700;font-size:13.5px;border:1.5px solid var(--line);background:#fff;}
+.modal-actions .confirm{background:var(--bad);color:#fff;border-color:var(--bad);}
+.modal-actions .cancel{background:var(--paper);color:var(--ink);}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 880px){
+  .quiz-shell{flex-direction:column;padding:14px 12px 90px;}
+  .nav-panel{display:none;}
+  .mobile-nav-toggle{display:flex;}
+  .mobile-drawer-overlay.open{display:block;}
+  .qcard{padding:18px;min-height:auto;}
+  .qtext{font-size:16px;}
+  .results-grid{grid-template-columns:repeat(2,1fr);}
+  .hub-hero h1{font-size:27px;}
+  .course-grid{grid-template-columns:1fr;}
+  .timer-box{font-size:17px;padding:8px 12px;}
+}
+@media (max-width:480px){
+  .qcard-nav{gap:6px;}
+  .nbtn{padding:10px 12px;font-size:12.5px;flex:1;justify-content:center;}
+  .nav-btn-group{flex:1;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><div class="mark">CBT</div> Practice Exam Hub</div>
+  <div class="topbar-right">
+    <span class="pill" id="clock-pill">—</span>
+  </div>
+</div>
+
+<div class="app" id="app-root"></div>
+
+<div class="mobile-drawer-overlay" id="drawer-overlay"></div>
+<div class="mobile-drawer" id="mobile-drawer">
+  <div class="mobile-drawer-handle"></div>
+  <button class="drawer-close" id="drawer-close">&times;</button>
+  <div id="drawer-content"></div>
+</div>
+
+<button class="mobile-nav-toggle hidden" id="mobile-nav-btn">
+  <span class="count" id="mnb-count">0/0</span>
+  <span>Q's</span>
+</button>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box" id="modal-box"></div>
+</div>
+
+<script id="course-data-script">
+const COURSE_DATA = {"phy101":{"name":"PHY 101","title":"General Physics I (Mechanics)","questions":[{"q":"A ballon is going up at a steady velocity of 12m/s at a height of 32m above the ground when an object is dropped from it. How long does it take for the object to reach the ground ? (g=10 m/s2 ).","opts":["3","4","5","NONE OF THE ABOVE"],"ans":1,"id":"phy101_0","exp":""},{"q":"What is the escape velocity of a body on the surface of the earth of radius ,R, if the gravitational constant is G and the mass of the earth is m ? (Neglecting energy loses to the surrounding).","opts":["sqrt(2GR)","sqrt(2GM/R)","sqrt(2GRM)","NONE OF THE ABOVE"],"ans":1,"id":"phy101_1","exp":""},{"q":"The magnitude of the gravitational attraction between the earth and a particle is 40N. If the mass of the particle is 4kg. Calculate the magnitude of the gravitational field intensity of the earth on the particle.","opts":["9.0Nkg-1","10.0Nkg-1","11.0Nkg-1","NONE OF THE ABOVE"],"ans":1,"id":"phy101_2","exp":""},{"q":"What is the gravitational potential at a point on the surface of the earth if G=6.6x10-11Nm2kg-2 and the radius and mass of the earth are respectively 6.4x106m and 5.98x1024kg?","opts":["4.2x10^7Jkg-1","5.2x10^7Jkg-1","6.2x10^7Jkg-1","NONE OF THE ABOVE"],"ans":2,"id":"phy101_3","exp":""},{"q":"The farther the distance from the earth, the \u2026\u2026\u2026\u2026\u2026the weight.","opts":["greater","lesser","neutral","NONE OF THE ABOVE"],"ans":1,"id":"phy101_4","exp":""},{"q":"A stone is projected upwards at an angle of 30 degrees to the horizontal from the top of a tower of height 100m and it hits the ground at a point Q. If the initial velocity of the projection is 100m/s. Calculate the maximum height of the stone above the ground.","opts":["125m","225m","325m","NONE OF THE ABOVE"],"ans":1,"id":"phy101_5","exp":""},{"q":"A missile is projected with a velocity of 250m/s at an angle of \u03b8 to the vertical. If the total time of flight of the missile is 25s. What is the value of \u03b8?","opts":["10 DEGREES","20 DEGREES","30 DEGREES","NONE OF THE ABOVE"],"ans":2,"id":"phy101_6","exp":""},{"q":"When acceleration of a body is zero, velocity of the body.","opts":["Decreases","Increases","Remains constant","NONE OF THE ABOVE"],"ans":2,"id":"phy101_7","exp":""},{"q":"What do the two types of collision have in common","opts":["Kinetic energy","Equal coefficient of restitution","Momentum","NONE OF THE ABOVE"],"ans":2,"id":"phy101_8","exp":""},{"q":"What type of collision is experienced by two bodies that stick together after the collision?","opts":["Elastic collision","Perfectly elastic collision","Inelastic Collision","NONE OF THE ABOVE"],"ans":2,"id":"phy101_9","exp":""},{"q":"The Kinetic energy of a 12g Sparrow flying at 20m/s is","opts":["2.4 J","2.4x10^3 J","1.44x10^3 J","NONE OF THE ABOVE"],"ans":1,"id":"phy101_10","exp":""},{"q":"A ball is thrown vertically upwards with a velocity of 30m/s. Calculate the maximum height reached (g=10m/s2).","opts":["40m","45m","50m","None of the above"],"ans":0,"id":"phy101_11","exp":""},{"q":"The rate of change of momentum is","opts":["Energy","Impulse","Force","NONE OF THE ABOVE"],"ans":2,"id":"phy101_12","exp":""},{"q":"A car starts from rest and has a constant acceleration of 4m/s2 in its first 3s. The car travels","opts":["18m","6m","12m","NONE OF THE ABOVE"],"ans":0,"id":"phy101_13","exp":""},{"q":"A 50kg crate slides down a ramp inclined at 35 degrees to the horizontal. The normal reaction FN on the ramp is","opts":["401N","287N","196N","NONE OF THE ABOVE"],"ans":0,"id":"phy101_14","exp":""},{"q":"The period of a 5.0g mass oscillating on a spring having spring constant of 150N/m is:","opts":["0.045s","0.0365s","0.087s","NONE OF THE ABOVE"],"ans":1,"id":"phy101_15","exp":""},{"q":"The coefficient of kinetic friction \u00b5k is usually","opts":["Greater than the coefficient of static friction \u00b5s","Equal to the coefficient of static friction \u00b5s","Less than the coefficient of static friction \u00b5s","NONE OF THE ABOVE"],"ans":2,"id":"phy101_16","exp":""},{"q":"A force that gives a 2.0kg mass an acceleration of 3.6m/s2 would give an 8.0 kg mass an","opts":["0.2m/s2","1.6m/s2","0.9m/s2","6.4m/s2"],"ans":2,"id":"phy101_17","exp":""},{"q":"The period of a simple pendulum depends on its","opts":["Length","Maximum velocity","Total energy","Mass"],"ans":0,"id":"phy101_18","exp":""},{"q":"The period of simple harmonic oscillator is 0.40s and the amplitude 12mm. The maximum velocity of the oscillator is","opts":["3.0x10^-2 m/s","3.8x10^-2 m/s","1.9x10^-2 m/s","4.3x10^-2 m/s"],"ans":2,"id":"phy101_19","exp":""},{"q":"What change in mass would be made to double the frequency of a simple harmonic oscillator?","opts":["4m1 = m2","0.25m1 = m2","2m1 = m2","none of the above"],"ans":0,"id":"phy101_20","exp":""},{"q":"The frictional force between a crate standing on a surface in relative motion depends on all but one of these.","opts":["Normal force on the surfaces","Nature of the surfaces","Mass of the crate","Area of the crate in contact with the surface"],"ans":3,"id":"phy101_21","exp":""},{"q":"Calculate the tension in the wire of a hammer thrower's hammer of mass 7kg, if it is being swing round at 88.8m/s in a circle of radius 1.5m.","opts":["414","434","543","NONE OF THE ABOVE"],"ans":1,"id":"phy101_22","exp":""},{"q":"A 500N woman runs across a field with a velocity of 5m/s. Her momentum is (g = 9.8m/s2)","opts":["2500kgm/s","255.1kgm/s","250kgm/s","none of the above"],"ans":1,"id":"phy101_23","exp":""},{"q":"When an object is dropped, its initial velocity is\u2026\u2026","opts":["increasing","decreasing","zero","none of the above"],"ans":2,"id":"phy101_24","exp":""},{"q":"Objects in motion solely under the influence of gravity are said to be in \u2026\u2026\u2026\u2026.","opts":["velocity","acceleration","free fall","none of the above"],"ans":2,"id":"phy101_25","exp":""},{"q":"The acceleration due to gravity g is the \u2026\u2026for all free-falling objects, regardless of their mass or weight.","opts":["constant velocity","constant acceleration","velocity","none of the above"],"ans":1,"id":"phy101_26","exp":""},{"q":"A car travels with a constant velocity of 45km/h for 10s. What distance does it cover in this time?","opts":["100m","125m","145m","none of the above"],"ans":1,"id":"phy101_27","exp":""},{"q":"A car moving with a velocity of 24m/s, accelerates for 15s at the rate of 1m/s2; calculate the distance it travels during this time interval.","opts":["39m","80m","473m","none of the above"],"ans":2,"id":"phy101_28","exp":""},{"q":"A car is travelling with a uniform velocity of 72km/h. What distance does it cover in 20s.","opts":["100m","300m","400m","none of the above"],"ans":2,"id":"phy101_29","exp":""},{"q":"The total distance travelled by an object in a projectile motion is given by the expression","opts":["U2/g","2U/g","4U/g","none of the above"],"ans":1,"id":"phy101_30","exp":""},{"q":"The expression for the maximum horizontal range which can be attained by a projectile with velocity, U is;","opts":["U/g","U2/g","U/2g","none of the above"],"ans":1,"id":"phy101_31","exp":""},{"q":"The expression for the horizontal range of a projectile is.","opts":["U Sin2\u03b8/g","U2 Sin2\u03b8/g","U Sin\u03b8/g","none of the above"],"ans":1,"id":"phy101_32","exp":""},{"q":"An object falls from a height of 80m. calculate its velocity just before hitting the ground?","opts":["19.6m/s","29.6m/s","39.6m/s","none of the above"],"ans":2,"id":"phy101_33","exp":""},{"q":"A stone is dropped from a height of 196m. Neglecting air resistance, calculate the time at which the stone will strike the ground.","opts":["4.33","6.35","8.35","none of the above"],"ans":1,"id":"phy101_34","exp":""},{"q":"A stone is thrown vertically upwards with an initial speed U. if g is acceleration of free fall due to gravity, when will the stone return to the starting point?","opts":["U/g","2U/g","3U/g","none of the above"],"ans":1,"id":"phy101_35","exp":""},{"q":"Newton's law of gravitation is given by the expression","opts":["Gm1m2/r2","Gm1/r2","Gm1m2/r","none of the above"],"ans":0,"id":"phy101_36","exp":""},{"q":"Acceleration due to gravity g is given by the expression","opts":["Gmem1/Re2","Gme/Re2","Gme/R","none of the above"],"ans":1,"id":"phy101_37","exp":""},{"q":"The velocity, v, of a space shuttle in a time t is given by v = 25 + 3t2. find the instantaneous acceleration at t = 9s","opts":["52m/s2","54m/s2","56m/s2","none of the above"],"ans":1,"id":"phy101_38","exp":""},{"q":"A boy cycles continuously through a distance of 1.0km in 5 minutes. calculate his average speed.","opts":["2.33m/s","3.33m/s","4.33m/s","none of the above"],"ans":1,"id":"phy101_39","exp":""},{"q":"A car takes off from rest and covers a distance of 80m on a straight road in 10s calculate the magnitude of its acceleration.","opts":["16m","26m","36m","none of the above"],"ans":0,"id":"phy101_40","exp":""},{"q":"The expression for the period T of a body in uniform circular motion is","opts":["2\u03c0r/v","2\u03c0v/r","\u03c0rv/2","NONE OF THE ABOVE"],"ans":0,"id":"phy101_41","exp":""},{"q":"A carpenter working at a construction site mistakenly drops his hammer from a height of 125m. how long does it take to reach the ground","opts":["5s","15s","25s","none of the above"],"ans":0,"id":"phy101_42","exp":""},{"q":"How much work is done in raising a 2.0kg book from the ground to a height of 1.8m?","opts":["3.8J","35J","36J","10.89J"],"ans":1,"id":"phy101_43","exp":""},{"q":"Moment of Inertia I is the rotational analogue of _______ in linear motion","opts":["Impulse","Torque","Mass","Force"],"ans":2,"id":"phy101_44","exp":""},{"q":"An example of a non-conservative force is","opts":["Tension","Normal Reaction","Gravity","Friction"],"ans":3,"id":"phy101_45","exp":""},{"q":"A 1200kg car whose velocity is 6ms-1 rounds a turn whose radius is 30m. The force acting on the car is","opts":["48N","240N","147N","1440N"],"ans":3,"id":"phy101_46","exp":""},{"q":"An elastic collision conserves","opts":["Momentum but not kinetic energy","Kinetic energy but not momentum","Both kinetic energy and momentum","Neither kinetic energy nor momentum"],"ans":2,"id":"phy101_47","exp":""},{"q":"A collision is perfectly inelastic when","opts":["The masses of the colliding bodies are equal","The velocities of the colliding bodies are equal after collision","When the bodies move off with same velocity after collision in same direction","when the two bodies move off with same velocity in opposite directions"],"ans":2,"id":"phy101_48","exp":""},{"q":"Frictional force between two surfaces in contact depends on","opts":["Area","Nature of the surfaces in contact","The temperature of the bodies","None of the above"],"ans":1,"id":"phy101_49","exp":""},{"q":"The amplitude of a harmonic oscillation is doubled, which of these remains constant","opts":["Period","Total energy","maximum velocity","maximum acceleration"],"ans":0,"id":"phy101_50","exp":""},{"q":"Centripetal acceleration has the expression:","opts":["v2/r","vr2","v/r","none of the above"],"ans":0,"id":"phy101_51","exp":""},{"q":"A body of mass 350kg is raised to a height of 45m above the ground. The work done on the body is","opts":["15.75kJ","154.35KJ","392.87J","None of the above"],"ans":1,"id":"phy101_52","exp":""},{"q":"Which of these is a scalar quantity","opts":["Work","Force","Impulse","Velocity"],"ans":0,"id":"phy101_53","exp":""},{"q":"When a block is placed on a vertical spring, the spring is compressed by 4.0 cm calculate the mass of the block given that the constant of the spring is 1500N/M and g is 9.8m/s2","opts":["6.12kg","33.78kg","0.61Kg","None of the above"],"ans":0,"id":"phy101_54","exp":""},{"q":"Calculate the impulse delivered when a player kicks a ball with a force of 1500N. Assume the player's foot acts on the ball for 5.0ms","opts":["7.5KNs","7.5Ns","0.3NS","300Ns"],"ans":1,"id":"phy101_55","exp":""},{"q":"The unit of angular momentum are","opts":["J.m","N.m","Kg/m2","Kg.m2/s"],"ans":3,"id":"phy101_56","exp":""},{"q":"A vehicle travelling down a straight road at 25 m/s slows down to 11m/s in 5.0 s what is the average acceleration","opts":["2.8 m/s2","-2.8 m/s2","10 m/s","None of the above"],"ans":0,"id":"phy101_57","exp":""},{"q":"A boy thrown a ball vertically downwards with an initial velocity of 14.7m/s. if the ball hits the ground 2.0s later, what is the height of the position from which the ball was thrown (g = 9.80m/s2)","opts":["49.0m","10.4m","49.0m","None of the above"],"ans":0,"id":"phy101_58","exp":""},{"q":"If a dropped object falls 19.6m in 2.0 seconds, how far will the ball fall in 4.0s?","opts":["39.2m","78.4m","19.6m","None of the above"],"ans":1,"id":"phy101_59","exp":""},{"q":"A truck pulls a loaded wagon with a constant force of 400N. If the total mass of the wagon and the contents is 279Kg. What is the acceleration of the wagon? (Ignore frictional force)","opts":["0.63m/s2","1.4 m/s2","1.6 m/s2","None of the above"],"ans":1,"id":"phy101_60","exp":""},{"q":"If coefficient of static friction between a 40.0kg crate and the floor is 0.650 what horizontal force must be applied to move the crate?","opts":["392N","255N","167N","None of the above"],"ans":1,"id":"phy101_61","exp":""},{"q":"Given that the gravitational constant is 7.0x10-11Nm2kg-2, what is the force of attraction between a 10^6kg mass of lead hanging one meter away from a 10^3kg mass of iron?","opts":["7.0x10^-2","6.0x10^-2","5.0x10^-2","NONE OF THE ABOVE"],"ans":0,"id":"phy101_62","exp":""},{"q":"The newton unit of force is equivalent to","opts":["Kg m/s2","Kgm/s","Kg m2s2","None of the above"],"ans":0,"id":"phy101_63","exp":""},{"q":"What is the mass of an object that accelerates at 3.0m/s2 under the influence of a 5.0N force?","opts":["15Kg","1.67Kg","0.6 Kg","None of the above"],"ans":1,"id":"phy101_64","exp":""},{"q":"What is the weight of a 80.0 kg mass in Newtons (g = 9.8m/s2)","opts":["8.16N","784N","80N","None of the above"],"ans":1,"id":"phy101_65","exp":""},{"q":"The mass of a body weighing 750N is","opts":["76.5kg","75.0 Kg","93.58x10^5kg","None of the above"],"ans":0,"id":"phy101_66","exp":""},{"q":"Linear momentum has unit","opts":["Ns","N/m","Kgm/s","all of the above"],"ans":0,"id":"phy101_67","exp":""},{"q":"Force x velocity is","opts":["Impulse","Work","power","Momentum"],"ans":2,"id":"phy101_68","exp":""},{"q":"What is the gravitational potential due to a molecule of mass M, at a distance R from it?","opts":["GM2/R2","GM/R","GM2/R","NONE OF THE ABOVE"],"ans":1,"id":"phy101_69","exp":""},{"q":"Calculate the escape velocity of a satellite launched from the earth's surface (g=10m/s2, Re = 6.4x106m).","opts":["3.13x10^4m/s","2.15x10^4m/s","1.13x10^4m/s","NONE OF THE ABOVE"],"ans":2,"id":"phy101_70","exp":""},{"q":"A system of particles refers to:","opts":["A single particle moving freely","Two or more particles interacting with each other","A solid body only","A gas with one molecule"],"ans":1,"id":"phy101_71","exp":""},{"q":"The total mass of a system of particles is given by:","opts":["M = m1 x m2 x mn","M = m1 + m2 + mn","M = m1/mn","M = m1 - m2 - mn"],"ans":1,"id":"phy101_72","exp":""},{"q":"The center of mass of a system is the point where:","opts":["The heaviest particle is located","All internal forces act","The total mass of the system can be considered to be concentrated","The velocity is zero"],"ans":2,"id":"phy101_73","exp":""},{"q":"If two particles of masses 2 kg and 3 kg are at positions 2 m and 4 m, the center of mass is at:","opts":["2.4 m","3.0 m","3.2 m","4.0 m"],"ans":2,"id":"phy101_74","exp":""},{"q":"The velocity of the center of mass is given by:","opts":["Vcm = \u03a3(mi\u00b7a)/M","Vcm = \u03a3(mi\u00b7vi)/M","Vcm = M\u00b7v","Vcm = \u03a3(mi\u00b7v)/m"],"ans":1,"id":"phy101_75","exp":""},{"q":"Internal forces do not affect the motion of the center of mass because:","opts":["They are negligible","They cancel each other in equal and opposite pairs","They act externally","They act only on one particle"],"ans":1,"id":"phy101_76","exp":""},{"q":"For two particles of equal masses, the center of mass lies:","opts":["Closer to the heavier one","Midway between them","At the origin","Depends on velocity"],"ans":1,"id":"phy101_77","exp":""},{"q":"The motion of the center of mass depends on:","opts":["Only internal forces","Both internal and external forces","Only external forces","None of the above"],"ans":2,"id":"phy101_78","exp":""},{"q":"If total external force on a system is zero, the total momentum:","opts":["Increases","Decreases","Remains constant","Becomes zero"],"ans":2,"id":"phy101_79","exp":""},{"q":"A stationary shell of mass 6 kg explodes into two parts (2 kg and 4 kg). If the 2 kg piece moves at 12 m/s, the 4 kg piece moves at:","opts":["12 m/s (same direction)","3 m/s (opposite direction)","6 m/s (opposite direction)","2 m/s (same direction)"],"ans":2,"id":"phy101_80","exp":""},{"q":"Rotational motion occurs when a body moves:","opts":["In a straight line","Around a fixed axis","Randomly","Without acceleration"],"ans":1,"id":"phy101_81","exp":""},{"q":"Angular velocity (\u03c9) is defined as:","opts":["d\u03b8/dt","ds/dt","dv/dt","dr/dt"],"ans":0,"id":"phy101_82","exp":""},{"q":"Linear velocity (v) is related to angular velocity by:","opts":["v = r/\u03c9","v = r\u03c9","v = \u03c92r","v = \u03c9/r"],"ans":1,"id":"phy101_83","exp":""},{"q":"Angular acceleration (\u03b1) is given by:","opts":["dv/dt","d\u03b8/dt","d\u03c9/dt","da/dt"],"ans":2,"id":"phy101_84","exp":""},{"q":"The tangential acceleration of a rotating particle is:","opts":["at = r\u03b1","at = r\u03c92","at = v2/r","at = r"],"ans":0,"id":"phy101_85","exp":""},{"q":"A wheel starts from rest with angular acceleration 2 rad/s2. Its angular velocity after 5 s is:","opts":["2 rad/s","5 rad/s","10 rad/s","25 rad/s"],"ans":2,"id":"phy101_86","exp":""},{"q":"For rotational motion, \u03c92 = \u03c90\u00b2 + 2\u03b1\u03b8 is analogous to:","opts":["s = ut + (1/2)at2","v = u + at","v2 = u2 + 2as","F = ma"],"ans":2,"id":"phy101_87","exp":""},{"q":"Torque is the:","opts":["Translational equivalent of velocity","Rotational equivalent of force","Linear momentum of a body","Rate of change of momentum"],"ans":1,"id":"phy101_88","exp":""},{"q":"The unit of torque in SI system is:","opts":["Joule","Watt","Newton-meter","Pascal"],"ans":2,"id":"phy101_89","exp":""},{"q":"Torque depends on:","opts":["Magnitude of force and the perpendicular distance from axis","Mass only","Angular speed only","Acceleration"],"ans":0,"id":"phy101_90","exp":""},{"q":"A wheel with \u03b1 = 2 rad/s2 for 5s has \u03c9:","opts":["5 rad/s","2 rad/s","10 rad/s","20 rad/s"],"ans":2,"id":"phy101_91","exp":""},{"q":"If a disc slows to rest, final \u03c9 =","opts":["Maximum","Zero","Constant","Infinite"],"ans":1,"id":"phy101_92","exp":""},{"q":"Turning at 33 1/3 rev/min equals:","opts":["10 rad/s","3.49 rad/s","1 rad/s","5 rad/s"],"ans":1,"id":"phy101_93","exp":""},{"q":"If angular velocity increases, \u03b1 is:","opts":["Zero","Negative","Positive","Infinity"],"ans":2,"id":"phy101_94","exp":""},{"q":"When rotor speed doubles, time depends on:","opts":["Angular acceleration","Torque only","Radius","Linear velocity"],"ans":0,"id":"phy101_95","exp":""},{"q":"78 rev/min equals:","opts":["10 rad/s","8.17 rad/s","4.5 rad/s","1 rad/s"],"ans":1,"id":"phy101_96","exp":""},{"q":"Dot product of two vectors gives a:","opts":["Vector","Scalar","Matrix","Tensor"],"ans":1,"id":"phy101_97","exp":""},{"q":"Cross product of two vectors gives a:","opts":["Scalar","Vector","Number","Angle"],"ans":1,"id":"phy101_98","exp":""},{"q":"When vectors are perpendicular, their dot product is:","opts":["Zero","Positive","Negative","Infinity"],"ans":0,"id":"phy101_99","exp":""},{"q":"Moment of inertia is:","opts":["Resistance to linear motion","Resistance to rotational motion","Force","Torque"],"ans":1,"id":"phy101_100","exp":""},{"q":"Newton's law of universal gravitation states that the force between two masses is","opts":["Directly proportional to the square of the distance","Inversely proportional to the distance","Directly proportional to the product of the masses","Inversely proportional to the product of the masses"],"ans":2,"id":"phy101_101","exp":""},{"q":"The SI unit of the universal gravitational constant (G) is","opts":["Nm/kg","Nm2/kg2","N/kg2","Nm"],"ans":1,"id":"phy101_102","exp":""},{"q":"The value of the universal gravitational constant G is approximately","opts":["9.8 m/s2","6.67 x 10^-11 Nm2/kg2","3.0 x 10^8 m/s","1.6 x 10^-19 C"],"ans":1,"id":"phy101_103","exp":""},{"q":"The gravitational force between two masses becomes four times larger when","opts":["Distance is doubled","Distance is halved","Masses are halved","Masses are quartered"],"ans":1,"id":"phy101_104","exp":""},{"q":"The acceleration due to gravity on Earth's surface is given by","opts":["g = GM/R","g = GM/R2","g = Gm/R2","g = R2/GM"],"ans":1,"id":"phy101_105","exp":""},{"q":"As altitude above the Earth increases, the value of g","opts":["Increases","Remains constant","Decreases","Becomes zero immediately"],"ans":2,"id":"phy101_106","exp":""},{"q":"The gravitational potential energy between two masses is","opts":["Positive","Zero","Negative","Constant"],"ans":2,"id":"phy101_107","exp":""},{"q":"Gravitational potential energy is maximum (least negative) when the distance between masses is","opts":["Small","Zero","Very large","Equal to Earth's radius"],"ans":2,"id":"phy101_108","exp":""},{"q":"Escape velocity is defined as the","opts":["Maximum velocity of a satellite","Velocity of Earth around the Sun","Minimum speed required to escape Earth's gravity","Speed of light"],"ans":2,"id":"phy101_109","exp":""},{"q":"The escape velocity from Earth is approximately","opts":["7.9 km/s","9.8 km/s","11.2 km/s","59.4 km/s"],"ans":2,"id":"phy101_110","exp":""},{"q":"Escape velocity depends on","opts":["Mass of the body escaping","Shape of the planet","Mass and radius of the planet","Distance from the Sun"],"ans":2,"id":"phy101_111","exp":""},{"q":"The orbital velocity of a satellite in a circular orbit is","opts":["v = sqrt(GM/r)","v = sqrt(GM/r2)","v = GM/r","v = 2\u03c0r/T"],"ans":0,"id":"phy101_112","exp":""},{"q":"The time taken by a satellite to complete one orbit is called","opts":["Escape time","Orbital radius","Period","Angular velocity"],"ans":2,"id":"phy101_113","exp":""},{"q":"The centripetal force keeping a satellite in orbit is provided by","opts":["Magnetic force","Electric force","Gravitational force","Nuclear force"],"ans":2,"id":"phy101_114","exp":""},{"q":"According to Kepler's first law, planets move in","opts":["Circular orbits","Elliptical orbits with the Sun at the center","Elliptical orbits with the Sun at one focus","Parabolic orbits"],"ans":2,"id":"phy101_115","exp":""},{"q":"Kepler's second law states that","opts":["Orbits are circular","Equal areas are swept in equal times","T2 \u221d r3","Velocity is constant"],"ans":1,"id":"phy101_116","exp":""},{"q":"A planet moves fastest when it is","opts":["Farthest from the Sun","Closest to the Sun","At the center of orbit","Moving in a circular path"],"ans":1,"id":"phy101_117","exp":""},{"q":"Kepler's third law relates","opts":["Mass and force","Speed and distance","Period and orbital radius","Energy and velocity"],"ans":2,"id":"phy101_118","exp":""},{"q":"According to Kepler's third law,","opts":["T \u221d r2","T2 \u221d r","T2 \u221d r3","T \u221d r3"],"ans":2,"id":"phy101_119","exp":""},{"q":"The T2/r3 ratio for planets orbiting the Sun is","opts":["Different for each planet","Zero","Constant","Infinite"],"ans":2,"id":"phy101_120","exp":""}]},"phy103":{"name":"PHY 103","title":"General Physics III (Heat, Gas Laws & Thermodynamics)","questions":[{"q":"Boyle's Law states that:","opts":["P is proportional to V","P x 1/V (P proportional to 1/V)","P + V = constant","P - V = constant"],"ans":1,"id":"phy103_0","exp":""},{"q":"For a gas at constant temperature, the product of pressure and volume is:","opts":["Zero","Variable","Constant","Infinite"],"ans":2,"id":"phy103_1","exp":""},{"q":"The graph of Boyle's Law is:","opts":["A straight line","A parabola","Rectangular hyperbola","A circle"],"ans":2,"id":"phy103_2","exp":""},{"q":"Charles' Law shows the relationship between:","opts":["Pressure and Volume","Volume and Temperature","Pressure and Temperature","Mass and Volume"],"ans":1,"id":"phy103_3","exp":""},{"q":"According to Charles' Law, at constant pressure, volume is proportional to:","opts":["Pressure","Mass","Temperature","Density"],"ans":2,"id":"phy103_4","exp":""},{"q":"The value of absolute zero is:","opts":["-273\u00b0C","0\u00b0C","100\u00b0C","273\u00b0C"],"ans":0,"id":"phy103_5","exp":""},{"q":"The Pressure Law relates:","opts":["Volume and Temperature","Pressure and Temperature","Pressure and Volume","Mass and Pressure"],"ans":1,"id":"phy103_6","exp":""},{"q":"The SI unit of pressure is:","opts":["Bar","Atmosphere","Pascal","Torr"],"ans":2,"id":"phy103_7","exp":""},{"q":"In the general gas equation, R represents:","opts":["Density constant","Universal gas constant","Radius","Reynolds number"],"ans":1,"id":"phy103_8","exp":""},{"q":"The value of R is:","opts":["8.31 J/mol K","6.67 J/mol K","9.81 J/mol K","3.14 J/mol K"],"ans":0,"id":"phy103_9","exp":""},{"q":"When temperature increases at constant pressure, volume:","opts":["Decreases","Increases","Remains constant","Becomes zero"],"ans":1,"id":"phy103_10","exp":""},{"q":"A gas at constant volume obeys:","opts":["Boyle's Law","Charles' Law","Pressure Law","None of these"],"ans":2,"id":"phy103_11","exp":""},{"q":"The equation PV = k represents:","opts":["Charles' Law","Boyle's Law","Pressure Law","Ideal gas law"],"ans":1,"id":"phy103_12","exp":""},{"q":"The general gas law combines:","opts":["Only Boyle's and Charles' Laws","Boyle's, Charles', and Pressure Laws","Only Pressure and Charles' Laws","Newton's laws"],"ans":1,"id":"phy103_13","exp":""},{"q":"The unit of volume in the gas equation must be in:","opts":["Litres","m\u00b3","cm\u00b3","mL"],"ans":1,"id":"phy103_14","exp":""},{"q":"When pressure is doubled and temperature constant, volume becomes:","opts":["Doubled","Halved","Unchanged","Quadrupled"],"ans":1,"id":"phy103_15","exp":""},{"q":"At absolute zero, the volume of an ideal gas is:","opts":["Maximum","Zero","Constant","Negative"],"ans":1,"id":"phy103_16","exp":""},{"q":"Absolute temperature is measured in:","opts":["Celsius","K (Kelvin)","Fahrenheit","Rankine"],"ans":1,"id":"phy103_17","exp":""},{"q":"Which of the following is NOT a gas law?","opts":["Boyle's Law","Pascal's Law","Charles' Law","Pressure Law"],"ans":1,"id":"phy103_18","exp":""},{"q":"The graph of Charles' Law between V and T (in Kelvin) is:","opts":["A curve","A straight line through the origin","A hyperbola","A circle"],"ans":1,"id":"phy103_19","exp":""},{"q":"The relationship V/T = k represents:","opts":["Charles' Law","Boyle's Law","Pressure Law","Avogadro's Law"],"ans":0,"id":"phy103_20","exp":""},{"q":"The general gas equation is given as:","opts":["PV = constant","PV/T = constant","P/VT = constant","PT/V = constant"],"ans":1,"id":"phy103_21","exp":""},{"q":"In PV = nRT, when V increases, P will:","opts":["Increase","Decrease","Stay the same","Become zero"],"ans":1,"id":"phy103_22","exp":""},{"q":"The temperature of a gas must always be measured in:","opts":["Celsius","Kelvin","Fahrenheit","Any unit"],"ans":1,"id":"phy103_23","exp":""},{"q":"Which of these quantities remains constant in Boyle's Law?","opts":["Pressure","Volume","Temperature","Mass only, not temperature"],"ans":2,"id":"phy103_24","exp":""},{"q":"In a constant temperature process, which of the following applies?","opts":["P1V1 = P2V2","V1/T1 = V2/T2","P1/T1 = P2/T2","P1V1T1 = P2V2T2"],"ans":0,"id":"phy103_25","exp":""},{"q":"The absolute zero concept originated from:","opts":["Charles' Law","Boyle's Law","Pressure Law","Avogadro's Law"],"ans":0,"id":"phy103_26","exp":""},{"q":"The equation of state for an ideal gas is:","opts":["PV = k","PV = nRT","P/V = nRT","P + V = nRT"],"ans":1,"id":"phy103_27","exp":""},{"q":"Which of the following is a correct combination law?","opts":["P1V1/T1 = P2V2/T2","P1V1 = P2V2/T1T2","P1/V1T1 = P2/V2T2","P1V1T1 = P2V2T2"],"ans":0,"id":"phy103_28","exp":""},{"q":"The kinetic theory explains gas behavior based on:","opts":["Chemical bonding","Motion of molecules","Electric charge of molecules","Gravity"],"ans":1,"id":"phy103_29","exp":""},{"q":"Heat transfer occurs from:","opts":["Cold to hot","Hot to cold","Equal temperature regions","It does not depend on temperature"],"ans":1,"id":"phy103_30","exp":""},{"q":"The three modes of heat transfer are:","opts":["Conduction, radiation, and diffusion","Conduction, convection, and radiation","Convection, radiation, and evaporation","Conduction, convection, and evaporation"],"ans":1,"id":"phy103_31","exp":""},{"q":"Conduction is most effective in:","opts":["Solids","Liquids","Gases","Vacuum"],"ans":0,"id":"phy103_32","exp":""},{"q":"In conduction, heat is transferred by:","opts":["Bulk movement of fluid","Vibration of molecules","Electromagnetic waves","Convection currents"],"ans":1,"id":"phy103_33","exp":""},{"q":"The rate of heat transfer by conduction is given by Q\u0307 = -kA(dT/dx). Here, k stands for:","opts":["Heat capacity","Density","Thermal conductivity","Convection coefficient"],"ans":2,"id":"phy103_34","exp":""},{"q":"The SI unit of thermal conductivity (k) is:","opts":["J s\u207b\u00b9 m\u207b\u00b9 K\u207b\u00b9","J s\u207b\u00b9 m\u207b\u00b9 \u00b0C\u207b\u00b9","W m\u207b\u00b2 K\u207b\u00b9","J kg\u207b\u00b9 K\u207b\u00b9"],"ans":1,"id":"phy103_35","exp":""},{"q":"Metals are good conductors because:","opts":["They have free electrons","They have low density","They are magnetic","They have high melting points"],"ans":0,"id":"phy103_36","exp":""},{"q":"Convection occurs in:","opts":["Solids only","Liquids and gases","Vacuum","Solids and liquids"],"ans":1,"id":"phy103_37","exp":""},{"q":"The rate of heat transfer by convection is given as Q\u0307 = hA(Ts \u2212 Tf). This is:","opts":["False","True"],"ans":1,"id":"phy103_38","exp":""},{"q":"The convection coefficient depends on:","opts":["Fluid nature and velocity","Solid density only","Gravity only","None of the above"],"ans":0,"id":"phy103_39","exp":""},{"q":"Radiation can occur:","opts":["Only in solids","Only in liquids","In vacuum","Only in gases"],"ans":2,"id":"phy103_40","exp":""},{"q":"The layer of air near a heated surface moves upward due to:","opts":["Density decrease","Increase in pressure","Magnetic effects","Gravity increase"],"ans":0,"id":"phy103_41","exp":""},{"q":"A perfect blackbody:","opts":["Absorbs all incident radiation","Reflects all radiation","Transmits all radiation","Absorbs none of the radiation"],"ans":0,"id":"phy103_42","exp":""},{"q":"In a composite slab, total heat flow rate is determined by:","opts":["Individual thermal conductivities only","Equivalent thermal resistance","Surface area only","Temperature difference only"],"ans":1,"id":"phy103_43","exp":""},{"q":"When two bodies exchange radiation, net heat flow depends on:","opts":["T1\u2074 \u2212 T2\u2074","T1 \u2212 T2","T1\u00b2 \u2212 T2\u00b2","T1/T2"],"ans":0,"id":"phy103_44","exp":""},{"q":"The amount of heat energy required to raise 1 kg of a substance by 1 K is called:","opts":["Latent heat","Specific heat capacity","Thermal conductivity","Heat capacity"],"ans":1,"id":"phy103_45","exp":""},{"q":"The thermal conductivity of an insulator is:","opts":["High","Low","Infinite","Zero"],"ans":1,"id":"phy103_46","exp":""},{"q":"Conduction is absent in:","opts":["Solids","Liquids","Gases","Vacuum"],"ans":3,"id":"phy103_47","exp":""},{"q":"The transfer of heat from the sun to the earth takes place by:","opts":["Conduction","Convection","Radiation","All of the above equally"],"ans":2,"id":"phy103_48","exp":""},{"q":"The rate of energy emission from a surface increases with:","opts":["Decrease in temperature","Increase in temperature","Decrease in surface area","It is independent of temperature"],"ans":1,"id":"phy103_49","exp":""},{"q":"The study of the relationship between heat and work is called:","opts":["Mechanics","Thermodynamics","Kinematics","Statics"],"ans":1,"id":"phy103_50","exp":""},{"q":"The system that exchanges neither matter nor heat is:","opts":["Open","Closed","Isolated","Adiabatic only"],"ans":2,"id":"phy103_51","exp":""},{"q":"The property that defines the thermal state of a system is:","opts":["Pressure","Temperature","Volume","Mass"],"ans":1,"id":"phy103_52","exp":""},{"q":"The Zeroth Law of Thermodynamics defines:","opts":["Energy conservation","Temperature equilibrium","Entropy","Work done by a system"],"ans":1,"id":"phy103_53","exp":""},{"q":"In an isothermal process, temperature is:","opts":["Constant","Increasing","Decreasing","Zero"],"ans":0,"id":"phy103_54","exp":""},{"q":"In an isobaric process, what remains constant?","opts":["Volume","Pressure","Temperature","Entropy"],"ans":1,"id":"phy103_55","exp":""},{"q":"For an isochoric process:","opts":["Work done = 0","Heat transfer = 0","Pressure = 0","Temperature = 0"],"ans":0,"id":"phy103_56","exp":""},{"q":"The equation Q \u2212 W = \u0394U represents:","opts":["First Law of Thermodynamics","Second Law of Thermodynamics","Zeroth Law of Thermodynamics","Third Law of Thermodynamics"],"ans":0,"id":"phy103_57","exp":""}]},"chm101":{"name":"CHM 101","title":"General Chemistry I (Additional Practice)","questions":[{"q":"Radioactivity is defined as","opts":["The spontaneous emission of radiation from unstable atomic nuclei","The process of nuclear fusion in stars","The chemical reaction between acids and metals","The absorption of light by matter"],"ans":0,"id":"chm101_0","exp":""},{"q":"The three types of radiations are","opts":["Alpha, beta and gamma rays","X-rays, gamma rays and UV rays","Alpha, beta and X-rays","Infrared, visible and ultraviolet rays"],"ans":0,"id":"chm101_1","exp":""},{"q":"The radiation that has the lowest penetrating power is","opts":["Gamma radiation","Beta radiation","Alpha radiation","X-radiation"],"ans":2,"id":"chm101_2","exp":""},{"q":"The radiation that has the highest penetrating power is","opts":["Alpha radiation","Beta radiation","Gamma radiation","Infrared radiation"],"ans":2,"id":"chm101_3","exp":""},{"q":"The half-life of a radioactive substance is defined as","opts":["The total time for a substance to completely decay","The time taken for half the number of radioactive nuclei in a sample to decay","The time taken for a substance to double its mass","The average lifetime of all the atoms in a sample"],"ans":1,"id":"chm101_4","exp":""},{"q":"The unit of measurement for radioactivity is","opts":["Becquerel","Newton","Joule","Pascal"],"ans":0,"id":"chm101_5","exp":""},{"q":"The difference between Boyle's Law and Charles' Law is that","opts":["Boyle's Law relates pressure and volume at constant temperature, while Charles' Law relates volume and temperature at constant pressure","Boyle's Law relates volume and temperature, while Charles' Law relates pressure and volume","Boyle's Law applies only to liquids, while Charles' Law applies only to gases","There is no difference; they are the same law"],"ans":0,"id":"chm101_6","exp":""},{"q":"The unit of pressure in the SI system is","opts":["Newton","Pascal","Joule","Bar"],"ans":1,"id":"chm101_7","exp":""},{"q":"The formula for the ideal gas equation is","opts":["PV = nRT","PV = nR/T","P/V = nRT","PT = nRV"],"ans":0,"id":"chm101_8","exp":""},{"q":"The characteristics of solids, liquids and gases are that solids have a fixed shape and volume, liquids have a fixed volume but take the shape of their container, while gases have neither a fixed shape nor volume","opts":["True, as stated","False, gases have a fixed volume","False, liquids have a fixed shape","False, solids do not have a fixed volume"],"ans":0,"id":"chm101_9","exp":""},{"q":"The effect of a catalyst on the rate constant kf for the forward reaction is that it","opts":["Increases kf","Decreases kf","Has no effect on kf","Makes kf negative"],"ans":0,"id":"chm101_10","exp":""},{"q":"The effect of a catalyst on the rate constant kr for the backward reaction is that it","opts":["Increases kr","Decreases kr","Has no effect on kr","Makes kr negative"],"ans":0,"id":"chm101_11","exp":""},{"q":"The effect of a catalyst on the equilibrium constant Kc for a reversible reaction is that it","opts":["Increases Kc","Decreases Kc","Has no effect on Kc","Doubles Kc"],"ans":2,"id":"chm101_12","exp":""},{"q":"In the reversible reaction A + B \u21cc C + D, at equilibrium the rates of the forward and reverse reactions","opts":["Become equal","The forward reaction stops","The reverse reaction stops","Both increase indefinitely"],"ans":0,"id":"chm101_13","exp":""},{"q":"The effect of increased pressure on the rate constant kr for the backward reaction A + B \u21cc C + D is that it","opts":["Generally increases kr (favouring the side with fewer moles of gas)","Always decreases kr","Has no effect on kr","Makes kr zero"],"ans":0,"id":"chm101_14","exp":""},{"q":"The effect of pressure on the equilibrium constant Kc for the reversible reaction A + B \u21cc C + D is that","opts":["Kc is unaffected by pressure at constant temperature","Kc always increases with pressure","Kc always decreases with pressure","Kc becomes zero at high pressure"],"ans":0,"id":"chm101_15","exp":""},{"q":"The effect of concentration on the rate constant kr for the backward reaction A + B \u21cc C + D is that","opts":["Rate constants are unaffected by concentration; only the reaction rate changes","kr increases as concentration increases","kr decreases as concentration increases","kr becomes negative"],"ans":0,"id":"chm101_16","exp":""},{"q":"The effect of concentration on the equilibrium constant Kc for the reversible reaction A + B \u21cc C + D is that","opts":["Kc is unaffected by changes in concentration at constant temperature","Kc increases with concentration","Kc decreases with concentration","Kc becomes undefined"],"ans":0,"id":"chm101_17","exp":""},{"q":"At equilibrium, for Kp to be equal to Kc, it implies that \u0394n (change in moles of gas) equals","opts":["Zero","One","Negative one","Infinity"],"ans":0,"id":"chm101_18","exp":""},{"q":"If Gibbs free energy \u0394G is less than zero, zero, and greater than zero, the reaction types are respectively","opts":["Spontaneous, at equilibrium, and non-spontaneous","Non-spontaneous, spontaneous, and at equilibrium","At equilibrium, spontaneous, and non-spontaneous","Spontaneous, non-spontaneous, and at equilibrium"],"ans":0,"id":"chm101_19","exp":""}]},"mth101":{"name":"MTH 101","title":"Elementary Algebra & Trigonometry","questions":[{"q":"The number 3.1415926535 is","opts":["An irrational number","Whole number","Rational number","Complex Number"],"ans":0,"id":"mth101_0","exp":""},{"q":"In a certain gathering of 200 students, 60% of them offer Economics while 77% of them offer History. How many of them offer both Economics and History?","opts":["74","85","70","80"],"ans":0,"id":"mth101_1","exp":""},{"q":"Expand (x + 4)^2","opts":["x^2 + 8x + 16","x^2 + 8x - 16","x^2 + 4x + 16","x^2 + 16x + 4"],"ans":0,"id":"mth101_2","exp":""},{"q":"If (x + 3)(x - 2) = 0, what are the roots?","opts":["x = -3, x = 2","x = 3, x = -2","x = -3, x = -2","x = 3, x = 2"],"ans":0,"id":"mth101_3","exp":""},{"q":"What is the coefficient of x^3 in (2x + 1)^4?","opts":["4","32","48","64"],"ans":1,"id":"mth101_4","exp":""},{"q":"Solve for x: (2x - 1)^2 = 9","opts":["x = 1, -4","x = 2, -1","x = 2, 1","x = 4, 1"],"ans":1,"id":"mth101_5","exp":""},{"q":"Find the middle term in the expansion of (x + y)^6","opts":["15x^3y^3","20x^3y^3","6x^3y^3","10x^3y^3"],"ans":1,"id":"mth101_6","exp":""},{"q":"Expand (x - 2)(x + 2)","opts":["x^2 - 4","x^2 + 4x - 4","x^2 + 4","x^2 - 4x + 4"],"ans":0,"id":"mth101_7","exp":""},{"q":"If (x - 1)^2 = 4, what is x?","opts":["-1, 3","0, 2","1, 5","-2, 4"],"ans":0,"id":"mth101_8","exp":""},{"q":"Solve: sqrt(x + 4) = 6","opts":["x = 32","x = 36","x = 2","x = 6"],"ans":0,"id":"mth101_9","exp":""},{"q":"Expand (3x - 2)^2","opts":["9x^2 - 12x + 4","9x^2 - 6x + 4","9x^2 - 12x - 4","9x^2 - 6x - 4"],"ans":0,"id":"mth101_10","exp":""},{"q":"Which of the following is NOT a real number?","opts":["sqrt(16)","pi","sqrt(-1)","-2"],"ans":2,"id":"mth101_11","exp":""},{"q":"What is the value of |\u22127|?","opts":["-7","7","0","Undefined"],"ans":1,"id":"mth101_12","exp":""},{"q":"Which of these is an irrational number?","opts":["3/5","sqrt(5)","-8","2.5"],"ans":1,"id":"mth101_13","exp":""},{"q":"What is the sum of 5/8 and 3/8?","opts":["1","8/8","5/11","3/16"],"ans":0,"id":"mth101_14","exp":""},{"q":"Which of these numbers is rational?","opts":["sqrt(2)","pi","0.25","sqrt(-9)"],"ans":2,"id":"mth101_15","exp":""},{"q":"Simplify: sqrt(9) + sqrt(16)","opts":["5","7","8","25"],"ans":1,"id":"mth101_16","exp":""},{"q":"Which of the following represents a real number?","opts":["5i","0","sqrt(-1)","None of the above"],"ans":1,"id":"mth101_17","exp":""},{"q":"What is the product of sqrt(3) and sqrt(3)?","opts":["6","3","sqrt(6)","Undefined"],"ans":1,"id":"mth101_18","exp":""},{"q":"Solve: 4x + 2 = 10","opts":["x = 2","x = 3","x = 4","x = -2"],"ans":0,"id":"mth101_19","exp":""},{"q":"What is the decimal representation of 1/8?","opts":["0.8","0.125","0.25","0.75"],"ans":1,"id":"mth101_20","exp":""},{"q":"Numbers that can be expressed as a ratio of two integers p/q where q \u2260 0 are called","opts":["Natural numbers","Integers","Rational numbers","Irrational numbers"],"ans":2,"id":"mth101_21","exp":""},{"q":"The set of numbers that contain all the rational numbers and irrational numbers are called","opts":["Integers","Real numbers","Complex numbers","Natural numbers"],"ans":1,"id":"mth101_22","exp":""},{"q":"An irrational number has a","opts":["Non-terminating decimal","Non-repeating decimal","Terminating decimal","Non-terminating and non-repeating decimal"],"ans":3,"id":"mth101_23","exp":""},{"q":"The product of two irrational numbers is always an irrational number","opts":["True","False","Indeterminate","All of the above"],"ans":1,"id":"mth101_24","exp":""},{"q":"The associative property is applicable to:","opts":["Addition and subtraction","Multiplication and division","Addition and multiplication","Subtraction and division"],"ans":2,"id":"mth101_25","exp":""},{"q":"Which of the following is commutative for rational numbers","opts":["Addition and subtraction","Addition and multiplication","Multiplication and division","Subtraction and division"],"ans":1,"id":"mth101_26","exp":""},{"q":"Find the additive inverse of 11/7","opts":["7/11","(-7)/11","11/7","(-11)/7"],"ans":3,"id":"mth101_27","exp":""},{"q":"The decimal representation of a rational number is","opts":["Always terminating","Either terminating or repeating","Neither terminating nor repeating","Always repeating"],"ans":1,"id":"mth101_28","exp":""},{"q":"If A={1,2,3,4,5,6,8}, B={2,1,3,5,7}, find (A-B) \u222a (B-A)","opts":["{4,7,5,8}","{6,3,1,2}","{4,6,7,8}","{2,3,5,1}"],"ans":2,"id":"mth101_29","exp":""},{"q":"In a faculty of 40 students, 24 offer MTH101, 18 offer MTH103, and 6 offer neither of those courses. How many students offer both courses?","opts":["48","40","74","8"],"ans":3,"id":"mth101_30","exp":""},{"q":"Given that A={1,2,3,4}, B={2,4,6,8}, C={3,4,5,6}, find (A \u2229 B) \u222a (A \u2229 C)","opts":["{2}","{2,4}","{2,3}","{2,3,4}"],"ans":3,"id":"mth101_31","exp":""},{"q":"If M={x: 2 \u2264 x \u2264 9}, then P(M) has how many elements?","opts":["16","216","256","128"],"ans":3,"id":"mth101_32","exp":""},{"q":"In a school of 140 students, 60 of them offer math and 45 offer physics, if 20 of them offer both, how many of them offer neither math nor physics?","opts":["65","45","35","55"],"ans":3,"id":"mth101_33","exp":""},{"q":"The cardinality of the power set of {x: x\u2208N, x\u226410} is","opts":["1024","1023","2048","2043"],"ans":0,"id":"mth101_34","exp":""},{"q":"Write X = {1,4,9,16,25,\u2026} in set builder form.","opts":["{x: x is a set of prime numbers}","{x: x is a set of whole numbers}","{x: x is a set of natural numbers}","{x: x is a set of square numbers}"],"ans":3,"id":"mth101_35","exp":""},{"q":"Evaluate 12x - 3xy when x=9 and y=-7","opts":["-81","297","342","245"],"ans":2,"id":"mth101_36","exp":""},{"q":"In a class of 30 students, 20 offer chemistry while 15 offer physics. If 12 students offer both physics and chemistry, how many students offer neither?","opts":["3","5","7","8"],"ans":2,"id":"mth101_37","exp":""},{"q":"Solve the equation 4x^2 - 6x - 10 = 0","opts":["3 and 2","5/2 and -1","5/3 and 3","2 and 3"],"ans":1,"id":"mth101_38","exp":""},{"q":"Evaluate 7C4 + 8C6","opts":["26","63","98","63"],"ans":1,"id":"mth101_39","exp":""},{"q":"Factorize completely 8x - 16","opts":["4(2x - 4x)","4(x - 2)","8(x - 2)","(2x - 4)"],"ans":2,"id":"mth101_40","exp":""},{"q":"A set that contains the elements in set A that are not in set B, together with elements in set B that are not in set A, is called","opts":["Symmetric set","Difference set","Symmetric difference set","Equivalent set"],"ans":2,"id":"mth101_41","exp":""},{"q":"Given the sequence -7, -4, -1, 2. Find the 30th term","opts":["92","64","80","87"],"ans":3,"id":"mth101_42","exp":""},{"q":"A sequence of numbers such that each number after the first is obtained from the previous one by adding a fixed number, is called","opts":["Common difference","Common ratio","Geometric progression","Arithmetic progression"],"ans":3,"id":"mth101_43","exp":""},{"q":"Which of these is not a method of solving a quadratic equation?","opts":["Substitution method","Graphical method","Factorization method","Formula method"],"ans":0,"id":"mth101_44","exp":""},{"q":"In a survey of 55 students, 34 like maths, 26 like English and 5 of them like none. How many of them like both maths and English?","opts":["10","15","20","12"],"ans":0,"id":"mth101_45","exp":""},{"q":"Solve the equation 2x^2 - 11x - 21 = 0","opts":["x = -7 or 3/2","x = 7 or 3","x = 7 or -3/2","x = -3/2 or 7"],"ans":3,"id":"mth101_46","exp":""},{"q":"If f(x) = 16x^2 - 8x + 2, find f(3)","opts":["74","70","92","122"],"ans":3,"id":"mth101_47","exp":""},{"q":"A intersection B means","opts":["The set that contains all the elements in the universal set.","The set that contains elements in A and not in B","The set that contains all elements in B and not in A","The set that contains all elements common to both A and B"],"ans":3,"id":"mth101_48","exp":""},{"q":"In how many ways can four boys be chosen from six boys?","opts":["15 ways","360 ways","30 ways","25 ways"],"ans":0,"id":"mth101_49","exp":""},{"q":"A complex number multiplied by its conjugate will give","opts":["complex number","imaginary number","real number","complex conjugate"],"ans":2,"id":"mth101_50","exp":""},{"q":"If Z = 5 - j2, find the modulus (r)","opts":["3.7","2","4","5.4"],"ans":3,"id":"mth101_51","exp":""},{"q":"Which of these is a way of representing elements of a set","opts":["Set builder notation","Orthogonal notation","Matrix notation","Symmetric Notation"],"ans":0,"id":"mth101_52","exp":""},{"q":"List the elements of the set A={x: x\u2208N and x<7}","opts":["{1,2,3,4,5,6}","{1,2,3,4,5,6,7}","{2,3,4,5,6}","{2,3,4,5,6,7}"],"ans":0,"id":"mth101_53","exp":""},{"q":"What number is 5/11?","opts":["Rational number","Irrational number","Complex number","Mixed number"],"ans":0,"id":"mth101_54","exp":""}]},"mth103":{"name":"MTH 103","title":"Vector, Geometry & Mechanics","questions":[{"q":"A physical quantity that has both magnitude and direction is called","opts":["Scalar","Vector","Index","None of the above"],"ans":1,"id":"mth103_0","exp":""},{"q":"A physical quantity that has size or magnitude but not associated with a direction is called","opts":["Momentum","Scalar","Vector","all of the above"],"ans":1,"id":"mth103_1","exp":""},{"q":"Which of these is an example of scalar","opts":["Length","Displacement","Force","Acceleration"],"ans":0,"id":"mth103_2","exp":""},{"q":"Which of these is an example of vector","opts":["Mass","Energy","Length","Force"],"ans":3,"id":"mth103_3","exp":""},{"q":"Vectors that have no particular direction associated with them are called","opts":["Line located vector","Point located vector","Free vector","Dimensional vector"],"ans":2,"id":"mth103_4","exp":""},{"q":"A vector that is applicable to a particular point is called","opts":["Location vector","Point vector","Line located Vector","Free vector"],"ans":1,"id":"mth103_5","exp":""},{"q":"A vector that is located along a straight line is called","opts":["Dimensional vector","Point vector","Line located Vector","Free vector"],"ans":2,"id":"mth103_6","exp":""},{"q":"Which of the following is a scalar quantity?","opts":["Velocity","Force","Temperature","Acceleration"],"ans":2,"id":"mth103_7","exp":""},{"q":"Which of the following is a vector quantity?","opts":["Mass","Time","Displacement","Energy"],"ans":2,"id":"mth103_8","exp":""},{"q":"A scalar quantity has:","opts":["Only magnitude","Only direction","Both magnitude and direction","Neither magnitude nor direction"],"ans":0,"id":"mth103_9","exp":""},{"q":"A vector quantity has:","opts":["Only magnitude","Only direction","Both magnitude and direction","Neither magnitude nor direction"],"ans":2,"id":"mth103_10","exp":""},{"q":"Which of the following is NOT a scalar quantity?","opts":["Distance","Speed","Weight","Volume"],"ans":2,"id":"mth103_11","exp":""},{"q":"Which of these is an example of a line located vector","opts":["Force","Mass","Acceleration","Length"],"ans":0,"id":"mth103_12","exp":""},{"q":"Find the modulus of r = 2i - 5j + 4k","opts":["7.21","5.64","6.71","8.23"],"ans":2,"id":"mth103_13","exp":""},{"q":"If u = 3i + 5j and v = 2i - 4j. Find 2u - v","opts":["8i - 6j","4i - 6j","4i + 10j","2i - 7j"],"ans":2,"id":"mth103_14","exp":""},{"q":"Find the dot product of a = 5i + 3j and b = 4i - 6j","opts":["2","-7","5","20"],"ans":0,"id":"mth103_15","exp":""},{"q":"Which of the following is NOT a vector quantity?","opts":["Momentum","Electric current","Magnetic field","Torque"],"ans":1,"id":"mth103_16","exp":""},{"q":"If a vector's direction is reversed, its magnitude:","opts":["Increases","Decreases","Remains the same","Becomes zero"],"ans":2,"id":"mth103_17","exp":""},{"q":"The magnitude of a vector is always:","opts":["Positive","Negative","Zero","Can be positive or negative"],"ans":0,"id":"mth103_18","exp":""},{"q":"Two vectors are equal if they have:","opts":["The same magnitude","The same direction","Both the same magnitude and direction","Neither the same magnitude nor direction"],"ans":2,"id":"mth103_19","exp":""},{"q":"Find the dot product of P = 3i - 2j and Q = 7i + 8j","opts":["-5","7","5","-7"],"ans":2,"id":"mth103_20","exp":""},{"q":"What is the title of the MTH103 course","opts":["Vector and Geometry","Vector, Geometry and Algebra","Vector, Geometry and Statistics","Vector, Geometry and Mechanics"],"ans":3,"id":"mth103_21","exp":""},{"q":"The change in velocity during an interval divided by the time elapsed is called","opts":["Average Acceleration","Instantaneous acceleration","Average velocity","Instantaneous velocity"],"ans":0,"id":"mth103_22","exp":""},{"q":"The rate of change of position with respect to time is called","opts":["Acceleration","Velocity","Displacement","None of the above"],"ans":1,"id":"mth103_23","exp":""},{"q":"The rate of change of velocity with respect to time is called","opts":["Displacement","Velocity","Acceleration","All of the above"],"ans":2,"id":"mth103_24","exp":""},{"q":"Find the dot product of m = i + 4j and n = 5i - 3j","opts":["5","13","2","-7"],"ans":3,"id":"mth103_25","exp":""},{"q":"Which of the following is a scalar quantity?","opts":["Velocity","Acceleration","Work","Force"],"ans":2,"id":"mth103_26","exp":""},{"q":"Which of the following is a vector quantity?","opts":["Temperature","Pressure","Electric field strength","Density"],"ans":2,"id":"mth103_27","exp":""},{"q":"A vector quantity can be represented by:","opts":["A line segment with an arrowhead","A number with a unit","A symbol with a subscript","A Greek letter"],"ans":0,"id":"mth103_28","exp":""},{"q":"The length of a vector represents its:","opts":["Direction","Magnitude","Angle","Origin"],"ans":1,"id":"mth103_29","exp":""},{"q":"The arrowhead of a vector represents its:","opts":["Magnitude","Direction","Length","End point"],"ans":1,"id":"mth103_30","exp":""},{"q":"Find the dot product of s = 6i + j and t = 2i - 8j","opts":["13","11","20","4"],"ans":3,"id":"mth103_31","exp":""},{"q":"The sum of the squares of the direction cosines is equal to one","opts":["True","False","Cannot be determined","None of the above"],"ans":0,"id":"mth103_32","exp":""},{"q":"Find the dot product of 7i - 6j and 5i + 7j","opts":["36","12","-3","-7"],"ans":2,"id":"mth103_33","exp":""},{"q":"If u = 8i - 2j + 11k, v = 5i + 7j + 12k and w = 6i - 9j - 5k. Find u + v + w","opts":["19i + 4j + 18k","19i - 4j - 18k","19i - 4j + 18k","19i + 4j - 18k"],"ans":2,"id":"mth103_34","exp":""},{"q":"Which of the following is a scalar quantity?","opts":["Momentum","Impulse","Energy","Weight"],"ans":2,"id":"mth103_35","exp":""},{"q":"Which of the following is a vector quantity?","opts":["Speed","Distance","Velocity","Time"],"ans":2,"id":"mth103_36","exp":""},{"q":"If two vectors act in the same direction, their resultant is:","opts":["The sum of their magnitudes","The difference of their magnitudes","Zero","Perpendicular to each other"],"ans":0,"id":"mth103_37","exp":""},{"q":"If two vectors act in opposite directions, their resultant is:","opts":["The sum of their magnitudes","The difference of their magnitudes","Zero","Perpendicular to each other"],"ans":1,"id":"mth103_38","exp":""},{"q":"Which of the following is not an example of a vector","opts":["force","momentum","displacement","mass"],"ans":3,"id":"mth103_39","exp":""},{"q":"Given that r = -4i + 3j, find the modulus of r","opts":["6","3","7","5"],"ans":3,"id":"mth103_40","exp":""},{"q":"Given that r1 = 5i + 12j, find the modulus of r1","opts":["5","13","11","17"],"ans":1,"id":"mth103_41","exp":""},{"q":"Which of the following is a vector quantity?","opts":["Mass","Volume","Momentum","Density"],"ans":2,"id":"mth103_42","exp":""},{"q":"A null vector has:","opts":["Zero magnitude","Non-zero magnitude","Undefined direction","Both zero magnitude and undefined direction"],"ans":0,"id":"mth103_43","exp":""},{"q":"Two vectors are said to be parallel if they have:","opts":["The same magnitude","The same direction","Opposite directions","Both the same magnitude and direction"],"ans":1,"id":"mth103_44","exp":""},{"q":"Two vectors are said to be anti-parallel if they have:","opts":["The same magnitude","The same direction","Opposite directions","Both the same magnitude and direction"],"ans":2,"id":"mth103_45","exp":""},{"q":"Given that a = 6i + 11j and b = 7i - 5j, find 2a + 3b","opts":["33i + 7j","23i + 37j","17i - 7j","15i - 37j"],"ans":0,"id":"mth103_46","exp":""},{"q":"Given that a = 11i - 6j and b = 5i + 7j, find a - 2b","opts":["21i - 20j","i - 20j","7i - 17j","15i - 7j"],"ans":1,"id":"mth103_47","exp":""},{"q":"The dot product of two vectors is a:","opts":["Scalar quantity","Vector quantity","Tensor quantity","Matrix quantity"],"ans":0,"id":"mth103_48","exp":""},{"q":"The cross product of two vectors is a:","opts":["Scalar quantity","Vector quantity","Tensor quantity","Matrix quantity"],"ans":1,"id":"mth103_49","exp":""},{"q":"The dot product of two perpendicular vectors is:","opts":["Zero","One","Equal to the product of their magnitudes","Equal to the sum of their magnitudes"],"ans":0,"id":"mth103_50","exp":""},{"q":"The cross product of two parallel vectors is:","opts":["Zero","One","Equal to the product of their magnitudes","Equal to the sum of their magnitudes"],"ans":0,"id":"mth103_51","exp":""},{"q":"If u = 8i - 2j - 11k, v = 5i - 7j + 12k and w = -6i - 9j + 5k. Find u + v + w","opts":["7i + 4j + 6k","19i - 4j - 18k","7i - 4j + 18k","7i - 18j + 6k"],"ans":3,"id":"mth103_52","exp":""},{"q":"If u = 7i + 5j and v = 2i - 9j. Find 2u - 3v","opts":["8i - 37j","4i - 6j","4i + 10j","8i + 37j"],"ans":3,"id":"mth103_53","exp":""},{"q":"Find the dot product of a = 5i + 11j and b = 7i - 6j","opts":["31","-31","5","20"],"ans":1,"id":"mth103_54","exp":""},{"q":"Find the dot product of P = 13i - 12j and Q = 7i + 21j","opts":["510","-161","430","288"],"ans":1,"id":"mth103_55","exp":""},{"q":"Given that r = 8i + 6j, find the modulus of r","opts":["6","9","7","10"],"ans":3,"id":"mth103_56","exp":""},{"q":"Given that a = 6i + 11j and b = 7i - 5j, find 3b - 2a","opts":["9i - 37j","23i + 37j","17i - 7j","15i - 37j"],"ans":0,"id":"mth103_57","exp":""},{"q":"Factorise ab + cd + ac + bd","opts":["(b + c)(a + d)","(b - c)(a + d)","(b + c)(a - d)","(b - c)(a - d)"],"ans":0,"id":"mth103_58","exp":""},{"q":"Determine the prime numbers in the following: 1,2,3,4,5,6,7,8,9,10","opts":["{1,2,3,5,7,9}","{2,3,5,7,9}","{1,3,5,7}","{2,3,5,7}"],"ans":3,"id":"mth103_59","exp":""},{"q":"What is the cube root of 216","opts":["36","6","16","4"],"ans":1,"id":"mth103_60","exp":""},{"q":"Find the average of the first four prime numbers after 10","opts":["20","17","15","25"],"ans":1,"id":"mth103_61","exp":""},{"q":"Simplify (2 - j3)(2 + j3)","opts":["21","17","32","13"],"ans":3,"id":"mth103_62","exp":""},{"q":"Calculate the mean of 2.3, 4.7, 3.5, 3.4, 2.2, 2.8, 2.1","opts":["4.1","2.3","3.5","3"],"ans":3,"id":"mth103_63","exp":""},{"q":"Which item on the list is odd","opts":["variable","data","x rays","population"],"ans":2,"id":"mth103_64","exp":""},{"q":"What is the next number in the sequence: 10, 30, 90, 270, ...","opts":["360","400","450","810"],"ans":3,"id":"mth103_65","exp":""},{"q":"If u = 8i - 2j - 11k, v = 5i - 7j + 12k and w = -6i - 9j + 5k. Find u - v - w","opts":["9i + 14j - 28k","19i - 4j - 18k","3i - 4j - 18k","7i + 14j + 6k"],"ans":0,"id":"mth103_66","exp":""},{"q":"If f(x) = 16x^2 - 8x + 2, find f(3)","opts":["74","70","26","122"],"ans":3,"id":"mth103_67","exp":""},{"q":"Simplify (79 - 34)(79 + 34)","opts":["5085","6024","4286","5058"],"ans":0,"id":"mth103_68","exp":""},{"q":"The rate of change of velocity with respect to time is called","opts":["Acceleration","Velocity","Displacement","None of the above"],"ans":0,"id":"mth103_69","exp":""},{"q":"Acceleration is expressed in","opts":["metres per second","metres per time","metres per speed","metres per second per second"],"ans":3,"id":"mth103_70","exp":""},{"q":"As the time interval approaches zero, the average acceleration approaches a limiting value called","opts":["instantaneous acceleration","instantaneous velocity","distance velocity","distance acceleration"],"ans":0,"id":"mth103_71","exp":""},{"q":"Velocity is expressed in","opts":["metres per second","metres per time","metres per speed","metres per second per second"],"ans":0,"id":"mth103_72","exp":""},{"q":"Find the projection of vector b on vector a given that a = 3i - 4j and b = 5i + 8j","opts":["5/17","-17/5","17/5","-5/17"],"ans":1,"id":"mth103_73","exp":""},{"q":"Find the projection of the second vector on the first vector given that m = 7i + 3j and n = 2i - 5j","opts":["-7.61/58","-1/58","5.34/58","7.61/58"],"ans":0,"id":"mth103_74","exp":""},{"q":"If u = 8i - 2j - 11k, v = 5i - 7j + 12k and w = -6i - 9j + 5k. Find u - v + w","opts":["7i + 4j + 6k","19i - 4j - 18k","3i - 4j - 18k","7i - 18j + 6k"],"ans":2,"id":"mth103_75","exp":""}]},"get101":{"name":"GET 101","title":"Engineering in the Society","questions":[{"q":"The type of science that do not have any practical application is","opts":["Applied","Physical","Pure","Management"],"ans":2,"id":"get101_0","exp":""},{"q":"What age signifies the Paleolithic and Mesolithic periods?","opts":["Dark","Stone","Space","Iron"],"ans":1,"id":"get101_1","exp":""},{"q":"Which year period was the Neolithic period observed?","opts":["2000-1000BC","3500-1000BC","1000-200BC","500-100AC"],"ans":1,"id":"get101_2","exp":""},{"q":"The industrial revolution in Europe and North America was fueled by the discovery of\u2026\u2026\u2026\u2026\u2026\u2026\u2026","opts":["Pulley","Airplane","wind mill","steam engine"],"ans":3,"id":"get101_3","exp":""},{"q":"How many year programmes do all faculties of engineering in Nigerian universities run","opts":["6","2","5","4"],"ans":2,"id":"get101_4","exp":""},{"q":"What is the meaning of COREN?","opts":["Congregation for the Regulation of Engineering in Nigeria","Council for the Regulation of Engineering in Nigeria","Consulate of the Regular Engine of Nigeria","None of the above"],"ans":1,"id":"get101_5","exp":""},{"q":"In what year was the first patent granted in USA?","opts":["1776","1840","1970","1600"],"ans":2,"id":"get101_6","exp":""},{"q":"Which of the following does not make up 95% of living things","opts":["Carbon","sodium","phosphorus","hydrogen"],"ans":1,"id":"get101_7","exp":""},{"q":"There are two categories of membership which are?","opts":["Associate and honorary","Corporate and affiliate","Mandatory and applicant","Required and unrequired"],"ans":1,"id":"get101_8","exp":""},{"q":"What statement of NSE states that the Nigerian society of engineers shall be one of the very best engineering professional bodies in the world?","opts":["Mission","Logic","Vision","Motion"],"ans":2,"id":"get101_9","exp":""},{"q":"Which of the following is not a branch of NSE?","opts":["Aba","Benin","Ibo","Onitsha"],"ans":2,"id":"get101_10","exp":""},{"q":"Which of the following is not a division of NSE?","opts":["Medicinal","Civil","Mechanical","Space"],"ans":0,"id":"get101_11","exp":""},{"q":"Engineering profession is one of the _______in the world","opts":["Scientific","Modern","Ancient","Oldest"],"ans":3,"id":"get101_12","exp":""},{"q":"_________ engineering is the application of engineering knowledge and services in solving technical and environmental problems in agriculture.","opts":["Plantational","Multinational","Medicinal","Agricultural"],"ans":3,"id":"get101_13","exp":""},{"q":"Which of the following is a main area of specialization in agricultural engineering?","opts":["food engineering","harvester engineering","cultivation engineering","fertilizer engineering"],"ans":0,"id":"get101_14","exp":""},{"q":"Electrical/Electronic engineering deals with the following except?","opts":["Design and development of a vast number of electrical machines","Construction of electronegative and positive current","Generation, transmission and distribution of electric power","Design of electronic equipment and computers"],"ans":1,"id":"get101_15","exp":""},{"q":"______ is an ethic of an engineers.","opts":["To neglect","To destroy","To deconstruct","To be honest"],"ans":3,"id":"get101_16","exp":""},{"q":"The role of engineering spans across the society?","opts":["True","False"],"ans":0,"id":"get101_17","exp":""},{"q":"There are \u2026\u2026.. categories of membership in the Nigeria society of engineers.","opts":["2","4","1","3"],"ans":0,"id":"get101_18","exp":""},{"q":"Which of the following is the highest in the engineering profession.","opts":["TECHNOLOGIST","ARTISANS","TECHNICIAN","ENGINEER"],"ans":3,"id":"get101_19","exp":""},{"q":"Engineers are known to be the most \u2026\u2026. Professionals in most part of the world.","opts":["hardworking","honest","intellectual","peaceful"],"ans":1,"id":"get101_20","exp":""},{"q":"Which of the Following is the Oldest Engineering Discipline","opts":["Civil Engineering","Chemical Engineering","Structural Engineering","Petroleum Engineering"],"ans":0,"id":"get101_21","exp":""},{"q":"Which is not an important subject for admission into College of engineering","opts":["Chemistry","Technical drawing","Physics","Mathematics"],"ans":1,"id":"get101_22","exp":""},{"q":"\u2026\u2026Technology embraces the means by which man controls or Modifies his natural environment. This statement was made by","opts":["Spier","Toffler","Niehoff","David"],"ans":0,"id":"get101_23","exp":""},{"q":"\u2026\u2026\u2026.is the ratio of the technician cadre in the engineering profession.","opts":["2","10","4","1"],"ans":2,"id":"get101_24","exp":""},{"q":"The engineer is at times regarded as an artist.","opts":["True","False"],"ans":0,"id":"get101_25","exp":""},{"q":"What is the ratio of the Artisans cadre in the engineering profession?","opts":["7","1","8","4"],"ans":2,"id":"get101_26","exp":""},{"q":"\u2014 is when a market outlook survey must be carried out in the area where the purposed project is to be cited.","opts":["feasibility studies","market analysis","management requirement","plant capacity"],"ans":1,"id":"get101_27","exp":""},{"q":"\u2014 is a section of the feasibility report where the general organization of the project should be described.","opts":["project properties","feasibility studies","financial and economic evaluation","management requirements"],"ans":0,"id":"get101_28","exp":""},{"q":"A budget where variable items such as labour and cost of materials are allowed to float and the implementing person is allowed to vary things based on the prevailing situation is \u2014","opts":["project management","budget control","inflexible budget","flexible budget"],"ans":3,"id":"get101_29","exp":""},{"q":"The three phases of technology transfer include; i) Material transfer\u00a0 \u00a0ii) capacity transfer\u00a0 iii) commercial transfer iv) Design transfer\u00a0 v) technological transfer.","opts":["i, iii, iv","i, ii, iii","iii, iv, v","i, ii, v"],"ans":0,"id":"get101_30","exp":""},{"q":"The gas produced by the gasification process contains mostly\u2014","opts":["Hydrogen and oxygen","Hydrogen and carbon monoxide","Methane and carbon monoxide","Hydrogen and Sulphur"],"ans":1,"id":"get101_31","exp":""},{"q":"The first stage of process in the coal gasification process is \u2014","opts":["Removal of tar and dust","Methanation","Distillation or devolatilization","Removal of CO2"],"ans":2,"id":"get101_32","exp":""},{"q":"According to William Gunston, what did man\u2019s early technology consist of?","opts":["Computer and space travel","A few bits of wood, stone, and animal skin","Metals and advanced tools","Houses and farm land"],"ans":1,"id":"get101_33","exp":""},{"q":"The two ways an engineer can be elected into the Fellowship grade include?","opts":["By direct application and by invitation","By honour and by contribution","By influence and by experience","By degree and By direct application"],"ans":0,"id":"get101_34","exp":""},{"q":"In the History of Engineering the first 3 types of engineering include all of the following except","opts":["Civil Engineering","Agricultural Engineering","Military Engineering","Chemical Engineering"],"ans":3,"id":"get101_35","exp":""},{"q":"One of this is an area of specialization for mechanical engineering?","opts":["Marine Engineering","Structural Engineering","Instrumentation Engineering","All of the above"],"ans":0,"id":"get101_36","exp":""},{"q":"The stages in the development of world technology can be classified into","opts":["9","7","5","8"],"ans":1,"id":"get101_37","exp":""},{"q":"_________ invented the electric motor in 1821?","opts":["Jeffery dahmer","Michael faraday","Leo dicaprio","None of the above"],"ans":1,"id":"get101_38","exp":""},{"q":"_________ Stated that \u201c\u2026 technology embraces the means by which man controls or Modifies his environment\u2019\u2019.","opts":["Toffler","Pablo","Spier","Avensberg"],"ans":2,"id":"get101_39","exp":""},{"q":"Which of these is not a role of a Civil Engineer?","opts":["Design and analysis of all types of structures","Building and managements of roads","Development and utilization of metals","None of the above"],"ans":2,"id":"get101_40","exp":""},{"q":"_________ was famous for making factory system possible","opts":["Spier","Toffler","Hanks","James watt"],"ans":3,"id":"get101_41","exp":""},{"q":"_________ Defined technology as a special kind of knowledge which is directed towards practical applications in the physical and social world","opts":["Pytlik et al","Lenski","Popenoe","Hanks"],"ans":2,"id":"get101_42","exp":""},{"q":"What was the purpose of creating the public works department (PWD)?","opts":["To regulate trade and commerce","To build and maintain infrastructure","To promote cultural heritage","To manage agricultural resources"],"ans":1,"id":"get101_43","exp":""},{"q":"Which federal ministries are involved in the Development and management of technologies and Engineering-related activities?","opts":["Ministries of health and education","Ministries of finance and defense","Ministries of works and housing, industries, science and technology, agriculture, water resources, commerce","Ministries of Tourism and culture"],"ans":2,"id":"get101_44","exp":""},{"q":"Which institutions in Nigeria are involved in teaching the principles of engineering and technology?","opts":["Hospitals and clinics","Polytechnics, colleges, and universities","Libraries and museums","Banks and financial institutions"],"ans":1,"id":"get101_45","exp":""},{"q":"What is the full meaning of NSE?","opts":["Nigerian Society of Engineers.","National Society of Engineers.","None of the above","National society of Entrepreneurs."],"ans":0,"id":"get101_46","exp":""},{"q":"Who is the lecturer in charge of this course?","opts":["Engr. Dr. Ikenna Onyegbadue.","Engr. Dr. Adesusi Moses.","Engr. Fred Ikenna","Dr. Adeniyi Olumide"],"ans":0,"id":"get101_47","exp":""},{"q":"Which is not one of the cadres that make up the engineering family?","opts":["Craftsman","Engineer","Architect","Technologist"],"ans":2,"id":"get101_48","exp":""},{"q":"Which of the following is not a cadres of the engineering family?","opts":["Engineer.","Physicist.","Technician.","Technologist."],"ans":1,"id":"get101_49","exp":""},{"q":"First national engineering assembly held in","opts":["Edo","Calabar","Osun","Lagos"],"ans":3,"id":"get101_50","exp":""},{"q":"Power Systems is an option in Electrical Engineering.","opts":["True","False"],"ans":0,"id":"get101_51","exp":""}]},"gst113":{"name":"GST 113","title":"Use of Library, Study Skills & ICT","questions":[{"q":"The library brings the world closer to you","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_0","exp":""},{"q":"A school library is a library within community","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_1","exp":""},{"q":"In your study skills you review before you read","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_2","exp":""},{"q":"The following are involved in study skills; question, read, recall, review and survey","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_3","exp":""},{"q":"The acronym ICT means","opts":["INFORMATION AND COMMUNICATION TECHNOLOGY","INFORMATION AND COMMAND TECHNOLOGY","INTRODUCTION AND COMMUNICATION TECHNOLOGY","INFORMATION AND COMMUNICATION TECHNIQUES"],"ans":0,"id":"gst113_4","exp":""},{"q":"_______________ is a malware that needs a host to cause infection to other programs, data by modifying them.","opts":["WORM","VIRUS","BOT","PROGRAM"],"ans":1,"id":"gst113_5","exp":""},{"q":"A Web browser is a special device that is installed in your computer that allows it to communicate with other devices on a network.","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_6","exp":""},{"q":"Virtual Library is accessed through the internet or intranet","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_7","exp":""},{"q":"Virtual Library does not allow for multiple and concurrent access","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_8","exp":""},{"q":"The Library resources consist of only printed materials","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_9","exp":""},{"q":"Graphics are part of non-print materials","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_10","exp":""},{"q":"To locate a book in law college, you will go to the shelf with letter \"Q\"","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_11","exp":""},{"q":"Information is necessary for all","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_12","exp":""},{"q":"CD-ROM is a device that can be used for storage of information","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_13","exp":""},{"q":"Serials are publications published in series or at specific period","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_14","exp":""},{"q":"Q is used to locate books in Natural and Applied Sciences","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_15","exp":""},{"q":"Copyright law is the law protecting originality of creator","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_16","exp":""},{"q":"Having an idea not yet expressed can be copyrighted","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_17","exp":""},{"q":"Copyright law protects creativity","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_18","exp":""},{"q":"Intellectual fraud cannot be checked by copyright law","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_19","exp":""},{"q":"Copyright is only protection for literary works","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_20","exp":""},{"q":"Dewey Decimal Classification Scheme is alphabetical notation","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_21","exp":""},{"q":"Publisher can be used to access a book","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_22","exp":""},{"q":"E-Library and Virtual Library are the same","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_23","exp":""},{"q":"Cuneiform is the oldest system of writing for documentation","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_24","exp":""},{"q":"Papyrus sheets are made from papyrus plant","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_25","exp":""},{"q":"Hieroglyphics are writing language in pictorials","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_26","exp":""},{"q":"Alexandrian was the world's first great library","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_27","exp":""},{"q":"The Alexandrian Library was not considered as a University","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_28","exp":""},{"q":"Scriptorium is the room the Monks worked","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_29","exp":""},{"q":"The Lagos Book Club was formed by civil servants and a couple of Nigerians","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_30","exp":""},{"q":"A -------- is an organized collection of resources that are made accessible to a defined community or audience for reference or borrowing purposes","opts":["library","Primary","Secondary","Tertiary"],"ans":0,"id":"gst113_31","exp":""},{"q":"The libraries owned and funded by government, serving the community, is called?","opts":["National Library","Public Library","Academic Library","Special Library"],"ans":1,"id":"gst113_32","exp":""},{"q":"Library under the care of private ownership is called?","opts":["Private Library","National Library","Academic Library","Special Library"],"ans":0,"id":"gst113_33","exp":""},{"q":"The earliest known written materials were first put together in Mesopotamia more than ----------- years ago?","opts":["5000","4000","3000","2000"],"ans":0,"id":"gst113_34","exp":""},{"q":"What year was handwritten books replaced with printed?","opts":["1450","1550","1350","2024"],"ans":0,"id":"gst113_35","exp":""},{"q":"Academic Libraries are found in which institutions?","opts":["Primary","Secondary","Tertiary","Special"],"ans":2,"id":"gst113_36","exp":""},{"q":"Special libraries serve --------- institutions","opts":["Primary","Secondary","Tertiary","Special"],"ans":3,"id":"gst113_37","exp":""},{"q":"Which is the apex library of a nation?","opts":["National Library","Public Library","Academic Library","Special Library"],"ans":0,"id":"gst113_38","exp":""},{"q":"An _____________ is a small picture that appears on the computer screen, usually to represent a program or a file created by a program.","opts":["icon","Cracker","VIRUS","menu bar"],"ans":0,"id":"gst113_39","exp":""},{"q":"The ___________ refers to the row of labels across the top of a window (just below the title of the window).","opts":["icon","menu bar","View bar","Format bar"],"ans":1,"id":"gst113_40","exp":""},{"q":"A small data-memory storage area that a computer can use to instantly re-access data instead of re-reading it from the original source is called a","opts":["Memory","Storage","Backup","Cache"],"ans":3,"id":"gst113_41","exp":""},{"q":"A ____________ is a single user of a network application that is operated from a server.","opts":["Customer","Client","Connector","Server"],"ans":1,"id":"gst113_42","exp":""},{"q":"Computer software that performs a task or set of tasks, such as word processing or drawing, is called","opts":["Application software","System Application","Computer Application","Internet Application"],"ans":0,"id":"gst113_43","exp":""},{"q":"The Oral Tradition was in what era of Library","opts":["Ancient","Modern","None","Middle"],"ans":2,"id":"gst113_44","exp":""},{"q":"Paper was invented as a medium of recorded knowledge between \u2026\u2026\u2026\u2026\u2026\u2026 and \u2026\u2026\u2026\u2026\u2026\u2026.","opts":["100 BC and 105 AD","90BC and 100 AD","1150 and 1411","400BC and 500 AD"],"ans":0,"id":"gst113_45","exp":""},{"q":"The Yaba College of Technology Library became the first \u2026\u2026\u2026\u2026\u2026\u2026\u2026. Library","opts":["Public library","National Library","Academic Library","Special Library"],"ans":2,"id":"gst113_46","exp":""},{"q":"The capacity of a networked connection that determines how much data can be sent along the networked wires is called","opts":["Bandwidth","Broadband","Data","Internet"],"ans":0,"id":"gst113_47","exp":""},{"q":"Software used to navigate the Internet is called a _____________","opts":["Google","Whatsapp","Browser","Internet Software"],"ans":2,"id":"gst113_48","exp":""},{"q":"Every web page has a unique address called ________?","opts":["Uniform Research Locator","Unified Resource Locator","Uniform Resource Link","Uniform Resource Locator"],"ans":3,"id":"gst113_49","exp":""},{"q":"PPP stands for?","opts":["POINT-TO-POINT PROCESS","POINT-TOP-POINT PROTOCOL","POINTING-TO-POINTING PROTOCOL","POINT-TO-POINT PROTOCOL"],"ans":3,"id":"gst113_50","exp":""},{"q":"HTTP Stands for ____________","opts":["Hypertext Transfer Protocol","Hypertext Transport Protocol","Hypertext Transmission Protocol","Hypertext Travelling Protocol"],"ans":0,"id":"gst113_51","exp":""},{"q":"URI Stands for _____________","opts":["Uniform Research Identifier","Uniform Resource Identifier","Uniform Resource Identity","Uniform Resource Imaging"],"ans":1,"id":"gst113_52","exp":""},{"q":"URL Stands for ____________","opts":["Uniform Research Locator","Uniform Resource Locator","Uniform Resource Link","Unified Resource Locator"],"ans":1,"id":"gst113_53","exp":""},{"q":"Who was the father of Internet?","opts":["Vint Cerffer","Vintty Cerf","Vint Cerf","Vincent Cerf"],"ans":2,"id":"gst113_54","exp":""},{"q":"The term SMS stands for ______________","opts":["Short Message Service","Short Message Security","Short Mail Service","System Message Service"],"ans":0,"id":"gst113_55","exp":""},{"q":"Computer viruses can be classified as?","opts":["Biological","Hardware","Software","Tools"],"ans":2,"id":"gst113_56","exp":""},{"q":"How many R's are in steps of study skills?","opts":["1","2","3","4"],"ans":2,"id":"gst113_57","exp":""},{"q":"Note taking during study is a \u2026\u2026\u2026\u2026\u2026.. reading habit","opts":["GOOD","BAD","DANGEROUS","ABUSIVE"],"ans":0,"id":"gst113_58","exp":""},{"q":"Head movement during study is a \u2026\u2026\u2026\u2026\u2026.. reading habit","opts":["GOOD","BAD","DANGEROUS","ABUSIVE"],"ans":1,"id":"gst113_59","exp":""},{"q":"A Library without walls is called a \u2026\u2026\u2026\u2026\u2026\u2026 Library","opts":["RADIO","SPECIAL LIBRARY","SCREEN LIBRARY","VIRTUAL"],"ans":3,"id":"gst113_60","exp":""},{"q":"A library where resources are kept in devices such as computers, CDs etc are called \u2026\u2026\u2026\u2026\u2026.. Library","opts":["Television","disseminated","Electronic","radio"],"ans":2,"id":"gst113_61","exp":""},{"q":"All are references except;","opts":["fiction book","dictionary","handbook","yearbook"],"ans":0,"id":"gst113_62","exp":""},{"q":"Which is the serial","opts":["novel","magazine","dictionary","almanac"],"ans":1,"id":"gst113_63","exp":""},{"q":"General Works in the LC is Represented by what Alphabet","opts":["A","B","C","D"],"ans":0,"id":"gst113_64","exp":""},{"q":"A in the LC is for History","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_65","exp":""},{"q":"The Acronym OPAC is","opts":["Online Public Access Catalogue","Online People Access Catalogue","Online Personal Access Catalogue","Online Public Access Category"],"ans":0,"id":"gst113_66","exp":""},{"q":"Which of the following domains is used for-profit businesses?","opts":[".net",".edu",".com",".org"],"ans":2,"id":"gst113_67","exp":""},{"q":"Which of the following is not a word processing Program?","opts":["MS Word","Word Perfect","MS Excel","Word Star"],"ans":2,"id":"gst113_68","exp":""},{"q":"Which one of the following is not a network device?","opts":["Router","Switch","Hub","CPU"],"ans":3,"id":"gst113_69","exp":""},{"q":"Which one of the following is not a search engine?","opts":["Google","Chrome","Yahoo","Bing"],"ans":1,"id":"gst113_70","exp":""},{"q":"Which of the following cannot work as an input unit?","opts":["keyboard","trackball","lightpen","floppy"],"ans":3,"id":"gst113_71","exp":""},{"q":"Types of network topologies include the following except","opts":["Ring topology","Bus Topology","Car Topology","Star Topology"],"ans":2,"id":"gst113_72","exp":""},{"q":"What is Android?","opts":["A toy","Laptop Software","Mobile Operating System","Mobile Phone"],"ans":2,"id":"gst113_73","exp":""},{"q":"OPAC can be accessed in any of the followings: Author, Title, Publisher, Year of Publication, Call Number etc.","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_74","exp":""},{"q":"OPAC is Organizing Public Access Catalogue","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_75","exp":""},{"q":"Regression When Reading is a Good Reading Habit","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_76","exp":""},{"q":"Note Taking and Note Making are Relevant Study Skills","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_77","exp":""},{"q":"In Planning, the Acronym M.A.R.C, A is","opts":["Attainable","Ascertain","Access","Acquire"],"ans":0,"id":"gst113_78","exp":""},{"q":"In Planning, the Acronym M.A.R.C, C is","opts":["Clever","Client","Civil","Clear"],"ans":3,"id":"gst113_79","exp":""},{"q":"In Planning, the Acronym M.A.R.C, M is","opts":["Massive","Manageable","Million","Movement"],"ans":1,"id":"gst113_80","exp":""},{"q":"In Planning, the Acronym M.A.R.C, R is","opts":["Reachable","Resilient","Realistic","Reliable"],"ans":2,"id":"gst113_81","exp":""},{"q":"AI is a Source of Information Retrieving tool","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_82","exp":""},{"q":"What Year was the First University Library Established in Nigeria","opts":["1948","1956","1938","1960"],"ans":0,"id":"gst113_83","exp":""},{"q":"The Library of Yaba College of Technology was the First Established Academic Library in Nigeria","opts":["TRUE","FALSE"],"ans":0,"id":"gst113_84","exp":""},{"q":"The malicious software that does not require a host program is known as?","opts":["parasitic","non parasitic","intruder","None of the above"],"ans":1,"id":"gst113_85","exp":""},{"q":"The most common type of memory that the computer uses to process data is ROM.","opts":["Yes","No","Maybe","None of the above"],"ans":1,"id":"gst113_86","exp":""},{"q":"The system unit of a personal computer typically contains all of the following except?","opts":["Microprocessor","Disk controller","Serial interface","Modem"],"ans":3,"id":"gst113_87","exp":""},{"q":"Books in China were made up of","opts":["Iron","Metal","Paper","Bamboo"],"ans":3,"id":"gst113_88","exp":""},{"q":"Paper Scrolls were Parchment Codex","opts":["TRUE","FALSE"],"ans":1,"id":"gst113_89","exp":""},{"q":"Igbinedion University Library operates the ......................... system of library","opts":["Faculty","Collegial","Department","None of the above"],"ans":1,"id":"gst113_90","exp":""},{"q":"Library Users can also be called Clientele or .....................\u2026","opts":["Users","Patrons","Borrowers","None of the above"],"ans":1,"id":"gst113_91","exp":""},{"q":"The Followings are Library contributors except \u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026..","opts":["Henry Carr","Herbert Macaulay","Tom Jones","Lord Lugard"],"ans":3,"id":"gst113_92","exp":""},{"q":"_____________ is responsible for coordinating various operations using timing signals.","opts":["CONTROL UNIT","ALU","RAM","ROM"],"ans":0,"id":"gst113_93","exp":""},{"q":"_____ can be defined as a raw fact?","opts":["TRUTH","DATA","INFORMATION","None of the above"],"ans":1,"id":"gst113_94","exp":""},{"q":"_____ is an example of a non-parasitic malicious software?","opts":["Worms","viruses","logic bombs","none of the above"],"ans":0,"id":"gst113_95","exp":""},{"q":"_______ is an example of a parasitic malicious software?","opts":["Worms","Bot programs","Viruses","All of the above"],"ans":2,"id":"gst113_96","exp":""},{"q":"________ is the protocol that is responsible for the interconnection of networks on the internet?","opts":["TCP/IP","HTTP","HTML","TCP/HTTP"],"ans":0,"id":"gst113_97","exp":""},{"q":"____________ is the science that attempts to produce machines that display the same type of intelligence that humans do.","opts":["Nanoscience","Nanotechnology","Simulation","Artificial intelligence (AI)"],"ans":3,"id":"gst113_98","exp":""},{"q":"_________is the language for developing information on the internet?","opts":["TCP/IP","HTTP","HTML","TCP/HTTP"],"ans":2,"id":"gst113_99","exp":""},{"q":"________is the protocol that is responsible for information distribution on the internet?","opts":["TCP/IP","HTTP","HTML","TCP/HTTP"],"ans":1,"id":"gst113_100","exp":""},{"q":"A computer system that combines text, graphics, voice and video is known as?","opts":["WEB","VIDEO","HYPERMEDIA","MULTIMEDIA"],"ans":3,"id":"gst113_101","exp":""},{"q":"A processing system wherein data is gathered for a time and collected into a group before they are entered into the computer system?","opts":["Transaction Processing","Online Processing","Real Time Processing","Batch Processing"],"ans":3,"id":"gst113_102","exp":""},{"q":"Computers can be classified according to signals to _____ and _____?","opts":["ANALOGUE and HYBRID","ANALOGUE and DIGITAL","DIGITAL and DIGITAL","HYBRID and DIGITAL"],"ans":1,"id":"gst113_103","exp":""},{"q":"Computers carrying operation on data which can vary continuously and are measurable such as time, lengths, weights etc.?","opts":["Analog Computers","Digital Computers","Hybrid Computers","None of the above"],"ans":0,"id":"gst113_104","exp":""},{"q":"Computers on an internet are identified by () address","opts":["Internet Protocol","SMS","HTTP","FTP"],"ans":0,"id":"gst113_105","exp":""},{"q":"EBCDIC stands for?","opts":["Extended Binary Coded Decimal Interchange Code","Extended Bit Code Decimal Interchange Code","Extended Bit Case Decimal Interchange Code","Extended Binary Case Decimal Interchange Code"],"ans":0,"id":"gst113_106","exp":""},{"q":"EEPROM Stands for ()","opts":["Hypertext Markup Language","Electronically Erasable Programmable Read-Only Memory","Wireless Local Area Network","Uniform Resource Locator"],"ans":1,"id":"gst113_107","exp":""},{"q":"Problems found on the internet include the following except","opts":["Cyberbully","cyberstalking","dancing","identity theft"],"ans":2,"id":"gst113_108","exp":""},{"q":"Surgeons can perform delicate operations by manipulating devices through computers instead of manually. This technology is known as:?","opts":["robotics","computer forensics","simulation","forecasting"],"ans":0,"id":"gst113_109","exp":""},{"q":"The arranging of data in a logical sequence is called?","opts":["Sorting","Classifying","Reproducing","Summarizing"],"ans":0,"id":"gst113_110","exp":""},{"q":"The file extension .exe generally refers to what kind of file?","opts":["Excel file","Audio file","Executable file","MS Excess file"],"ans":2,"id":"gst113_111","exp":""},{"q":"The following are computer resources except one?","opts":["firmware","information","users","communication networks"],"ans":2,"id":"gst113_112","exp":""},{"q":"The following are examples of application software except","opts":["WhatsApp","Ubuntu","Twitter","Msword"],"ans":1,"id":"gst113_113","exp":""},{"q":"The following are examples of biometric authentication except?","opts":["Iris scan","facial recognition","finger print","password"],"ans":3,"id":"gst113_114","exp":""},{"q":"All of the following are examples of real security and privacy risks EXCEPT:?","opts":["hackers","Spam","Viruses","Identity theft"],"ans":1,"id":"gst113_115","exp":""}]},"pee101":{"name":"PEE 101","title":"Introduction to Petroleum Engineering","questions":[{"q":"Which sector of the oil and gas industry is involved in finding and producing oil and gas?","opts":["Upstream","Midstream","Downstream","All of the above"],"ans":0,"id":"pee101_0","exp":""},{"q":"What operations are included in the downstream sector?","opts":["Finding and producing oil","Crude oil refining and natural gas processing","Transportation of hydrocarbons","Exploration and drilling"],"ans":1,"id":"pee101_1","exp":""},{"q":"Which sector connects the upstream and downstream sectors?","opts":["Midstream","Upstream","Downstream","Refining"],"ans":0,"id":"pee101_2","exp":""},{"q":"What is one of the main methods of producing oil and gas?","opts":["Exploratory","Primary","Tertiary","Secondary"],"ans":1,"id":"pee101_3","exp":""},{"q":"Which of the following is a means of transporting reservoir fluids?","opts":["Pipelines","Tanker trucks","Liquefied natural gas transport ships","All of the above"],"ans":3,"id":"pee101_4","exp":""},{"q":"What is a reservoir in the context of the oil and gas industry?","opts":["A natural formation containing hydrocarbons","A type of drilling equipment","A transportation method for oil","A refinery process"],"ans":0,"id":"pee101_5","exp":""},{"q":"What causes compositional variations in reservoir fluids?","opts":["Type of drilling rig used","Biological and thermal maturation","The depth of the well","Refining processes"],"ans":1,"id":"pee101_6","exp":""},{"q":"Petroleum engineering deals with which of the following?","opts":["Transportation of hydrocarbons","Marketing of petroleum products","Drilling and production of petroleum","Environmental protection"],"ans":2,"id":"pee101_7","exp":""},{"q":"What are unconventional oil and gas resources?","opts":["Oil found in traditional reservoirs","Coal gas, gas hydrates, tight gas sands","Natural gas found in pipelines","None of the above"],"ans":1,"id":"pee101_8","exp":""},{"q":"What is a disadvantage of cable tool drilling?","opts":["High speed","Effective control of subsurface pressure","Slow and unstable process","Low cost"],"ans":2,"id":"pee101_9","exp":""},{"q":"Which of the following is a new drilling technique","opts":["Cable tool drilling","Coil tubing drilling","Spudding","Blowout preventer drilling"],"ans":1,"id":"pee101_10","exp":""},{"q":"Which is not a function of drilling mud","opts":["Cooling the drill bit","Lifting cuttings to the surface","Increasing subsurface pressure","Lubricating the drill string"],"ans":2,"id":"pee101_11","exp":""},{"q":"A geological model helps to","opts":["Increase oil prices","Calculate volumes in place","Decrease drilling costs","Refine crude oil"],"ans":1,"id":"pee101_12","exp":""},{"q":"Reservoir fluid processing involves","opts":["Dehydration","Drilling","Refining","Transporting"],"ans":0,"id":"pee101_13","exp":""},{"q":"Which property is not associated with reservoir rocks?","opts":["Porosity","Permeability","Saturation","None"],"ans":3,"id":"pee101_14","exp":""},{"q":"SPE stands for what ?","opts":["Society of Petroleum Engineers","Special Petroleum Energy","Society of Power Engineers","Special Pipeline Engineers"],"ans":0,"id":"pee101_15","exp":""},{"q":"Which is not an alternative energy option?","opts":["Nuclear energy","Wind energy","Coal","Smoke"],"ans":3,"id":"pee101_16","exp":""},{"q":"Dry gas is a class of ?","opts":["Reservoir rock","Hydrocarbon fluid","Drilling fluid","Refining process"],"ans":1,"id":"pee101_17","exp":""},{"q":"What does a refinery do?","opts":["Drills for oil","Transports oil","Breaks down and refines crude oil","Explore for petroleum"],"ans":2,"id":"pee101_18","exp":""},{"q":"An example of a petrochemical is ?","opts":["Ethylene glycol","Diesel","Gasoline","Kerosene"],"ans":0,"id":"pee101_19","exp":""},{"q":"Components of a rotary drilling rig includes all except ?","opts":["Derrick","Kelly","Drill pipes","Bailing bucket"],"ans":3,"id":"pee101_20","exp":""},{"q":"OPEC is?","opts":["An oil drilling company","A refinery","An intergovernmental organization","A type of drilling rig"],"ans":2,"id":"pee101_21","exp":""},{"q":"Example of surface facilities include?","opts":["Pumps","Compressors","Separators","All of the above"],"ans":3,"id":"pee101_22","exp":""},{"q":"Measuring fluid properties can be done through?","opts":["Constant composition expansion (CCE)","Well testing","Geophysical logging","None of the above"],"ans":0,"id":"pee101_23","exp":""},{"q":"Drilling mud typically includes?","opts":["Clay","Barite","Bentonite","All of the above"],"ans":3,"id":"pee101_24","exp":""},{"q":"Which is not a reservoir fluid property?","opts":["Formation volume factor","Viscosity","Porosity","Specific gravity"],"ans":2,"id":"pee101_25","exp":""},{"q":"Fluid properties are used in petroleum engineering for?","opts":["Volumetric estimation of oil and gas in place","Drilling rig selection","Surface facility design","Environmental impact assessment"],"ans":0,"id":"pee101_26","exp":""},{"q":"Non-hydrocarbon components of petroleum include?","opts":["Ethylene glycol","Carbon dioxide","Gasoline","Kerosene"],"ans":1,"id":"pee101_27","exp":""},{"q":"Sour gas contains?","opts":["High levels of hydrogen sulphide","Low levels of sulphur","High levels of methane","Low levels of carbon dioxide"],"ans":0,"id":"pee101_28","exp":""},{"q":"Primary method of oil recovery involves?","opts":["Natural pressure of the reservoir","Injection of water or gas","Chemical flooding","Steam injection"],"ans":0,"id":"pee101_29","exp":""},{"q":"Which of the following is part of midstream activities?","opts":["Refining","Transportation","Exploration","Drilling"],"ans":1,"id":"pee101_30","exp":""},{"q":"The process of separating oil, gas, and water phases is known as","opts":["Dehydration","Desalting","Sweetening","Separation"],"ans":3,"id":"pee101_31","exp":""},{"q":"The removal of hydrogen sulphide from crude oil is called","opts":["Dehydration","Desalting","Sweetening","Refining"],"ans":2,"id":"pee101_32","exp":""},{"q":"Which organization regulates petroleum policies of its member states?","opts":["SPE","OPEC","API","IEA"],"ans":1,"id":"pee101_33","exp":""},{"q":"What is a derrick used for in drilling?","opts":["Refining crude oil","Transporting oil","Supporting the drill rig","Separating oil and gas"],"ans":2,"id":"pee101_34","exp":""},{"q":"An example of unconventional gas resource is?","opts":["Tight gas sands","Ethylene glycol","Propane","Butane"],"ans":0,"id":"pee101_35","exp":""},{"q":"Functions of drilling mud include?","opts":["Cooling the drill bit","Lubricating the drill string","Supporting the wellbore","All of the above"],"ans":3,"id":"pee101_36","exp":""},{"q":"The  permeability of a reservoir rock affects?","opts":["Drilling speed","Flow of hydrocarbon fluid","Oil refining","Wellhead pressure"],"ans":1,"id":"pee101_37","exp":""},{"q":"A natural gas processing plant is part of which sector?","opts":["Upstream","Midstream","Downstream","None of the above"],"ans":2,"id":"pee101_38","exp":""},{"q":"Which type of drilling involves using a flexible, continuous string of pipe?","opts":["Rotary drilling","Slim hole drilling","Underbalanced drilling","Coil tubing drilling"],"ans":3,"id":"pee101_39","exp":""},{"q":"Desalting of crude oil is done to reduce:","opts":["Water content","Salt content","Sediments","Sulphur content"],"ans":1,"id":"pee101_40","exp":""},{"q":"Saturation in reservoir rocks refers to?","opts":["The amount of oil and gas present","The flow rate of the well","The temperature of the reservoir","The porosity of the rock"],"ans":0,"id":"pee101_41","exp":""},{"q":"What is ethylene glycol classified as?","opts":["Refining product","Petrochemical","Natural gas","Crude oil"],"ans":1,"id":"pee101_42","exp":""},{"q":"Non-hydrocarbon gases found in natural gas include?","opts":["Carbon dioxide and nitrogen","Methane and ethane","Propane and butane","None of the above"],"ans":0,"id":"pee101_43","exp":""},{"q":"The process of removing basic sediments and water from crude oil is called?","opts":["Separation","Dehydration","Desalting","Sweetening"],"ans":1,"id":"pee101_44","exp":""},{"q":"Hydrocarbon fluids that change phases with temperature and pressure are classified as?","opts":["Dry gas","Wet gas","Condensate","All of the above"],"ans":3,"id":"pee101_45","exp":""},{"q":"An aquifer barrier in a reservoir?","opts":["Contains oil and gas","Is permeable","Contains water","Is used for drilling"],"ans":2,"id":"pee101_46","exp":""},{"q":"What is not a function of the geological model?","opts":["Enhancing the value of a discovery","Deciding on well location","Refining crude oil","Providing static details for simulations"],"ans":2,"id":"pee101_47","exp":""},{"q":"Which method is used for secondary recovery?","opts":["Natural pressure","Water injection","Steam injection","Chemical flooding"],"ans":1,"id":"pee101_48","exp":""},{"q":"What does a separator do?","opts":["Separates hydrocarbons from non-hydrocarbon gases","Separates oil, gas, and water phases","Separates hydrocarbons by molecular weight","Separates hydrocarbons by boiling point"],"ans":1,"id":"pee101_49","exp":""},{"q":"Which is not a component of a rotary drilling rig?","opts":["Derrick","Kelly","Separator","Drill collar"],"ans":2,"id":"pee101_50","exp":""},{"q":"The term 'tight gas' refers to","opts":["Gas trapped in low permeability rock formations","Gas stored in tanks under pressure","Gas pipelines","Gas with high hydrogen sulphide content"],"ans":0,"id":"pee101_51","exp":""},{"q":"In oil refining, 'sweetening' refers to the removal of","opts":["Sweet","Salt","water","none of the above"],"ans":3,"id":"pee101_52","exp":""},{"q":"What is the purpose of using drilling mud?","opts":["increase the reserve of a field","Lubricating the drill string","Supporting the reservoir fluid  accumulation process","supplying power to the bit"],"ans":1,"id":"pee101_53","exp":""},{"q":"The specific gravity of a reservoir fluid is used to:","opts":["Measure the density relative to water","Estimate the flow rate","Determine the temperature of the reservoir","Calculate drilling costs"],"ans":0,"id":"pee101_54","exp":""},{"q":"Positive Environmental impact of oil and gas production can lead to?","opts":["Employment","Contaminated water sources","Degradation of farmlands","All of the above"],"ans":0,"id":"pee101_55","exp":""},{"q":"Natural gas is primarily composed of?","opts":["Methane","Ethane","Propane","Butane"],"ans":0,"id":"pee101_56","exp":""},{"q":"How many stands of drill pipe are needed to prepare a drill string that is 10 100 ft long? A stand is three pipes, and each pipe has a length of 30 ft. Assume one stand of drill collar and neglect elongation of pipe.","opts":["110 stands","113 stands","111 stands","112 stands"],"ans":3,"id":"pee101_57","exp":""},{"q":"How many stands of drill pipe are needed to prepare a drill string that is 9000 ft long? A stand is three pipes, and each pipe has a length of 30 ft. Assume one stand of drill collar and neglect elongation of pipe.","opts":["112 stands","113 stands","111 stands","99 stands"],"ans":3,"id":"pee101_58","exp":""},{"q":"How many stands of drill pipe are needed to prepare a drill string that is 8500 ft long? A stand is three pipes, and each pipe has a length of 30 ft. Assume one stand of drill collar and neglect elongation of pipe.","opts":["112 stands","113 stands","94 stands","114 stands"],"ans":2,"id":"pee101_59","exp":""},{"q":"How many stands of drill pipe are needed to prepare a drill string that is 7500 ft long? A stand is three pipes, and each pipe has a length of 30 ft. Assume one stand of drill collar and neglect elongation of pipe.","opts":["83 stands","113 stands","111 stands","114 stands"],"ans":0,"id":"pee101_60","exp":""},{"q":"How many stands of drill pipe are needed to prepare a drill string that is 20000 ft long? A stand is three pipes, and each pipe has a length of 30 ft. Assume one stand of drill collar and neglect elongation of pipe.","opts":["112 stands","222 stands","111 stands","114 stands"],"ans":1,"id":"pee101_61","exp":""},{"q":"How many stands of drill pipe are needed to prepare a drill string that is 15100 ft long? A stand is three pipes, and each pipe has a length of 30 ft. Assume one stand of drill collar and neglect elongation of pipe.","opts":["167 stands","113 stands","111 stands","114 stands"],"ans":0,"id":"pee101_62","exp":""},{"q":"During a drilling operation, the top of a formation of interest is at a depth of 6000ft and the ROP(rate of penetration) of the drill bit is 250 ft/day. How long will it take ( in days) to drill to the top of the formation?","opts":["3 days","24days","12 days","15days"],"ans":1,"id":"pee101_63","exp":""},{"q":"During a drilling operation, the top of a formation of interest is at a depth of 9000ft and the ROP(rate of penetration) of the drill bit is 150 ft/day. How long will it take ( in days) to drill to the top of the formation?","opts":["30 days","60 days","120 days","150 days"],"ans":1,"id":"pee101_64","exp":""},{"q":"During a drilling operation, the top of a formation of interest is at a depth of 22080ft and the ROP(rate of penetration) of the drill bit is 230 ft/day. How long will it take ( in days) to drill to the top of the formation?","opts":["13 days","24 days","96 days","15days"],"ans":2,"id":"pee101_65","exp":""},{"q":"During a drilling operation, the top of a formation of interest is at a depth of 11200ft and the ROP(rate of penetration) of the drill bit is 400 ft/day. How long will it take ( in days) to drill to the top of the formation?","opts":["38 days","24d ays","12 days","28 days"],"ans":3,"id":"pee101_66","exp":""},{"q":"During a drilling operation, the top of a formation of interest is at a depth of 33000ft and the ROP(rate of penetration) of the drill bit is 550 ft/day. How long will it take ( in days) to drill to the top of the formation?","opts":["60 days","24 days","12 days","15days"],"ans":0,"id":"pee101_67","exp":""},{"q":"Calculate the gas oil ratio (GOR) for a well that produces 2000MSCF gas and 40STB oil?","opts":["10SCF/STB","50SCF/STB","100SCF/STB","12SCF/STB"],"ans":1,"id":"pee101_68","exp":""},{"q":"Calculate the gas oil ratio (GOR) for a well that produces 3000MSCF gas and 50STB oil?","opts":["10SCF/STB","50SCF/STB","60SCF/STB","12SCF/STB"],"ans":2,"id":"pee101_69","exp":""},{"q":"Calculate the gas oil ratio (GOR) for a well that produces 5000MSCF gas and 20STB oil?","opts":["10SCF/STB","250SCF/STB","100SCF/STB","12SCF/STB"],"ans":1,"id":"pee101_70","exp":""},{"q":"Calculate the gas oil ratio (GOR) for a well that produces 21000MSCF gas and 100STB oil?","opts":["210SCF/STB","50SCF/STB","100SCF/STB","12SCF/STB"],"ans":0,"id":"pee101_71","exp":""},{"q":"Calculate the gas oil ratio (GOR) for a well that produces 6600MSCF gas and 100STB oil?","opts":["10SCF/STB","50SCF/STB","100SCF/STB","66SCF/STB"],"ans":3,"id":"pee101_72","exp":""},{"q":"The specific gravity of an oil sample is 0.76. What is its API gravity?","opts":["55.68 API","45 API","67 API","80 API"],"ans":0,"id":"pee101_73","exp":""},{"q":"The specific gravity of an oil sample is 0.65. What is its API gravity?","opts":["55.68 API","45 API","29.29 API","86.19 API"],"ans":3,"id":"pee101_74","exp":""},{"q":"The specific gravity of an oil sample is 0.91. What is its API gravity?","opts":["20.68 API","22.44 API","23.99 API","30.79 API"],"ans":2,"id":"pee101_75","exp":""},{"q":"The specific gravity of an oil sample is 0.88. What is its API gravity?","opts":["29.29 API","45 API","67 API","80 API"],"ans":0,"id":"pee101_76","exp":""},{"q":"what is the nature of the oil with an API gravity of 56?","opts":["Light","Heavy","medium","sweet"],"ans":0,"id":"pee101_77","exp":""},{"q":"An oil reservoir has average porosity=0.15 in an area of 6400 acres with a net thickness of 100 ft, initial oil saturation of 75%, and initial oil formation volume factor of 1.3 RB/STB. Estimate Original oil in place  (OOIP)","opts":["43000000STB","430000000SCF","43000000STB","43000000SCF/STB"],"ans":1,"id":"pee101_78","exp":""},{"q":"An oil reservoir has average porosity=0.15 in an area of 6400 acres with a net thickness of 54 ft, initial oil saturation of 75%, and initial oil formation volume factor of 1.3 RB/STB. Estimate Original oil in place  (OOIP)","opts":["230000000STB","230000000SCF","43000000STB","43000000SCF/STB"],"ans":0,"id":"pee101_79","exp":""},{"q":"A well is draining a gas water reservoir. The drainage area of the well is 160 acres and has a net thickness of 20ft. Initial properties are 15% porosity, 70% gas saturation, a nd gas FVF of 0.0016 RB/SCF. What was the original gas in place in the drainage area?","opts":["1690000000 SCF","2690000000SCF","230000000SCF","130000000SCF"],"ans":0,"id":"pee101_80","exp":""},{"q":"Which countries in Africa Produce oil and gas?","opts":["Egypt","Tunisia","Libya","Rwanda"],"ans":2,"id":"pee101_81","exp":""},{"q":"Which country in the world has the highest petroleum reserve ?","opts":["Nigeria","US","Venezuela","Spain"],"ans":2,"id":"pee101_82","exp":""},{"q":"What is Nigeria s natural gas reserve  presently?","opts":["37.50 billion  barrels","209 trillion CF","112 billion  barrels","35.5 billion  barrels"],"ans":1,"id":"pee101_83","exp":""},{"q":"What is Nigeria s crude oil  reserve  presently?","opts":["37.50 billion  barrels","209 trillion CF","112 billion  barrels","35.5 billion  barrels"],"ans":0,"id":"pee101_84","exp":""},{"q":"How much is a barrel of crude in Nigeria?","opts":["81.75","56","12","100"],"ans":0,"id":"pee101_85","exp":""},{"q":"Which branch of engineering deals with the recovery, production, and distribution of petroleum and natural gas?","opts":["Mechanical Engineering","Petroleum Engineering","Chemical Engineering","Electrical Engineering"],"ans":1,"id":"pee101_86","exp":""},{"q":"What are the three main sub-disciplines of petroleum engineering?","opts":["Extraction, Processing, Distribution","Drilling Engineering, Production Engineering, Reservoir Engineering","Mechanical, Chemical, Electrical","Environmental, Safety, Geology"],"ans":1,"id":"pee101_87","exp":""},{"q":"Who is responsible for drilling and completing wells in petroleum engineering?","opts":["Production Engineers","Reservoir Engineers","Drilling Engineers","Geophysicists"],"ans":2,"id":"pee101_88","exp":""},{"q":"What is the primary responsibility of a petroleum engineer on a project basis?","opts":["Designing pipelines","Analyzing financial schemes","Implementing safety measures","Managing environmental impact"],"ans":0,"id":"pee101_89","exp":""},{"q":"Which professional society is the largest for petroleum engineers?","opts":["American Society of Mechanical Engineers (ASME)","Institute of Electrical and Electronics Engineers (IEEE)","Society of Petroleum Engineers (SPE)","American Chemical Society (ACS)"],"ans":2,"id":"pee101_90","exp":""},{"q":"What is the main source of organic matter believed to form petroleum?","opts":["Marine minerals","Volcanic eruptions","Animal and plant remains","Meteorite impacts"],"ans":2,"id":"pee101_91","exp":""},{"q":"Which phase of petroleum is typically methane with lesser amounts of heavier hydrocarbon molecules?","opts":["Liquid","Gas","Solid","Semi-solid"],"ans":1,"id":"pee101_92","exp":""},{"q":"What is the primary function of separators in petroleum processing?","opts":["Mixing produced fluids","Separating produced fluids into different phases","Storing produced fluids","Distributing produced fluids to consumers"],"ans":1,"id":"pee101_93","exp":""},{"q":"Which nation has adopted nuclear fission energy as its primary source for electricity generation?","opts":["United States","Russia","France","China"],"ans":2,"id":"pee101_94","exp":""},{"q":"What percentage of the world's energy needs is met by oil and gas combined?","opts":["Less than 25%","Approximately 50%","More than 75%","None of the above"],"ans":1,"id":"pee101_95","exp":""},{"q":"What is the composition of natural gas hydrates?","opts":["Gas and water mix at low temperatures and high pressures","Solid hydrocarbons","Liquid hydrocarbons","Wax mined from fractured formations"],"ans":0,"id":"pee101_96","exp":""},{"q":"Which phase diagram is often used to show the gas-liquid-solid phase behavior of petroleum?","opts":["Temperature-Pressure (T-P) diagram","Pressure-Volume (P-V) diagram","Volume-Temperature (V-T) diagram","None of the above"],"ans":0,"id":"pee101_97","exp":""},{"q":"What is the primary responsibility of a production engineer in petroleum engineering?","opts":["Designing drilling equipment","Managing reservoir fluids","Optimizing hydrocarbon production","Analyzing financial schemes"],"ans":2,"id":"pee101_98","exp":""},{"q":"What is the density of oil sands compared to water density?","opts":["Less than water density","Equal to water density","Greater than water density","Varies depending on the location"],"ans":2,"id":"pee101_99","exp":""},{"q":"What is the main function of drilling rigs in petroleum engineering?","opts":["Separating produced fluids","Storing produced fluids","Drilling and completing wells","Processing produced fluids"],"ans":2,"id":"pee101_100","exp":""},{"q":"What are the main constituents of petroleum?","opts":["Carbon and hydrogen","Oxygen and nitrogen","Sulfur and phosphorus","Iron and magnesium"],"ans":0,"id":"pee101_101","exp":""},{"q":"Phases  of petroleum can exist as ------------ in a reservoir?","opts":["Gas","Liquid","Solid","All of the above"],"ans":3,"id":"pee101_102","exp":""},{"q":"What is the primary source of organic matter believed to form petroleum?","opts":["Marine plants","Volcanic eruptions","Animal and plant remains","Meteorite impacts"],"ans":2,"id":"pee101_103","exp":""},{"q":"What is the primary function of refineries in petroleum processing?","opts":["Separating produced fluids","Processing hydrocarbons into marketable products","Storing produced fluids","Distributing produced fluids to consumers"],"ans":1,"id":"pee101_104","exp":""},{"q":"Which type of hydrocarbons are saturated and chemically stable?","opts":["Paraffins","Cycloparaffins","Aromatics","Alkenes"],"ans":0,"id":"pee101_105","exp":""},{"q":"What is the primary responsibility of a reservoir engineer in petroleum engineering?","opts":["Drilling and completing wells","Designing subsurface equipment","Optimizing hydrocarbon production","Analyzing financial schemes"],"ans":2,"id":"pee101_106","exp":""},{"q":"Which phase of petroleum typically contains larger hydrocarbon molecules like asphaltenes and waxes?","opts":["Gas","Liquid","Solid","Semi-solid"],"ans":1,"id":"pee101_107","exp":""},{"q":"What is geology primarily concerned with?","opts":["The study of living organisms","The study of Earth's atmosphere","The study of Earth, rocks, and solid, gaseous matter","The study of space exploration"],"ans":2,"id":"pee101_108","exp":""},{"q":"How are oil reserves classified?","opts":["Into three categories: solid, liquid, and gas","Into proven, probable, and possible reserves","Into renewable and non-renewable reserves","Into surface and subsurface reserves"],"ans":1,"id":"pee101_109","exp":""},{"q":"What is the primary purpose of reservoir geology?","opts":["To enhance the value of a discovery","To analyze financial schemes","To design drilling equipment","To study the Earth's atmosphere"],"ans":0,"id":"pee101_110","exp":""},{"q":"Which method involves recording some logs during drilling and some during production?","opts":["Core analysis","PVT analysis","Well logging","Seismic survey"],"ans":2,"id":"pee101_111","exp":""},{"q":"What are the techniques used for indirect analysis in reservoir geology?","opts":["Core analysis","Seismic survey","Well logging","PVT analysis"],"ans":2,"id":"pee101_112","exp":""},{"q":"Which method involves measuring the mechanical properties of rocks and surface?","opts":["Gravimetric method","Magnetometric method","Seismic survey","Geotechnical methods"],"ans":3,"id":"pee101_113","exp":""},{"q":"What is the purpose of seismic reflection in petroleum exploration?","opts":["To locate prospective basins","To determine the chemical composition of rocks","To measure temperature gradients","To analyze financial schemes"],"ans":0,"id":"pee101_114","exp":""},{"q":"Which method involves analyzing historical geological data collected by gravimetric, magnetometric, and seismic surveys?","opts":["Gravimetric method","Magnetometric method","Seismic survey","Remote sensing method"],"ans":3,"id":"pee101_115","exp":""},{"q":"What are gas hydrates also known as?","opts":["Ice crystals","Clathrates","Sedimentary rocks","Tar sands"],"ans":1,"id":"pee101_116","exp":""},{"q":"Which method involves the use of a gravimeter to measure small variations in gravity?","opts":["Gravimetric method","Magnetometric method","Seismic survey","Remote sensing method"],"ans":0,"id":"pee101_117","exp":""},{"q":"What is the primary purpose of stratigraphy?","opts":["To enhance the value of a discovery","To analyze financial schemes","To establish correlations between wells and fossils","To design drilling equipment"],"ans":2,"id":"pee101_118","exp":""},{"q":"How are sedimentary rocks formed?","opts":["Through volcanic eruptions","Through the accumulation of sediments","Through metamorphic processes","Through chemical precipitation"],"ans":1,"id":"pee101_119","exp":""},{"q":"What is the primary function of traps in petroleum exploration?","opts":["To stop the migration of hydrocarbons","To facilitate the flow of hydrocarbons","To analyze financial schemes","To control the Earth's magnetic field"],"ans":0,"id":"pee101_120","exp":""},{"q":"What is a giant oil field characterized by?","opts":["Less than 500 million barrels of recoverable oil","500 million to 5 billion barrels of recoverable oil","More than 5 billion barrels of recoverable oil","None of the above"],"ans":1,"id":"pee101_121","exp":""},{"q":"What is the quantum of oil and/or gas present in the reservoir pores called?","opts":["Reserve","Pressure","Porosity","Oil and/or gas in place"],"ans":3,"id":"pee101_122","exp":""},{"q":"What is the effect of pressure on gas density in a reservoir?","opts":["Low pressure results in high gas density","High pressure results in low gas density","High pressure results in high gas density","Pressure has no effect on gas density"],"ans":2,"id":"pee101_123","exp":""},{"q":"What is the term used for water present in the pores of the reservoir rock?","opts":["Surface water","Interstitial water","Connate water","Hydraulic water"],"ans":2,"id":"pee101_124","exp":""},{"q":"Which rock type forms the vast majority of reservoir rocks where petroleum accumulates?","opts":["Igneous rocks","Metamorphic rocks","Sedimentary rocks","Evaporites"],"ans":2,"id":"pee101_125","exp":""},{"q":"What is the primary function of the cap rock in trapping hydrocarbons?","opts":["To facilitate the flow of hydrocarbons","To stop the migration of hydrocarbons","To enhance the value of a discovery","To control the Earth's magnetic field"],"ans":1,"id":"pee101_126","exp":""},{"q":"What is the main classification of traps based on their origin?","opts":["Structural traps","Sedimentary traps","Combination traps","All of the above"],"ans":3,"id":"pee101_127","exp":""},{"q":"What is the primary purpose of a reservoir's life cycle?","opts":["To enhance the value of a discovery","To analyze financial schemes","To properly manage the field from exploration to abandonment","To control the Earth's magnetic field"],"ans":2,"id":"pee101_128","exp":""},{"q":"Which genetic classification of crustal rocks includes rocks formed from aqueous environments?","opts":["Igneous rocks","Sedimentary rocks","Metamorphic rocks","None of the above"],"ans":1,"id":"pee101_129","exp":""},{"q":"What is the main purpose of reservoir rocks?","opts":["To facilitate the flow of hydrocarbons","To enhance the value of a discovery","To contain natural, individual accumulations of hydrocarbons","To analyze financial schemes"],"ans":2,"id":"pee101_130","exp":""},{"q":"What are the characteristics of structural traps?","opts":["They are usually associated with low API gravity oil","They are usually pressurized","They may contain a separate gas zone in association with oil","All of the above"],"ans":3,"id":"pee101_131","exp":""},{"q":"Which method involves the use of sound signals transmitted through the Earth's surface?","opts":["Gravimetric method","Magnetometric method","Seismic survey","Remote sensing method"],"ans":2,"id":"pee101_132","exp":""},{"q":"What is the composition of gas hydrates?","opts":["Methane trapped in an ice-like crystalline form of water","Ethane trapped in sedimentary rocks","Carbon dioxide trapped in volcanic rocks","Nitrogen trapped in evaporites"],"ans":0,"id":"pee101_133","exp":""},{"q":"What is the primary purpose of resource estimation?","opts":["To analyze financial schemes","To identify potential hydrocarbon reserves","To facilitate the flow of hydrocarbons","To control the Earth's magnetic field"],"ans":1,"id":"pee101_134","exp":""},{"q":"How are conventional oil and gas resources defined?","opts":["They require stimulation treatments or special recovery processes","They can be produced at economic flow rates without stimulation treatments","They are found only in sedimentary rocks","They do not produce economic volumes of oil and gas"],"ans":1,"id":"pee101_135","exp":""},{"q":"What is the primary purpose of the geological model in reservoir engineering?","opts":["To enhance the value of a discovery","To analyze financial schemes","To provide static details for production forecasts","To control the Earth's magnetic field"],"ans":2,"id":"pee101_136","exp":""},{"q":"What is the term used for rocks formed from the accumulation of sediments?","opts":["Igneous rocks","Metamorphic rocks","Sedimentary rocks","Evaporites"],"ans":2,"id":"pee101_137","exp":""},{"q":"______________ is inarguably the most important economic commodity and source of energy in today s world.","opts":["Beans","Ground Water","Crude Oil","Maize"],"ans":2,"id":"pee101_138","exp":""},{"q":"______________ are derived from crude oil except","opts":["copper","Petrol","diesel","domestic gas,"],"ans":0,"id":"pee101_139","exp":""},{"q":"Kerosene, naphtha, fuel oil, fuel gas, lubricants, wax, and so on can be derived from","opts":["copper","crude oil","diesel","domestic gas,"],"ans":1,"id":"pee101_140","exp":""},{"q":"Petroleum is derived from the Latin words ______________ and ______________","opts":["Petra and oleum","Oil and oleum","Petrol and oil","Etra and leum"],"ans":0,"id":"pee101_141","exp":""},{"q":"Exploratory wells are also referred to as","opts":["Drilled holes","Wildcats","Tigers","Dry holes","None"],"ans":1,"id":"pee101_142","exp":""},{"q":"The latin word for petroleum translated means ----","opts":["Oil","Rock","Stone","Rock oil"],"ans":3,"id":"pee101_143","exp":""},{"q":"---- is a type of drilling method","opts":["Table tool drilling","Ring  drilling","Rotary drilling","None"],"ans":2,"id":"pee101_144","exp":""},{"q":"Exploratory wells where no hydrocarbon is discovered  is also referred to as","opts":["Drilled holes","Wildcats","Tigers","Dry holes"],"ans":3,"id":"pee101_145","exp":""}]}};
+</script>
+<script id="app-script">
+/* ===================== CONFIG ===================== */
+const NUM_QUESTIONS = 70;
+const EXAM_SECONDS = 45 * 60;
+const COURSE_ORDER = ["phy101","phy103","chm101","mth101","mth103","get101","gst113","pee101"];
+const COURSE_COLORS = {
+  phy101:"#1f3a5f", phy103:"#8a4a12", chm101:"#2e7d4f", mth101:"#7a3a9e",
+  mth103:"#b3432b", get101:"#0e7a7a", gst113:"#a6741b", pee101:"#4a5568"
+};
+
+const root = document.getElementById('app-root');
+const modalOverlay = document.getElementById('modal-overlay');
+const modalBox = document.getElementById('modal-box');
+const clockPill = document.getElementById('clock-pill');
+
+/* ===================== UTIL ===================== */
+function fmtTime(sec){
+  sec = Math.max(0, Math.round(sec));
+  const m = Math.floor(sec/60);
+  const s = sec % 60;
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function pickRandom(arr, n){
+  return shuffle(arr).slice(0, Math.min(n, arr.length));
+}
+function updateClock(){
+  const d = new Date();
+  clockPill.textContent = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+setInterval(updateClock, 1000*20);
+updateClock();
+
+function lsKey(courseCode){ return 'cbt_session_' + courseCode; }
+
+function saveSession(state){
+  try{
+    localStorage.setItem(lsKey(state.course), JSON.stringify(state));
+  }catch(e){ console.warn('save failed', e); }
+}
+function loadSession(courseCode){
+  try{
+    const raw = localStorage.getItem(lsKey(courseCode));
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function clearSession(courseCode){
+  localStorage.removeItem(lsKey(courseCode));
+}
+
+/* ===================== ROUTER STATE ===================== */
+let VIEW = 'hub'; // hub | setup | quiz | results
+let currentCourse = null;
+let quizState = null; // active quiz object
+let tickInterval = null;
+
+/* ===================== HUB VIEW ===================== */
+function renderHub(){
+  VIEW = 'hub';
+  stopTicking();
+  const totalQs = COURSE_ORDER.reduce((s,c)=> s + (COURSE_DATA[c]?COURSE_DATA[c].questions.length:0), 0);
+
+  let cards = COURSE_ORDER.map(code=>{
+    const c = COURSE_DATA[code];
+    if(!c) return '';
+    const resumable = !!loadSession(code);
+    return `
+      <div class="course-card" style="--code-color:${COURSE_COLORS[code]}" onclick="goSetup('${code}')">
+        <div class="course-code">${c.name}</div>
+        <div class="course-title">${c.title}</div>
+        <div class="course-meta">
+          <span>📚 ${c.questions.length} questions</span>
+          <span>⏱ 45 min</span>
+        </div>
+        ${resumable ? '<div class="course-meta" style="color:#a6741b;font-weight:700;border-top:none;padding-top:0;">⏸ Resume available</div>' : ''}
+      </div>`;
+  }).join('');
+
+  root.innerHTML = `
+    <div class="hub-hero">
+      <h1>Choose your course</h1>
+      <p>Randomized 70-question practice exams pulled from full question banks. Each attempt shuffles both questions and answer choices, so no two sessions are the same.</p>
+      <div class="hub-stats">
+        <div class="hub-stat"><b>${COURSE_ORDER.length}</b><span>Courses</span></div>
+        <div class="hub-stat"><b>${totalQs}</b><span>Total Questions</span></div>
+        <div class="hub-stat"><b>45:00</b><span>Per Attempt</span></div>
+      </div>
+    </div>
+    <div class="course-grid">${cards}</div>
+  `;
+}
+
+function goSetup(code){
+  currentCourse = code;
+  renderSetup();
+}
+window.goSetup = goSetup;
+
+/* ===================== SETUP VIEW ===================== */
+let setupPrefs = { revealMode: 'immediate' }; // 'immediate' | 'end'
+
+function renderSetup(){
+  VIEW = 'setup';
+  stopTicking();
+  const c = COURSE_DATA[currentCourse];
+  const existing = loadSession(currentCourse);
+
+  root.innerHTML = `
+    <div class="setup-wrap">
+      <button class="back-link" onclick="renderHub()">&larr; All courses</button>
+      <div class="setup-card">
+        <h2>${c.name}</h2>
+        <p class="setup-sub">${c.title} &middot; ${Math.min(NUM_QUESTIONS, c.questions.length)} questions &middot; 45:00 timer</p>
+
+        ${existing ? `
+        <div class="resume-banner">
+          <div>
+            <b>You have a session in progress</b>
+            ${existing.finished ? 'Completed — view your results.' : `${fmtTime(existing.remainingSeconds)} remaining, ${Object.keys(existing.answers||{}).length} answered.`}
+          </div>
+          <div class="btn-row">
+            ${existing.finished ? `<button class="nbtn primary" onclick="viewSavedResults()">View Results</button>` : `<button class="nbtn primary" onclick="resumeQuiz()">Resume</button>`}
+            <button class="nbtn" onclick="discardSession()">Discard</button>
+          </div>
+        </div>` : ''}
+
+        <div class="opt-toggle">
+          <div>
+            <div class="opt-label">When should answers be revealed?</div>
+            <div class="opt-desc">Choose whether you see the correct answer & explanation right after each question, or only in a full review at the end.</div>
+          </div>
+        </div>
+        <div class="seg-control">
+          <button class="seg-btn ${setupPrefs.revealMode==='immediate'?'active':''}" onclick="setReveal('immediate')">Show after each answer</button>
+          <button class="seg-btn ${setupPrefs.revealMode==='end'?'active':''}" onclick="setReveal('end')">Show only at the end</button>
+        </div>
+
+        <button class="start-btn" onclick="startNewQuiz()">Start New Attempt</button>
+      </div>
+    </div>
+  `;
+}
+function setReveal(mode){
+  setupPrefs.revealMode = mode;
+  renderSetup();
+}
+window.setReveal = setReveal;
+window.renderSetup = renderSetup;
+
+function discardSession(){
+  clearSession(currentCourse);
+  renderSetup();
+}
+window.discardSession = discardSession;
+
+function viewSavedResults(){
+  const s = loadSession(currentCourse);
+  if(!s) return renderSetup();
+  quizState = s;
+  renderResults();
+}
+window.viewSavedResults = viewSavedResults;
+
+function resumeQuiz(){
+  const s = loadSession(currentCourse);
+  if(!s){ renderSetup(); return; }
+  quizState = s;
+  // apply the "internet loss" rule: elapsed real-world time since lastSeen counts against remaining time
+  const now = Date.now();
+  const elapsedAway = Math.floor((now - s.lastSeen)/1000);
+  s.remainingSeconds = Math.max(0, s.remainingSeconds - elapsedAway);
+  s.lastSeen = now;
+  saveSession(s);
+  renderQuiz();
+}
+window.resumeQuiz = resumeQuiz;
+
+/* ===================== START NEW QUIZ ===================== */
+function startNewQuiz(){
+  const c = COURSE_DATA[currentCourse];
+  const chosen = pickRandom(c.questions, NUM_QUESTIONS);
+  const questions = chosen.map(q=>{
+    // build shuffled options, track correct index post-shuffle
+    const optOrder = shuffle(q.opts.map((_,i)=>i));
+    const newOpts = optOrder.map(i=>q.opts[i]);
+    const newAns = optOrder.indexOf(q.ans);
+    return {
+      id: q.id,
+      q: q.q,
+      opts: newOpts,
+      ans: newAns,
+      exp: q.exp || ''
+    };
+  });
+
+  quizState = {
+    course: currentCourse,
+    revealMode: setupPrefs.revealMode,
+    questions: questions,
+    answers: {},        // qIndex -> selected option index
+    flagged: {},         // qIndex -> true
+    visited: {},          // qIndex -> true (to distinguish "skipped" vs "not answered")
+    currentIndex: 0,
+    remainingSeconds: EXAM_SECONDS,
+    lastSeen: Date.now(),
+    startedAt: Date.now(),
+    finished: false
+  };
+  saveSession(quizState);
+  renderQuiz();
+}
+window.startNewQuiz = startNewQuiz;
+
+/* ===================== QUIZ VIEW ===================== */
+function stopTicking(){
+  if(tickInterval){ clearInterval(tickInterval); tickInterval = null; }
+}
+
+function startTicking(){
+  stopTicking();
+  tickInterval = setInterval(()=>{
+    if(!quizState || quizState.finished) return;
+    quizState.remainingSeconds -= 1;
+    quizState.lastSeen = Date.now();
+    if(quizState.remainingSeconds <= 0){
+      quizState.remainingSeconds = 0;
+      saveSession(quizState);
+      finishQuiz(true);
+      return;
+    }
+    saveSession(quizState);
+    updateTimerDisplay();
+  }, 1000);
+}
+
+function updateTimerDisplay(){
+  const el = document.getElementById('timer-box');
+  if(!el) return;
+  el.querySelector('.timer-text').textContent = fmtTime(quizState.remainingSeconds);
+  el.classList.remove('warn','crit');
+  if(quizState.remainingSeconds <= 60) el.classList.add('crit');
+  else if(quizState.remainingSeconds <= 300) el.classList.add('warn');
+}
+
+// save lastSeen periodically & on visibility change so we can compute "offline" gap accurately
+document.addEventListener('visibilitychange', ()=>{
+  if(!quizState || VIEW !== 'quiz') return;
+  if(document.visibilityState === 'hidden'){
+    quizState.lastSeen = Date.now();
+    saveSession(quizState);
+  } else {
+    const now = Date.now();
+    const gap = Math.floor((now - quizState.lastSeen)/1000);
+    if(gap > 2){
+      quizState.remainingSeconds = Math.max(0, quizState.remainingSeconds - gap);
+    }
+    quizState.lastSeen = now;
+    saveSession(quizState);
+    updateTimerDisplay();
+    if(quizState.remainingSeconds <= 0){
+      finishQuiz(true);
+    }
+  }
+});
+window.addEventListener('beforeunload', ()=>{
+  if(quizState && VIEW === 'quiz'){
+    quizState.lastSeen = Date.now();
+    saveSession(quizState);
+  }
+});
+window.addEventListener('online', showOnlineStatus);
+window.addEventListener('offline', showOnlineStatus);
+function showOnlineStatus(){
+  const el = document.getElementById('offline-indicator');
+  if(!el) return;
+  el.classList.toggle('hidden', navigator.onLine);
+}
+
+function qStatus(i){
+  const answered = quizState.answers.hasOwnProperty(i);
+  const visited = quizState.visited[i];
+  const flagged = !!quizState.flagged[i];
+  let base = 'notanswered';
+  if(answered) base = 'answered';
+  else if(visited) base = 'skipped';
+  return { base, flagged };
+}
+
+function renderQuiz(){
+  VIEW = 'quiz';
+  const c = COURSE_DATA[quizState.course];
+  const idx = quizState.currentIndex;
+  const total = quizState.questions.length;
+  const q = quizState.questions[idx];
+  quizState.visited[idx] = true;
+
+  const selected = quizState.answers[idx];
+  const isAnswered = selected !== undefined;
+  const showFeedbackNow = isAnswered && quizState.revealMode === 'immediate';
+  const isLast = idx === total - 1;
+
+  const optsHtml = q.opts.map((opt, oi)=>{
+    let cls = 'option';
+    if(showFeedbackNow){
+      if(oi === q.ans) cls += ' correct';
+      else if(oi === selected && oi !== q.ans) cls += ' incorrect';
+    } else if(selected === oi){
+      cls += ' selected';
+    }
+    const letter = String.fromCharCode(65+oi);
+    return `<div class="${cls}" onclick="selectOption(${oi})">
+      <div class="option-letter">${letter}</div>
+      <div>${opt}</div>
+    </div>`;
+  }).join('');
+
+  let feedbackHtml = '';
+  if(showFeedbackNow){
+    const correct = selected === q.ans;
+    feedbackHtml = `<div class="feedback-box show ${correct?'right':'wrong'}">
+      <b>${correct ? '✓ Correct' : '✗ Incorrect — correct answer: ' + String.fromCharCode(65+q.ans)}</b>
+      ${q.exp ? q.exp : (correct ? 'Well done.' : 'Review this topic — you selected ' + String.fromCharCode(65+selected) + '.')}
+    </div>`;
+  }
+
+  root.innerHTML = `
+    <div class="quiz-shell">
+      <div class="quiz-main">
+        <div class="quiz-header">
+          <div class="quiz-title-block">
+            <h2>${c.name} Practice Exam</h2>
+            <div class="sub">${c.title}</div>
+          </div>
+          <div class="timer-box" id="timer-box">
+            <div class="timer-dot"></div>
+            <span class="timer-text">${fmtTime(quizState.remainingSeconds)}</span>
+          </div>
+        </div>
+
+        <div class="offline-banner ${navigator.onLine ? 'hidden' : ''}" id="offline-indicator">
+          ⚠ You're offline. Your answers are saved locally — the timer keeps running and will catch up once you return.
+        </div>
+
+        <div class="qcard">
+          <div class="qcard-top">
+            <div class="qnum-tag">Question ${idx+1} of ${total}</div>
+            <button class="flag-btn ${quizState.flagged[idx] ? 'active':''}" onclick="toggleFlag()">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 3v18h2v-7h10l-2-4 2-4H7V3H5z"/></svg>
+              ${quizState.flagged[idx] ? 'Flagged' : 'Flag'}
+            </button>
+          </div>
+          <div class="qtext">${q.q}</div>
+          <div class="options">${optsHtml}</div>
+          ${feedbackHtml}
+
+          <div class="qcard-nav">
+            <div class="nav-btn-group">
+              <button class="nbtn" onclick="goPrev()" ${idx===0?'disabled':''}>&larr; Previous</button>
+              <button class="nbtn skip" onclick="skipQuestion()" ${isLast?'disabled':''}>Skip</button>
+            </div>
+            <div class="nav-btn-group">
+              <button class="nbtn review" onclick="openReviewPanel()">Review</button>
+              ${isLast
+                ? `<button class="nbtn submit" onclick="confirmSubmit()">Submit Exam</button>`
+                : `<button class="nbtn primary" onclick="goNext()">Next &rarr;</button>`}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-panel" id="nav-panel"></div>
+    </div>
+  `;
+
+  renderNavPanelInto(document.getElementById('nav-panel'));
+  setupMobileNav();
+  saveSession(quizState);
+  startTicking();
+  updateTimerDisplay();
+}
+
+function selectOption(oi){
+  const idx = quizState.currentIndex;
+  const q = quizState.questions[idx];
+  const already = quizState.answers[idx];
+  if(already !== undefined && quizState.revealMode === 'immediate'){
+    // already answered & revealed -- lock it (no changing after reveal in immediate mode)
+    return;
+  }
+  quizState.answers[idx] = oi;
+  quizState.visited[idx] = true;
+  saveSession(quizState);
+  renderQuiz();
+}
+window.selectOption = selectOption;
+
+function toggleFlag(){
+  const idx = quizState.currentIndex;
+  quizState.flagged[idx] = !quizState.flagged[idx];
+  saveSession(quizState);
+  renderQuiz();
+}
+window.toggleFlag = toggleFlag;
+
+function goNext(){
+  if(quizState.currentIndex < quizState.questions.length - 1){
+    quizState.currentIndex++;
+    saveSession(quizState);
+    renderQuiz();
+    window.scrollTo({top:0, behavior:'instant'});
+  }
+}
+window.goNext = goNext;
+
+function goPrev(){
+  if(quizState.currentIndex > 0){
+    quizState.currentIndex--;
+    saveSession(quizState);
+    renderQuiz();
+    window.scrollTo({top:0, behavior:'instant'});
+  }
+}
+window.goPrev = goPrev;
+
+function skipQuestion(){
+  const idx = quizState.currentIndex;
+  quizState.visited[idx] = true;
+  if(quizState.currentIndex < quizState.questions.length - 1){
+    quizState.currentIndex++;
+  }
+  saveSession(quizState);
+  renderQuiz();
+  window.scrollTo({top:0, behavior:'instant'});
+}
+window.skipQuestion = skipQuestion;
+
+function jumpTo(i){
+  quizState.currentIndex = i;
+  saveSession(quizState);
+  renderQuiz();
+  closeMobileDrawer();
+  window.scrollTo({top:0, behavior:'instant'});
+}
+window.jumpTo = jumpTo;
+
+/* ===================== NAV PANEL ===================== */
+function renderNavPanelInto(container){
+  const total = quizState.questions.length;
+  let answeredCount = 0, flaggedCount = 0, skippedCount = 0;
+
+  let grid = '';
+  for(let i=0;i<total;i++){
+    const st = qStatus(i);
+    if(st.base === 'answered') answeredCount++;
+    if(st.base === 'skipped') skippedCount++;
+    if(st.flagged) flaggedCount++;
+    const cur = i === quizState.currentIndex ? ' current' : '';
+    grid += `<div class="qgrid-item ${st.base}${cur} ${st.flagged?'flagged':''}" onclick="jumpTo(${i})">${i+1}</div>`;
+  }
+  const notAnswered = total - answeredCount;
+
+  container.innerHTML = `
+    <h3>Question Navigator</h3>
+    <div class="legend">
+      <div class="legend-row"><div class="legend-swatch answered"></div> Answered</div>
+      <div class="legend-row"><div class="legend-swatch skipped"></div> Skipped / Visited</div>
+      <div class="legend-row"><div class="legend-swatch notanswered"></div> Not answered</div>
+      <div class="legend-row"><div class="legend-swatch flagged"></div> Flagged (dot marker)</div>
+    </div>
+    <div class="qgrid">${grid}</div>
+    <div class="panel-stats">
+      <div><span>Answered</span><b>${answeredCount}/${total}</b></div>
+      <div><span>Flagged</span><b>${flaggedCount}</b></div>
+      <div><span>Not answered</span><b>${notAnswered}</b></div>
+    </div>
+    <button class="submit-panel-btn" onclick="confirmSubmit()">Submit Exam</button>
+  `;
+}
+
+/* ===================== MOBILE NAV DRAWER ===================== */
+function setupMobileNav(){
+  const btn = document.getElementById('mobile-nav-btn');
+  const overlay = document.getElementById('drawer-overlay');
+  const drawer = document.getElementById('mobile-drawer');
+  const closeBtn = document.getElementById('drawer-close');
+  const content = document.getElementById('drawer-content');
+
+  btn.classList.remove('hidden');
+  const total = quizState.questions.length;
+  const answered = Object.keys(quizState.answers).length;
+  document.getElementById('mnb-count').textContent = answered + '/' + total;
+
+  btn.onclick = ()=>{
+    renderNavPanelInto(content);
+    overlay.classList.add('open');
+    drawer.classList.add('open');
+  };
+  const close = ()=>{
+    overlay.classList.remove('open');
+    drawer.classList.remove('open');
+  };
+  overlay.onclick = close;
+  closeBtn.onclick = close;
+}
+function closeMobileDrawer(){
+  document.getElementById('drawer-overlay')?.classList.remove('open');
+  document.getElementById('mobile-drawer')?.classList.remove('open');
+}
+
+/* ===================== REVIEW PANEL (during quiz, quick jump) ===================== */
+function openReviewPanel(){
+  const total = quizState.questions.length;
+  const unanswered = [];
+  for(let i=0;i<total;i++){ if(quizState.answers[i]===undefined) unanswered.push(i+1); }
+
+  modalBox.innerHTML = `
+    <h3>Review before you continue</h3>
+    <p>${Object.keys(quizState.answers).length} of ${total} questions answered.</p>
+    ${unanswered.length ? `<p><b>Not yet answered:</b> ${unanswered.join(', ')}</p>` : `<p>All questions have been answered. 🎉</p>`}
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal()">Keep going</button>
+      <button class="confirm" style="background:var(--navy);border-color:var(--navy);" onclick="closeModal();jumpTo(0)">Go to Q1</button>
+    </div>
+  `;
+  modalOverlay.classList.add('open');
+}
+window.openReviewPanel = openReviewPanel;
+
+function closeModal(){
+  modalOverlay.classList.remove('open');
+}
+window.closeModal = closeModal;
+
+/* ===================== SUBMIT ===================== */
+function confirmSubmit(){
+  const total = quizState.questions.length;
+  const answered = Object.keys(quizState.answers).length;
+  const unanswered = total - answered;
+
+  modalBox.innerHTML = `
+    <h3>Submit exam?</h3>
+    <p>Once submitted, you can't change your answers. Make sure you're ready.</p>
+    <div class="modal-stats">
+      <div><b>${answered}</b><span>Answered</span></div>
+      <div><b>${unanswered}</b><span>Unanswered</span></div>
+      <div><b>${fmtTime(quizState.remainingSeconds)}</b><span>Time left</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal()">Go back</button>
+      <button class="confirm" onclick="closeModal();finishQuiz(false)">Submit now</button>
+    </div>
+  `;
+  modalOverlay.classList.add('open');
+}
+window.confirmSubmit = confirmSubmit;
+
+function finishQuiz(timedOut){
+  stopTicking();
+  quizState.finished = true;
+  quizState.finishedAt = Date.now();
+  quizState.timedOut = !!timedOut;
+  saveSession(quizState);
+  renderResults();
+}
+
+/* ===================== RESULTS ===================== */
+let reviewFilter = 'all';
+
+function computeScore(){
+  const qs = quizState.questions;
+  let correct = 0, incorrect = 0, unanswered = 0;
+  qs.forEach((q,i)=>{
+    const sel = quizState.answers[i];
+    if(sel === undefined) unanswered++;
+    else if(sel === q.ans) correct++;
+    else incorrect++;
+  });
+  return { correct, incorrect, unanswered, total: qs.length, pct: Math.round((correct/qs.length)*100) };
+}
+
+function renderResults(){
+  VIEW = 'results';
+  stopTicking();
+  const c = COURSE_DATA[quizState.course];
+  const score = computeScore();
+  const pass = score.pct >= 50;
+  const revealAtEnd = quizState.revealMode === 'end';
+
+  const timeUsed = EXAM_SECONDS - quizState.remainingSeconds;
+
+  root.innerHTML = `
+    <div class="results-wrap">
+      <button class="back-link" onclick="renderHub()">&larr; All courses</button>
+      <div class="results-hero">
+        <div class="score-label">${c.name} &middot; ${c.title}</div>
+        <div class="score-big">${score.pct}%</div>
+        <div class="score-label">${score.correct} / ${score.total} correct</div>
+        <div class="verdict ${pass?'pass':'fail'}">${pass ? 'PASS' : 'NEEDS REVIEW'}</div>
+        ${quizState.timedOut ? '<div style="margin-top:10px;font-size:12px;color:#f3c98a;">⏱ Time expired — exam was auto-submitted.</div>' : ''}
+      </div>
+
+      <div class="results-grid">
+        <div class="result-stat"><b style="color:var(--good)">${score.correct}</b><span>Correct</span></div>
+        <div class="result-stat"><b style="color:var(--bad)">${score.incorrect}</b><span>Incorrect</span></div>
+        <div class="result-stat"><b style="color:var(--ink-soft)">${score.unanswered}</b><span>Unanswered</span></div>
+        <div class="result-stat"><b>${fmtTime(timeUsed)}</b><span>Time used</span></div>
+      </div>
+
+      <div class="results-actions">
+        <button class="primary" onclick="retakeQuiz()">Retake (new random set)</button>
+        <button onclick="renderHub()">Back to course hub</button>
+      </div>
+
+      <h2 style="font-family:var(--serif);color:var(--navy-deep);font-size:20px;margin-bottom:4px;">
+        ${revealAtEnd ? 'Full Review — Answers & Explanations' : 'Review Your Answers'}
+      </h2>
+      <p style="color:var(--ink-soft);font-size:13px;margin-top:0;margin-bottom:16px;">
+        ${revealAtEnd ? 'Answers were hidden during the exam — here they are now, with explanations for anything you missed.' : 'Jump back through each question with the correct answer and explanation shown.'}
+      </p>
+
+      <div class="filter-row">
+        <button class="filter-btn ${reviewFilter==='all'?'active':''}" onclick="setReviewFilter('all')">All (${score.total})</button>
+        <button class="filter-btn ${reviewFilter==='incorrect'?'active':''}" onclick="setReviewFilter('incorrect')">Incorrect (${score.incorrect})</button>
+        <button class="filter-btn ${reviewFilter==='unanswered'?'active':''}" onclick="setReviewFilter('unanswered')">Unanswered (${score.unanswered})</button>
+        <button class="filter-btn ${reviewFilter==='flagged'?'active':''}" onclick="setReviewFilter('flagged')">Flagged</button>
+      </div>
+
+      <div id="review-list"></div>
+    </div>
+  `;
+
+  renderReviewList();
+}
+
+function setReviewFilter(f){
+  reviewFilter = f;
+  renderReviewList();
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+window.setReviewFilter = setReviewFilter;
+
+function renderReviewList(){
+  const container = document.getElementById('review-list');
+  const qs = quizState.questions;
+  let html = '';
+
+  qs.forEach((q,i)=>{
+    const sel = quizState.answers[i];
+    const isCorrect = sel === q.ans;
+    const isUnanswered = sel === undefined;
+    const isFlagged = !!quizState.flagged[i];
+
+    if(reviewFilter === 'incorrect' && (isCorrect || isUnanswered)) return;
+    if(reviewFilter === 'unanswered' && !isUnanswered) return;
+    if(reviewFilter === 'flagged' && !isFlagged) return;
+
+    const status = isUnanswered ? 'unanswered' : (isCorrect ? 'correct' : 'incorrect');
+    const statusLabel = isUnanswered ? 'Unanswered' : (isCorrect ? 'Correct' : 'Incorrect');
+
+    const optsHtml = q.opts.map((opt,oi)=>{
+      let cls = 'review-opt';
+      if(oi === q.ans) cls += ' correct';
+      else if(oi === sel && oi !== q.ans) cls += ' incorrect';
+      const letter = String.fromCharCode(65+oi);
+      return `<div class="${cls}"><b>${letter}.</b> ${opt}</div>`;
+    }).join('');
+
+    html += `
+      <div class="review-item">
+        <div class="rq-top">
+          <span class="rq-num">Question ${i+1}${isFlagged ? ' &middot; 🚩 Flagged':''}</span>
+          <span class="rq-status ${status}">${statusLabel}</span>
+        </div>
+        <div class="rq-text">${q.q}</div>
+        <div class="review-opts">${optsHtml}</div>
+        ${(q.exp || !isCorrect) ? `<div class="review-explain"><b>Explanation:</b> ${q.exp ? q.exp : 'The correct answer is ' + String.fromCharCode(65+q.ans) + '.'}</div>` : ''}
+      </div>
+    `;
+  });
+
+  if(!html){
+    html = `<p style="color:var(--ink-soft);font-size:13.5px;text-align:center;padding:30px 0;">Nothing to show for this filter.</p>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function retakeQuiz(){
+  clearSession(currentCourse);
+  renderSetup();
+}
+window.retakeQuiz = retakeQuiz;
+
+/* ===================== INIT ===================== */
+renderHub();
+
+</script>
+</body>
+</html>
